@@ -2,3 +2,5 @@ UserSettings
 Packages
 Library
 Temp
+obj
+.vs/topdown-fighter/**
