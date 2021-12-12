@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
 {
     private PlayerStats stats;
     private PlayerInput input;
@@ -13,11 +14,12 @@ public class PlayerMovement : MonoBehaviour
         stats = GetComponent<PlayerStats>();
         input = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody>();
-
     }
 
     void FixedUpdate()
     {
+        if (!isServer)
+            return;
         float moveSpeed = stats.GetMovementSpeed();
         Vector3 movement = input.GetMovementVector().normalized;
 
@@ -26,4 +28,5 @@ public class PlayerMovement : MonoBehaviour
             rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
         }
     }
+
 }
