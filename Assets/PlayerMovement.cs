@@ -63,13 +63,24 @@ public class PlayerMovement : NetworkBehaviour
 
             head.transform.localEulerAngles = verticalRotation;
         }
-
     }
 
     [Command]
     private void CmdUpdateRotationalMovement()
     {
+        // Get mouse input from PlayerInput component
+        // Multiply it by sensitivity
+        Vector2 mouseInput = input.GetMouseInputVector() * settings.Sensitivity;
 
+        Vector3 horizontalRotation = new Vector3(0f, mouseInput.x, 0f);
+        rb.MoveRotation(rb.rotation * Quaternion.Euler(horizontalRotation));
+        if (head != null)
+        {
+            clientCurrentVerticalCameraRotation -= mouseInput.y;
+            Vector3 verticalRotation = new Vector3(clientCurrentVerticalCameraRotation, 0f, 0f);
+
+            head.transform.localEulerAngles = verticalRotation;
+        }
     }
 
     private void UpdateDirectionalMovement()
