@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using System;
 
 public class PlayerMovement : NetworkBehaviour
 {
@@ -9,6 +10,10 @@ public class PlayerMovement : NetworkBehaviour
     private PlayerSettings settings;
     private PlayerStats stats;
     private Rigidbody rb;
+
+    private Transform head;
+
+    private float clientCurrentVerticalCameraRotation;
 
     private bool canMoveCamera = true;
 
@@ -19,18 +24,59 @@ public class PlayerMovement : NetworkBehaviour
         settings = GetComponent<PlayerSettings>();
         stats = GetComponent<PlayerStats>();
         rb = GetComponent<Rigidbody>();
+        head = transform.Find("Head");
+    }
+
+    void Update()
+    {
+        // Rotation is updated every frame locally for responsiveness
+        if (isLocalPlayer)
+            UpdateRotationalMovementLocal();
     }
 
     void FixedUpdate()
     {
         // Movement is server-authoritative
-        if (!(isServer || isLocalPlayer))
-            return;
+        if (isServer || isLocalPlayer)
+        {
+            UpdateDirectionalMovement();
+        }
 
-        // Get movespeed from the PlayerStats component
+        // Rotation is updated each physics update on the server
+        if (isServer)
+            CmdUpdateRotationalMovement();
+
+    }
+
+    private void UpdateRotationalMovementLocal()
+    {
+        // Get mouse input from PlayerInput component
+        // Multiply it by sensitivity
+        Vector2 mouseInput = input.GetMouseInputVector() * settings.Sensitivity;
+
+        Vector3 horizontalRotation = new Vector3(0f, mouseInput.x, 0f);
+        rb.MoveRotation(rb.rotation * Quaternion.Euler(horizontalRotation));
+        if (head != null)
+        {
+            clientCurrentVerticalCameraRotation -= mouseInput.y;
+            Vector3 verticalRotation = new Vector3(clientCurrentVerticalCameraRotation, 0f, 0f);
+
+            head.transform.localEulerAngles = verticalRotation;
+        }
+
+    }
+
+    [Command]
+    private void CmdUpdateRotationalMovement()
+    {
+
+    }
+
+    private void UpdateDirectionalMovement()
+    {
         // Get client input from the PlayerInput component
         // Normalise it so that diagonal movement isn't faster than cardinal movement
-        Vector3 moveInput = input.GetMovementVector().normalized;
+        Vector3 moveInput = input.GetWalkInputVector().normalized;
         // Apply move speed modifiers
         moveInput.x *= stats.MoveStrafeSpeed * stats.MoveStrafeMultiplier;
         moveInput.z *= moveInput.z > 0f ? (input.sprinting ? (stats.MoveSprintSpeed * stats.MoveSprintMultiplier) : (stats.MoveWalkSpeed * stats.MoveWalkMultiplier)) : (stats.MoveStrafeSpeed * stats.MoveStrafeMultiplier);
