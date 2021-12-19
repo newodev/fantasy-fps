@@ -8,6 +8,7 @@ public class PlayerInput : NetworkBehaviour
     // A vector from (-1, 0, -1) to (1, 0, 1) based on axis (WASD) input
     // This vector is sent from the client and saved on the server
     private Vector3 clientInputVector;
+    public bool sprinting = false;
 
     void Update()
     {
@@ -20,6 +21,8 @@ public class PlayerInput : NetworkBehaviour
         // Combine input axes into vector. Y value is 0 because the player doesn't move vertically
         Vector3 inputVector = new Vector3(horizontalInput, 0f, verticalInput);
 
+        // Update movement vector on this client (for prediction) and on server (for broadcast)
+        clientInputVector = inputVector;
         CmdUpdateInput(inputVector);
     }
 

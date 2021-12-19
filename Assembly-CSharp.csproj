@@ -54,9 +54,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assets\PlayerMovement.cs" />
+    <Compile Include="Assets\PlayerCameraManager.cs" />
     <Compile Include="Assets\PlayerInput.cs" />
     <Compile Include="Assets\PlayerStats.cs" />
-    <Compile Include="Assets\PlayerCameraManager.cs" />
+    <Compile Include="Assets\PlayerSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Mirror\Plugins\Mono.Cecil\Mono.CecilX.dll" />

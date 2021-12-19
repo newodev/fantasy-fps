@@ -24,10 +24,4 @@ public class PlayerCameraManager : NetworkBehaviour
             cam.SetActive(false);
         }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

@@ -5,14 +5,19 @@ using Mirror;
 
 public class PlayerMovement : NetworkBehaviour
 {
-    private PlayerStats stats;
     private PlayerInput input;
+    private PlayerSettings settings;
+    private PlayerStats stats;
     private Rigidbody rb;
+
+    private bool canMoveCamera = true;
+
     // Start is called before the first frame update
     void Start()
     {
-        stats = GetComponent<PlayerStats>();
         input = GetComponent<PlayerInput>();
+        settings = GetComponent<PlayerSettings>();
+        stats = GetComponent<PlayerStats>();
         rb = GetComponent<Rigidbody>();
     }
 
@@ -23,15 +28,18 @@ public class PlayerMovement : NetworkBehaviour
             return;
 
         // Get movespeed from the PlayerStats component
-        float moveSpeed = stats.GetMovementSpeed();
         // Get client input from the PlayerInput component
         // Normalise it so that diagonal movement isn't faster than cardinal movement
-        Vector3 movement = input.GetMovementVector().normalized;
+        Vector3 moveInput = input.GetMovementVector().normalized;
+        // Apply move speed modifiers
+        moveInput.x *= stats.MoveStrafeSpeed * stats.MoveStrafeMultiplier;
+        moveInput.z *= moveInput.z > 0f ? (input.sprinting ? (stats.MoveSprintSpeed * stats.MoveSprintMultiplier) : (stats.MoveWalkSpeed * stats.MoveWalkMultiplier)) : (stats.MoveStrafeSpeed * stats.MoveStrafeMultiplier);
+        Vector3 movement = transform.right * moveInput.x + transform.forward * moveInput.z;
 
         // Don't update the rigidbody if we aren't actually going to move
         if (movement != Vector3.zero)
         {
-            rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+            rb.MovePosition(rb.position + movement * Time.fixedDeltaTime);
         }
     }
 

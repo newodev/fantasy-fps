@@ -4,35 +4,24 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
-    // Base movement speed value. In units/second
+    // Base movement speed values (units/second)
     [SerializeField]
-    private float moveSpeed = 5f;
-    // Multiplier for the base movement speed.
-    private float moveSpeedMultiplier = 1f;
+    private float moveWalkSpeed = 4f, moveSprintSpeed = 6f, moveStrafeSpeed = 2f;
+    public float MoveWalkSpeed { get => moveWalkSpeed; private set { if (value < 0) value = 0; moveWalkSpeed = value; } }
+    public float MoveSprintSpeed { get => moveSprintSpeed; private set { if (value < 0) value = 0; moveSprintSpeed = value; } }
+    public float MoveStrafeSpeed { get => moveStrafeSpeed; private set { if (value < 0) value = 0; moveStrafeSpeed = value; } }
 
-    public float GetMovementSpeed()
-    {
-        return moveSpeed * moveSpeedMultiplier;
-    }
-    
-    // 
+    // Multipliers for movement speeds. Adjusted by slow effects, boots, etc
     [SerializeField]
-    private int maxHP = 20;
-    [SerializeField]
-    private int currentHP = 20;
+    private float moveWalkMultiplier = 1f, moveSprintMultiplier = 1f, moveStrafeMultiplier = 1f;
+    public float MoveWalkMultiplier { get => moveWalkSpeed; private set { if (value < 0) value = 0; moveWalkMultiplier = value; } }
+    public float MoveStrafeMultiplier { get => moveStrafeSpeed; private set { if (value < 0) value = 0; moveStrafeMultiplier = value; } }
+    public float MoveSprintMultiplier { get => moveSprintSpeed; private set { if (value < 0) value = 0; moveSprintMultiplier = value; } }
 
-    public int GetMaxHP()
-    {
-        return maxHP;
-    }
-    public int GetCurrentHP()
-    {
-        return currentHP;
-    }
-    public void ChangeMaxHP(int val)
-    {
-        maxHP += val;
-    }
+    [SerializeField]
+    private float maxHP = 20, currentHP = 20;
+    public float MaxHP { get => moveWalkSpeed; private set { if (value < 0) value = 0; maxHP = value; } }
+    public float CurrentHP { get => currentHP; private set { if (value < 0) value = 0; if (value > MaxHP) value = MaxHP; currentHP = value; } }
 
     // Modifies the player's current health based on damage value
     public void ApplyDamage(int damage)
@@ -42,9 +31,6 @@ public class PlayerStats : MonoBehaviour
             return;
 
         currentHP -= damage;
-        // Ensure HP can not go below 0
-        if (currentHP < 0)
-            currentHP = 0;
     }
 
     // Modifies the player's current health based on damage value
@@ -55,8 +41,5 @@ public class PlayerStats : MonoBehaviour
             return;
 
         currentHP += heal;
-        // Ensure HP cannot exceed max
-        if (currentHP > maxHP)
-            currentHP = maxHP;
     }
 }
