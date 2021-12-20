@@ -30,6 +30,7 @@ public class PlayerInput : NetworkBehaviour
         Vector3 walkInput = UpdateWalkInput();
         Vector2 mouseInput = UpdateMouseInput();
         bool jumpInput = Input.GetKey(KeyCode.Space);
+        clientJumpKeyPressed = jumpInput;
 
         // Update all input on the server (as movement is server-authoritative)
         CmdUpdateInput(walkInput, mouseInput, jumpInput);

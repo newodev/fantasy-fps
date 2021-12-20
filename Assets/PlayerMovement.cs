@@ -18,6 +18,8 @@ public class PlayerMovement : NetworkBehaviour
 
     private bool canMoveCamera = true;
 
+    private float jumpCooldown;
+
     private bool onGround;
 
     // Start is called before the first frame update
@@ -47,14 +49,11 @@ public class PlayerMovement : NetworkBehaviour
             UpdateDirectionalMovement();
         }
 
+
         if (isLocalPlayer)
         {
             UpdateRotationalMovementLocal();
             UpdateJump();
-        }
-        // Rotation is updated each physics update on the server
-        if (isServer)
-        {
             CmdUpdateRotationalMovement();
             CmdUpdateJump();
         }
@@ -123,18 +122,28 @@ public class PlayerMovement : NetworkBehaviour
 
     private void UpdateJump()
     {
-        if (onGround)
+        if (jumpCooldown > 0)
         {
-
+            jumpCooldown -= Time.fixedDeltaTime;
+        }
+        if (onGround && input.GetJumpKeyPressed() && jumpCooldown <= 0)
+        {
+            rb.AddForce(new Vector3(0f, stats.JumpForce, 0f), ForceMode.Impulse);
+            jumpCooldown = 1f;
         }
     }
 
     [Command]
     private void CmdUpdateJump()
     {
-        if (onGround && input.GetJumpKeyPressed())
+        if (jumpCooldown > 0)
+        {
+            jumpCooldown -= Time.fixedDeltaTime;
+        }
+        if (onGround && input.GetJumpKeyPressed() && jumpCooldown <= 0)
         {
             rb.AddForce(new Vector3(0f, stats.JumpForce, 0f), ForceMode.Impulse);
+            jumpCooldown = 1f;
         }
     }
 }
