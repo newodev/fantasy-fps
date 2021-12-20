@@ -154,7 +154,7 @@ public class PlayerMovement : NetworkBehaviour
         // Coyote jump check
         else if (currentCoyoteTime > 0 && input.GetJumpKeyPressed() && currentJumpCooldown <= 0)
         {
-            rb.velocity = new Vector3(0f, stats.JumpForce, 0f);
+            rb.velocity = new Vector3(rb.velocity.x, stats.JumpForce, rb.velocity.z);
             currentJumpCooldown = jumpCooldown;
             currentCoyoteTime = 0f;
         }
@@ -177,7 +177,7 @@ public class PlayerMovement : NetworkBehaviour
         // Coyote jump check
         else if (currentCoyoteTime > 0 && input.GetJumpKeyPressed() && currentJumpCooldown <= 0)
         {
-            rb.velocity = new Vector3(0f, stats.JumpForce, 0f);
+            rb.velocity = new Vector3(rb.velocity.x, stats.JumpForce, rb.velocity.z);
             currentJumpCooldown = jumpCooldown;
             currentCoyoteTime = 0f;
         }
