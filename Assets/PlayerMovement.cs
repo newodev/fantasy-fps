@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
-using System;
+using System.Linq;
 
 public class PlayerMovement : NetworkBehaviour
 {
@@ -10,12 +10,15 @@ public class PlayerMovement : NetworkBehaviour
     private PlayerSettings settings;
     private PlayerStats stats;
     private Rigidbody rb;
+    private new Collider collider;
 
     private Transform head;
 
     private float clientCurrentVerticalCameraRotation;
 
     private bool canMoveCamera = true;
+
+    private bool onGround;
 
     // Start is called before the first frame update
     void Start()
@@ -24,6 +27,7 @@ public class PlayerMovement : NetworkBehaviour
         settings = GetComponent<PlayerSettings>();
         stats = GetComponent<PlayerStats>();
         rb = GetComponent<Rigidbody>();
+        collider = transform.Find("Model").GetComponent<Collider>();
         head = transform.Find("Head");
     }
 
@@ -39,12 +43,21 @@ public class PlayerMovement : NetworkBehaviour
         // Movement is server-authoritative
         if (isServer || isLocalPlayer)
         {
+            UpdateGroundCheck();
             UpdateDirectionalMovement();
         }
 
+        if (isLocalPlayer)
+        {
+            UpdateRotationalMovementLocal();
+            UpdateJump();
+        }
         // Rotation is updated each physics update on the server
         if (isServer)
+        {
             CmdUpdateRotationalMovement();
+            CmdUpdateJump();
+        }
 
     }
 
@@ -100,4 +113,28 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
+    private void UpdateGroundCheck()
+    {
+        float groundCheckDistance = 0.05f;
+        Vector3 p = new Vector3(collider.bounds.center.x, collider.bounds.center.y - collider.bounds.extents.y - (groundCheckDistance / 2f), collider.bounds.center.z);
+
+        onGround = Physics.OverlapSphere(p, groundCheckDistance / 2f).Where(x => x.tag == "Environment").Count() > 0;
+    }
+
+    private void UpdateJump()
+    {
+        if (onGround)
+        {
+
+        }
+    }
+
+    [Command]
+    private void CmdUpdateJump()
+    {
+        if (onGround && input.GetJumpKeyPressed())
+        {
+            rb.AddForce(new Vector3(0f, stats.JumpForce, 0f), ForceMode.Impulse);
+        }
+    }
 }

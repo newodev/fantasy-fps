@@ -12,10 +12,13 @@ public class PlayerInput : NetworkBehaviour
     // A vector describing this frame's mouse input
     // Mouse movement is client authoritative
     private Vector2 clientMouseInputVector;
+    // Describes whether space bar was pressed in this frame
+    private bool clientJumpKeyPressed;
 
     // Public getter functions
     public Vector3 GetWalkInputVector() => clientWalkInputVector;
     public Vector3 GetMouseInputVector() => clientMouseInputVector;
+    public bool GetJumpKeyPressed() => clientJumpKeyPressed;
 
     public bool sprinting = false;
 
@@ -26,9 +29,10 @@ public class PlayerInput : NetworkBehaviour
 
         Vector3 walkInput = UpdateWalkInput();
         Vector2 mouseInput = UpdateMouseInput();
+        bool jumpInput = Input.GetKey(KeyCode.Space);
 
         // Update all input on the server (as movement is server-authoritative)
-        CmdUpdateInput(walkInput, mouseInput);
+        CmdUpdateInput(walkInput, mouseInput, jumpInput);
     }
 
     private Vector2 UpdateMouseInput()
@@ -63,7 +67,7 @@ public class PlayerInput : NetworkBehaviour
 
     // A command sent by the client to the server, telling to update input
     [Command]
-    private void CmdUpdateInput(Vector3 walkInput, Vector2 mouseInput)
+    private void CmdUpdateInput(Vector3 walkInput, Vector2 mouseInput, bool jumpInput)
     {
         // Clamp input so that speedhacks won't work
         walkInput.x = Mathf.Clamp(walkInput.x, -1f, 1f);
@@ -74,5 +78,6 @@ public class PlayerInput : NetworkBehaviour
         // We do this because we only previously updated it on the client
         clientWalkInputVector = walkInput;
         clientMouseInputVector = mouseInput;
+        clientJumpKeyPressed = jumpInput;
     }
 }

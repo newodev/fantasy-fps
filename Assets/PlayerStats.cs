@@ -20,8 +20,12 @@ public class PlayerStats : MonoBehaviour
 
     [SerializeField]
     private float maxHP = 20, currentHP = 20;
-    public float MaxHP { get => moveWalkSpeed; private set { if (value < 0) value = 0; maxHP = value; } }
+    public float MaxHP { get => maxHP; private set { if (value < 0) value = 0; maxHP = value; } }
     public float CurrentHP { get => currentHP; private set { if (value < 0) value = 0; if (value > MaxHP) value = MaxHP; currentHP = value; } }
+
+    [SerializeField]
+    private float jumpForce = 5f;
+    public float JumpForce { get => jumpForce; private set { if (value < 0) value = 0; jumpForce = value; } }
 
     // Modifies the player's current health based on damage value
     public void ApplyDamage(int damage)
