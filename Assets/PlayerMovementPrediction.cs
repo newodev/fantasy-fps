@@ -27,6 +27,14 @@ public class PlayerMovementPrediction : MonoBehaviour
     private float coyoteTime = 0.2f;
     private float currentCoyoteTime;
 
+    // How far the player's server position can be from local position before reconciliating
+    [SerializeField]
+    private float reconciliationThreshold = 1f;
+
+    // The most recent server state recieved
+    private PlayerStatePacket lastServerState;
+    public void UpdateServerState(PlayerStatePacket s) => lastServerState = s;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -42,6 +50,11 @@ public class PlayerMovementPrediction : MonoBehaviour
     {
         // Rotation is updated every frame locally for responsiveness
         PredictRotationalMovement();
+
+        if (Vector3.Distance(lastServerState.position, transform.position) >= reconciliationThreshold)
+        {
+            rb.MovePosition(lastServerState.position);
+        }
     }
 
     void FixedUpdate()
