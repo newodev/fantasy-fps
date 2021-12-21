@@ -45,7 +45,7 @@ public class PlayerInput : NetworkBehaviour
         // Combine input into a vector2
         Vector2 mouseInput = new Vector2(horizontalMouseInput, verticalMouseInput);
 
-        // Update movement vector on this client (as it is client-authoritative)
+        // Update movement vector on this client (for prediction)
         clientMouseInputVector = mouseInput;
 
         return mouseInput;
