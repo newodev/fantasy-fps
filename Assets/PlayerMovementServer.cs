@@ -43,6 +43,9 @@ public class PlayerMovementServer : NetworkBehaviour
 
     void FixedUpdate()
     {
+        if (!id.isServer)
+            return;
+
         UpdateGroundCheck();
         UpdateDirectionalMovement();
         UpdateJump();
