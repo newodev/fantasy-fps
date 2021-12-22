@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8f2db5e34e7a0548bf7a4dd92d99487, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reconciliationThreshold: 5
+  reconciliationThreshold: 0.1
 --- !u!114 &102907499000798208
 MonoBehaviour:
   m_ObjectHideFlags: 0

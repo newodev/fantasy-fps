@@ -47,6 +47,8 @@ public class PlayerSynchroniser : NetworkBehaviour
         // We do this because we only previously updated it on the client
         input = i;
         packetsRecieved++;
+
+        AcknowledgeInputPacket(i.id);
     }
 
     public void AcknowledgeInputPacket(int inputPacketID)

@@ -27,7 +27,7 @@ public class PlayerInput : NetworkBehaviour
 
     void Update()
     {
-        if (!isLocalPlayer)
+        if (!isLocalPlayer || isServer)
             return;
 
         // Gather all input data and update it on this client (for movement prediction)

@@ -44,25 +44,52 @@ public class PlayerMovementPrediction : MonoBehaviour
     private float reconciliationDuration = 1f;
 
     // The most recent server state recieved
-    private List<StateSnapshot> positions;
+    private List<StateSnapshot> positions = new List<StateSnapshot>();
     public void RecieveServerAcknowledge(PlayerStatePacket s, int inputPacketID)
     {
+        Vector3 nullY = new Vector3(1, 0, 1);
+        // This can occur in the player's first frame of existence
+        // Return out for safety
+        if (positions.Count == 0)
+            return;
+
         // Verify that our local state after predicting with the input with this ID
         // was at least very close to what the server has
         // TODO: later maybe clean this up
-        int localStateIndex = positions.IndexOf(positions.Where(x => x.packet.id == inputPacketID).First());
+        IEnumerable<StateSnapshot> localState = positions.Where(x => x.packet.id == inputPacketID);
+        if (localState.Count() == 0)
+            return;
+        int localStateIndex = positions.IndexOf(localState.First());
+
+        int inputsToSimulate = positions.Count - (localStateIndex + 1);
+        // TODO: This part probably shouldnt have to exist.
+        if (inputsToSimulate < 1)
+        {
+            return;
+        }
+
         if (Vector3.Distance(positions[localStateIndex].position, s.position) > reconciliationThreshold)
         {
+            Debug.Log($"s: {s.position} l: {positions[localStateIndex].position}");
+
             Debug.Log("Reconciliating");
 
             // Here we must re-simulate any further inputs since the one that was just acknowledged.
-            rb.MovePosition(positions[localStateIndex].position);
+            transform.position = s.position;
 
-            int inputsToSimulate = positions.Count - (localStateIndex + 1);
+            Vector3 startPos = transform.position;
+            Vector3 newPos = transform.position;
             for (int i = localStateIndex + 1; i < inputsToSimulate; i++)
             {
-                Simulate(positions[i].packet);
+                Vector3 currentPos = newPos;
+                PredictGroundCheck();
+                newPos = PredictDirectionalMovement(positions[i].packet, currentPos);
+                UpdateJump();
             }
+            Debug.Log($"Simulated x{inputsToSimulate}. a: {startPos} b: {newPos}");
+
+
+            transform.position = newPos;
         }
         else
             Debug.Log("Didn't Reconciliate");
@@ -101,7 +128,6 @@ public class PlayerMovementPrediction : MonoBehaviour
     void Simulate(InputPacket i)
     {
         Vector3 currentPos = transform.position;
-        Quaternion currentRot = transform.rotation;
         PredictGroundCheck();
         Vector3 newPos = PredictDirectionalMovement(i, currentPos);
         UpdateJump();
