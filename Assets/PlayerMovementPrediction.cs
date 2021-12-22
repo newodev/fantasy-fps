@@ -14,8 +14,12 @@ public class PlayerMovementPrediction : MonoBehaviour
     private new Collider collider;
 
     private Transform head;
+    // We only need the manager to send rotation to the server
+    private PlayerManager manager;
 
     private float clientCurrentVerticalCameraRotation;
+    private float cameraRotationLimitUp = 85f;
+    private float cameraRotationLimitDown = -90f;
 
     private bool canMoveCamera = true;
 
@@ -29,7 +33,7 @@ public class PlayerMovementPrediction : MonoBehaviour
 
     // How far the player's server position can be from local position before reconciliating
     [SerializeField]
-    private float reconciliationThreshold = 1f;
+    private float reconciliationThreshold = 10f;
 
     // The most recent server state recieved
     private PlayerStatePacket lastServerState;
@@ -38,7 +42,8 @@ public class PlayerMovementPrediction : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        input = transform.parent.GetComponent<PlayerInput>();
+        input = GetComponentInParent<PlayerInput>();
+        manager = GetComponentInParent<PlayerManager>();
         settings = GetComponent<PlayerSettings>();
         stats = GetComponent<PlayerStats>();
         rb = GetComponent<Rigidbody>();
@@ -51,6 +56,7 @@ public class PlayerMovementPrediction : MonoBehaviour
         // Rotation is updated every frame locally for responsiveness
         PredictRotationalMovement();
 
+        // Reconciliate desync
         if (Vector3.Distance(lastServerState.position, transform.position) >= reconciliationThreshold)
         {
             rb.MovePosition(lastServerState.position);
@@ -66,19 +72,28 @@ public class PlayerMovementPrediction : MonoBehaviour
 
     private void PredictRotationalMovement()
     {
+        if (!canMoveCamera)
+            return;
+
         // Get mouse input from PlayerInput component
         // Multiply it by sensitivity
         Vector2 mouseInput = input.GetMouseInputVector() * settings.Sensitivity;
 
-        Vector3 horizontalRotation = new Vector3(0f, mouseInput.x, 0f);
-        rb.MoveRotation(rb.rotation * Quaternion.Euler(horizontalRotation));
+        Vector3 deltaHorizontal = new Vector3(0f, mouseInput.x, 0f);
+        Quaternion horizontalRotation = rb.rotation * Quaternion.Euler(deltaHorizontal);
+
+        rb.MoveRotation(horizontalRotation);
         if (head != null)
         {
             clientCurrentVerticalCameraRotation -= mouseInput.y;
+            clientCurrentVerticalCameraRotation = Mathf.Clamp(clientCurrentVerticalCameraRotation, cameraRotationLimitDown, cameraRotationLimitUp);
             Vector3 verticalRotation = new Vector3(clientCurrentVerticalCameraRotation, 0f, 0f);
 
             head.transform.localEulerAngles = verticalRotation;
         }
+
+        // TODO: These are the wrong way around? refactor to right order
+        manager.CmdSendRotation(new Vector3(horizontalRotation.eulerAngles.y, clientCurrentVerticalCameraRotation, 0f));
     }
 
     private void PredictDirectionalMovement()

@@ -20,6 +20,7 @@ public class PlayerManager : NetworkBehaviour
     private Rigidbody rb;
 
     private PlayerMovementPrediction mv;
+    private PlayerMovementServer mvs;
 
     [SerializeField]
     private float resendDelay = 1f;
@@ -40,12 +41,13 @@ public class PlayerManager : NetworkBehaviour
         else if (isServer || !isLocalPlayer)
         {
             Instantiate(networkedPlayer, transform);
-            NetworkClient.RegisterHandler<PlayerStatePacket>(RecieveStateUpdate);
         }
 
         if (isServer)
         {
             rb = GetComponentInChildren<Rigidbody>();
+            mvs = GetComponentInChildren<PlayerMovementServer>();
+
         }
     }
 
@@ -59,31 +61,36 @@ public class PlayerManager : NetworkBehaviour
         if(currentDelay <= 0)
         {
             currentDelay = resendDelay;
-            connectionToClient.Send(new PlayerStatePacket(rb.position, rb.rotation.eulerAngles));
+            TargetSendStateUpdate(new PlayerStatePacket(rb.position));
         }
     }
 
     // This function is only run on the local client
-    void RecieveStateUpdate(PlayerStatePacket s)
+    [TargetRpc]
+    void TargetSendStateUpdate(PlayerStatePacket s)
     {
-        mv.UpdateServerState(s);
+        mv?.UpdateServerState(s);
     }
 
+    // This is used to update rotation on the server as it is client-authoritative
+    [Command]
+    public void CmdSendRotation(Vector3 r)
+    {
+        mvs?.RecieveRotationalMovement(r);
+    }
 }
 
 public struct PlayerStatePacket : NetworkMessage
 {
     public Vector3 position;
-    public Vector3 rotation;
 
-    public PlayerStatePacket(Vector3 p, Vector3 r)
+    public PlayerStatePacket(Vector3 p)
     {
         position = p;
-        rotation = r;
     }
 
     public bool Equals(PlayerStatePacket s)
     {
-        return position == s.position && rotation == s.rotation;
+        return position == s.position;
     }
 }

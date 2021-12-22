@@ -40,32 +40,26 @@ public class PlayerMovementServer : NetworkBehaviour
         collider = transform.Find("Model").GetComponent<Collider>();
         head = transform.Find("Head");
     }
-    void Update()
-    {
-        UpdateRotationalMovement();
-    }
+
     void FixedUpdate()
     {
-        if (!id.isServer)
-            return;
-
         UpdateGroundCheck();
         UpdateDirectionalMovement();
         UpdateJump();
     }
 
-    private void UpdateRotationalMovement()
+    public void RecieveRotationalMovement(Vector3 newRot)
     {
-        // Get mouse input from PlayerInput component
-        // Multiply it by sensitivity
-        Vector2 mouseInput = input.GetMouseInputVector() * settings.Sensitivity;
-
-        Vector3 horizontalRotation = new Vector3(0f, mouseInput.x, 0f);
-        rb.MoveRotation(rb.rotation * Quaternion.Euler(horizontalRotation));
+        if (!canMoveCamera)
+            return;
+        Vector3 horizontalRotation = new Vector3(0f, newRot.x, 0f);
+        rb.MoveRotation(Quaternion.Euler(horizontalRotation));
+        Debug.Log($"a: {newRot.x}, b: {horizontalRotation.y}, c: {transform.rotation.y}");
         if (head != null)
         {
-            clientCurrentVerticalCameraRotation -= mouseInput.y;
-            Vector3 verticalRotation = new Vector3(clientCurrentVerticalCameraRotation, 0f, 0f);
+            float vertRot =  newRot.y;
+            vertRot = Mathf.Clamp(vertRot, cameraRotationLimitDown, cameraRotationLimitUp);
+            Vector3 verticalRotation = new Vector3(vertRot, 0f, 0f);
 
             head.transform.localEulerAngles = verticalRotation;
         }
