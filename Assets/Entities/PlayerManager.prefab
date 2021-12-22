@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7369974171579250831}
   - component: {fileID: 3595562704847774701}
   - component: {fileID: 6872729114265175734}
+  - component: {fileID: -8567361041243778031}
   m_Layer: 0
   m_Name: PlayerManager
   m_TagString: Untagged
@@ -66,6 +67,7 @@ MonoBehaviour:
   syncInterval: 0.1
   localPlayer: {fileID: 102907499000798214, guid: 3bf56fe4360d28041be6e8c91d8a2f04, type: 3}
   networkedPlayer: {fileID: 102907499000798214, guid: 38884a527ee109842a2ecbce529cbc82, type: 3}
+  resendDelay: 1
 --- !u!114 &6872729114265175734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,3 +83,15 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   sprinting: 0
+--- !u!114 &-8567361041243778031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 606851390294712656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fadd0593044d20a47891df28de672944, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

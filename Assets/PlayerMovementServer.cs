@@ -6,7 +6,7 @@ using System.Linq;
 
 public class PlayerMovementServer : NetworkBehaviour
 {
-    private PlayerInput input;
+    private PlayerSynchroniser sync;
     private PlayerSettings settings;
     private PlayerStats stats;
     private Rigidbody rb;
@@ -32,7 +32,7 @@ public class PlayerMovementServer : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        input = transform.parent.GetComponent<PlayerInput>();
+        sync = transform.parent.GetComponent<PlayerSynchroniser>();
         id = transform.parent.GetComponent<NetworkIdentity>();
         settings = GetComponent<PlayerSettings>();
         stats = GetComponent<PlayerStats>();
@@ -75,13 +75,13 @@ public class PlayerMovementServer : NetworkBehaviour
             currentJumpCooldown -= Time.fixedDeltaTime;
         }
         // Standard jump check
-        if (onGround && input.GetJumpKeyPressed() && currentJumpCooldown <= 0)
+        if (onGround && sync.InputPacket.jumpInput && currentJumpCooldown <= 0)
         {
             rb.AddForce(new Vector3(0f, stats.JumpForce, 0f), ForceMode.Impulse);
             currentJumpCooldown = jumpCooldown;
         }
         // Coyote jump check
-        else if (currentCoyoteTime > 0 && input.GetJumpKeyPressed() && currentJumpCooldown <= 0)
+        else if (currentCoyoteTime > 0 && sync.InputPacket.jumpInput && currentJumpCooldown <= 0)
         {
             rb.velocity = new Vector3(rb.velocity.x, stats.JumpForce, rb.velocity.z);
             currentJumpCooldown = jumpCooldown;
@@ -93,10 +93,10 @@ public class PlayerMovementServer : NetworkBehaviour
     {
         // Get client input from the PlayerInput component
         // Normalise it so that diagonal movement isn't faster than cardinal movement
-        Vector3 moveInput = input.GetWalkInputVector().normalized;
+        Vector3 moveInput = sync.InputPacket.walkInput.normalized;
         // Apply move speed modifiers
         moveInput.x *= stats.MoveStrafeSpeed * stats.MoveStrafeMultiplier;
-        moveInput.z *= moveInput.z > 0f ? (input.sprinting ? (stats.MoveSprintSpeed * stats.MoveSprintMultiplier) : (stats.MoveWalkSpeed * stats.MoveWalkMultiplier)) : (stats.MoveStrafeSpeed * stats.MoveStrafeMultiplier);
+        moveInput.z *= moveInput.z > 0f ? (sync.InputPacket.sprintInput ? (stats.MoveSprintSpeed * stats.MoveSprintMultiplier) : (stats.MoveWalkSpeed * stats.MoveWalkMultiplier)) : (stats.MoveStrafeSpeed * stats.MoveStrafeMultiplier);
         Vector3 movement = transform.right * moveInput.x + transform.forward * moveInput.z;
 
         // Don't update the rigidbody if we aren't actually going to move

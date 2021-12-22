@@ -16,19 +16,6 @@ public class PlayerManager : NetworkBehaviour
     [SerializeField]
     private GameObject localPlayer, networkedPlayer;
 
-    // The rigidbody of the player contained within this manager
-    private Rigidbody rb;
-
-    private PlayerMovementPrediction mv;
-    private PlayerMovementServer mvs;
-
-    [SerializeField]
-    private float resendDelay = 1f;
-    private float currentDelay = 1f;
-
-    private int packetsRecieved = 0;
-    private int packetsAcknowledged = 0;
-
     // Instantiate the correct version of player
     void Start()
     {
@@ -37,7 +24,6 @@ public class PlayerManager : NetworkBehaviour
         if (isLocalPlayer && !isServer)
         {
             Instantiate(localPlayer, transform);
-            mv = GetComponentInChildren<PlayerMovementPrediction>();
         }
         // If we are running this on the server, or a client that doesn't own this specific player,
         // We create a networked player instance
@@ -46,54 +32,5 @@ public class PlayerManager : NetworkBehaviour
             Instantiate(networkedPlayer, transform);
         }
 
-        if (isServer)
-        {
-            rb = GetComponentInChildren<Rigidbody>();
-            mvs = GetComponentInChildren<PlayerMovementServer>();
-
-        }
-    }
-
-    void Update()
-    {
-        if (!isServer)
-            return;
-
-        if (currentDelay > 0)
-            currentDelay -= Time.deltaTime;
-        if(currentDelay <= 0)
-        {
-            currentDelay = resendDelay;
-            TargetSendStateUpdate(new PlayerStatePacket(rb.position));
-        }
-    }
-
-    // This function is only run on the local client
-    [TargetRpc]
-    void TargetSendStateUpdate(PlayerStatePacket s)
-    {
-        mv?.UpdateServerState(s);
-    }
-
-    // This is used to update rotation on the server as it is client-authoritative
-    [Command]
-    public void CmdSendRotation(Vector3 r)
-    {
-        mvs?.RecieveRotationalMovement(r);
-    }
-}
-
-public struct PlayerStatePacket : NetworkMessage
-{
-    public Vector3 position;
-
-    public PlayerStatePacket(Vector3 p)
-    {
-        position = p;
-    }
-
-    public bool Equals(PlayerStatePacket s)
-    {
-        return position == s.position;
     }
 }

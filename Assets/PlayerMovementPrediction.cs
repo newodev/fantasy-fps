@@ -5,6 +5,12 @@ using Mirror;
 using System.Linq;
 using System;
 
+// Represents the position of the player after applying the input packet
+public struct StateSnapshot
+{
+    public InputPacket packet;
+    public Vector3 position;
+}
 // This component executes solely on the player owned by the local client, and performs client-side prediction.
 public class PlayerMovementPrediction : MonoBehaviour
 {
@@ -12,11 +18,10 @@ public class PlayerMovementPrediction : MonoBehaviour
     private PlayerSettings settings;
     private PlayerStats stats;
     private Rigidbody rb;
+    private PlayerSynchroniser sync;
     private new Collider collider;
 
     private Transform head;
-    // We only need the manager to send rotation to the server
-    private PlayerManager manager;
 
     private float clientCurrentVerticalCameraRotation;
     private float cameraRotationLimitUp = 85f;
@@ -34,20 +39,40 @@ public class PlayerMovementPrediction : MonoBehaviour
 
     // How far the player's server position can be from local position before reconciliating
     [SerializeField]
-    private float reconciliationThreshold = 3f;
+    private float reconciliationThreshold = 0.5f;
     private float reconciliationTime = 1f;
     private float reconciliationDuration = 1f;
-    private Vector3 originalPosition;
 
     // The most recent server state recieved
-    private PlayerStatePacket lastServerState;
-    public void UpdateServerState(PlayerStatePacket s) => lastServerState = s;
+    private List<StateSnapshot> positions;
+    public void RecieveServerAcknowledge(PlayerStatePacket s, int inputPacketID)
+    {
+        // Verify that our local state after predicting with the input with this ID
+        // was at least very close to what the server has
+        // TODO: later maybe clean this up
+        int localStateIndex = positions.IndexOf(positions.Where(x => x.packet.id == inputPacketID).First());
+        if (Vector3.Distance(positions[localStateIndex].position, s.position) > reconciliationThreshold)
+        {
+            Debug.Log("Reconciliating");
+
+            // Here we must re-simulate any further inputs since the one that was just acknowledged.
+            rb.MovePosition(positions[localStateIndex].position);
+
+            int inputsToSimulate = positions.Count - (localStateIndex + 1);
+            for (int i = localStateIndex + 1; i < inputsToSimulate; i++)
+            {
+                Simulate(positions[i].packet);
+            }
+        }
+        else
+            Debug.Log("Didn't Reconciliate");
+    }
 
     // Start is called before the first frame update
     void Start()
     {
         input = GetComponentInParent<PlayerInput>();
-        manager = GetComponentInParent<PlayerManager>();
+        sync = GetComponentInParent<PlayerSynchroniser>();
         settings = GetComponent<PlayerSettings>();
         stats = GetComponent<PlayerStats>();
         rb = GetComponent<Rigidbody>();
@@ -59,35 +84,35 @@ public class PlayerMovementPrediction : MonoBehaviour
     {
         // Rotation is updated every frame locally for responsiveness
         PredictRotationalMovement();
-
-        // Reconciliate desync
-        if (Vector3.Distance(lastServerState.position, transform.position) >= reconciliationThreshold && originalPosition == Vector3.zero)
-        {
-            originalPosition = transform.position;
-        }
-        else
-            originalPosition = Vector3.zero;
     }
 
     void FixedUpdate()
     {
-        PredictGroundCheck();
-        PredictDirectionalMovement();
-        SolveReconciliation();
-        UpdateJump();
+        Simulate(input.InputPacket);
+
+        // Save snapshot to solve desync with
+        positions.Add(new StateSnapshot { position = transform.position, packet = input.InputPacket });
+        if (positions.Count > 20)
+        {
+            positions.RemoveAt(0);
+        }
     }
 
-    private void SolveReconciliation()
+    void Simulate(InputPacket i)
     {
-        if (originalPosition == Vector3.zero)
-            return;
+        Vector3 currentPos = transform.position;
+        Quaternion currentRot = transform.rotation;
+        PredictGroundCheck();
+        Vector3 newPos = PredictDirectionalMovement(i, currentPos);
+        UpdateJump();
 
-        rb.MovePosition(Vector3.Lerp(lastServerState.position, originalPosition, reconciliationTime));
-        if (reconciliationTime > 0)
-            reconciliationTime -= Time.fixedDeltaTime;
-        if (reconciliationTime <= 0)
-            originalPosition = Vector3.zero;
+        // Don't update the rigidbody if we aren't actually going to move
+        if (newPos != currentPos)
+        {
+            rb.MovePosition(newPos);
+        }
     }
+
 
     private void PredictRotationalMovement()
     {
@@ -96,7 +121,7 @@ public class PlayerMovementPrediction : MonoBehaviour
 
         // Get mouse input from PlayerInput component
         // Multiply it by sensitivity
-        Vector2 mouseInput = input.GetMouseInputVector() * settings.Sensitivity;
+        Vector2 mouseInput = input.InputPacket.mouseInput * settings.Sensitivity;
 
         Vector3 deltaHorizontal = new Vector3(0f, mouseInput.x, 0f);
         Quaternion horizontalRotation = rb.rotation * Quaternion.Euler(deltaHorizontal);
@@ -112,24 +137,20 @@ public class PlayerMovementPrediction : MonoBehaviour
         }
 
         // TODO: These are the wrong way around? refactor to right order
-        manager.CmdSendRotation(new Vector3(horizontalRotation.eulerAngles.y, clientCurrentVerticalCameraRotation, 0f));
+        sync.CmdSendRotation(new Vector3(horizontalRotation.eulerAngles.y, clientCurrentVerticalCameraRotation, 0f));
     }
 
-    private void PredictDirectionalMovement()
+    private Vector3 PredictDirectionalMovement(InputPacket i, Vector3 currentPos)
     {
         // Get client input from the PlayerInput component
         // Normalise it so that diagonal movement isn't faster than cardinal movement
-        Vector3 moveInput = input.GetWalkInputVector().normalized;
+        Vector3 moveInput = i.walkInput.normalized;
         // Apply move speed modifiers
         moveInput.x *= stats.MoveStrafeSpeed * stats.MoveStrafeMultiplier;
-        moveInput.z *= moveInput.z > 0f ? (input.sprinting ? (stats.MoveSprintSpeed * stats.MoveSprintMultiplier) : (stats.MoveWalkSpeed * stats.MoveWalkMultiplier)) : (stats.MoveStrafeSpeed * stats.MoveStrafeMultiplier);
+        moveInput.z *= moveInput.z > 0f ? (i.sprintInput ? (stats.MoveSprintSpeed * stats.MoveSprintMultiplier) : (stats.MoveWalkSpeed * stats.MoveWalkMultiplier)) : (stats.MoveStrafeSpeed * stats.MoveStrafeMultiplier);
         Vector3 movement = transform.right * moveInput.x + transform.forward * moveInput.z;
 
-        // Don't update the rigidbody if we aren't actually going to move
-        if (movement != Vector3.zero)
-        {
-            rb.MovePosition(rb.position + movement * Time.fixedDeltaTime);
-        }
+        return rb.position + movement * Time.fixedDeltaTime;
     }
 
     private void PredictGroundCheck()
@@ -154,6 +175,8 @@ public class PlayerMovementPrediction : MonoBehaviour
         onGround = newOnGround;
     }
 
+
+    // TODO: Refactor jump to be entirely custom forces
     private void UpdateJump()
     {
         // Decrement jump cooldown
@@ -162,13 +185,13 @@ public class PlayerMovementPrediction : MonoBehaviour
             currentJumpCooldown -= Time.fixedDeltaTime;
         }
         // Standard jump check
-        if (onGround && input.GetJumpKeyPressed() && currentJumpCooldown <= 0)
+        if (onGround && input.InputPacket.jumpInput && currentJumpCooldown <= 0)
         {
             rb.AddForce(new Vector3(0f, stats.JumpForce, 0f), ForceMode.Impulse);
             currentJumpCooldown = jumpCooldown;
         }
         // Coyote jump check
-        else if (currentCoyoteTime > 0 && input.GetJumpKeyPressed() && currentJumpCooldown <= 0)
+        else if (currentCoyoteTime > 0 && input.InputPacket.jumpInput && currentJumpCooldown <= 0)
         {
             rb.velocity = new Vector3(rb.velocity.x, stats.JumpForce, rb.velocity.z);
             currentJumpCooldown = jumpCooldown;
