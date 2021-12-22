@@ -6,11 +6,7 @@ using System;
 
 public class PlayerInput : NetworkBehaviour
 {
-    // A vector from (-1, 0, -1) to (1, 0, 1) based on axis (WASD) input
-    // This vector is sent from the client and saved on the server
     private Vector3 clientWalkInputVector;
-    // A vector describing this frame's mouse input
-    // Mouse movement is client authoritative
     private Vector2 clientMouseInputVector;
     // Describes whether space bar was pressed in this frame
     private bool clientJumpKeyPressed;
@@ -21,6 +17,12 @@ public class PlayerInput : NetworkBehaviour
     public bool GetJumpKeyPressed() => clientJumpKeyPressed;
 
     public bool sprinting = false;
+
+    // Amount of input packets sent from this client to the server.
+    // Also represents the ID of the next packet to send
+    private int packetsSent = 0;
+    // Incremented when a packet is sent, decremented when it is acknowledged by the server.
+    private int packetsUnacknowledged = 0;
 
     void Update()
     {
@@ -81,4 +83,21 @@ public class PlayerInput : NetworkBehaviour
         clientMouseInputVector = mouseInput;
         clientJumpKeyPressed = jumpInput;
     }
+}
+
+public struct InputPacket
+{
+    // A vector from (-1, 0, -1) to (1, 0, 1) based on axis (default WASD) input
+    // This vector is sent from the client and saved on the server
+    Vector3 walkInput;
+    // A vector describing this frame's mouse input
+    // Mouse movement is client authoritative
+    Vector2 mouseInput;
+    // Describes whether jump key (default SPACE) was pressed in this frame
+    bool jumpInput;
+    // Describes whether sprint key (default SHIFT) was pressed in this frame
+    bool sprintInput;
+
+    // ID of this packet. Used by client to reconciliate.
+    int id;
 }

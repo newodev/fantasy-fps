@@ -54,7 +54,6 @@ public class PlayerMovementServer : NetworkBehaviour
             return;
         Vector3 horizontalRotation = new Vector3(0f, newRot.x, 0f);
         rb.MoveRotation(Quaternion.Euler(horizontalRotation));
-        Debug.Log($"a: {newRot.x}, b: {horizontalRotation.y}, c: {transform.rotation.y}");
         if (head != null)
         {
             float vertRot =  newRot.y;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using System.Linq;
+using System;
 
 // This component executes solely on the player owned by the local client, and performs client-side prediction.
 public class PlayerMovementPrediction : MonoBehaviour
@@ -33,7 +34,10 @@ public class PlayerMovementPrediction : MonoBehaviour
 
     // How far the player's server position can be from local position before reconciliating
     [SerializeField]
-    private float reconciliationThreshold = 10f;
+    private float reconciliationThreshold = 3f;
+    private float reconciliationTime = 1f;
+    private float reconciliationDuration = 1f;
+    private Vector3 originalPosition;
 
     // The most recent server state recieved
     private PlayerStatePacket lastServerState;
@@ -57,17 +61,32 @@ public class PlayerMovementPrediction : MonoBehaviour
         PredictRotationalMovement();
 
         // Reconciliate desync
-        if (Vector3.Distance(lastServerState.position, transform.position) >= reconciliationThreshold)
+        if (Vector3.Distance(lastServerState.position, transform.position) >= reconciliationThreshold && originalPosition == Vector3.zero)
         {
-            rb.MovePosition(lastServerState.position);
+            originalPosition = transform.position;
         }
+        else
+            originalPosition = Vector3.zero;
     }
 
     void FixedUpdate()
     {
         PredictGroundCheck();
         PredictDirectionalMovement();
+        SolveReconciliation();
         UpdateJump();
+    }
+
+    private void SolveReconciliation()
+    {
+        if (originalPosition == Vector3.zero)
+            return;
+
+        rb.MovePosition(Vector3.Lerp(lastServerState.position, originalPosition, reconciliationTime));
+        if (reconciliationTime > 0)
+            reconciliationTime -= Time.fixedDeltaTime;
+        if (reconciliationTime <= 0)
+            originalPosition = Vector3.zero;
     }
 
     private void PredictRotationalMovement()

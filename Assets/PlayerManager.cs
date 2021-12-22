@@ -26,6 +26,9 @@ public class PlayerManager : NetworkBehaviour
     private float resendDelay = 1f;
     private float currentDelay = 1f;
 
+    private int packetsRecieved = 0;
+    private int packetsAcknowledged = 0;
+
     // Instantiate the correct version of player
     void Start()
     {
