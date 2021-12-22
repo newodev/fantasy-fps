@@ -47,7 +47,6 @@ public class PlayerMovementPrediction : MonoBehaviour
     private List<StateSnapshot> positions = new List<StateSnapshot>();
     public void RecieveServerAcknowledge(PlayerStatePacket s, int inputPacketID)
     {
-        Vector3 nullY = new Vector3(1, 0, 1);
         // This can occur in the player's first frame of existence
         // Return out for safety
         if (positions.Count == 0)
@@ -88,11 +87,8 @@ public class PlayerMovementPrediction : MonoBehaviour
             }
             Debug.Log($"Simulated x{inputsToSimulate}. a: {startPos} b: {newPos}");
 
-
             transform.position = newPos;
         }
-        else
-            Debug.Log("Didn't Reconciliate");
     }
 
     // Start is called before the first frame update
