@@ -69,10 +69,6 @@ public class PlayerMovementPrediction : MonoBehaviour
 
         if (Vector3.Distance(positions[localStateIndex].position, s.position) > reconciliationThreshold)
         {
-            Debug.Log($"s: {s.position} l: {positions[localStateIndex].position}");
-
-            Debug.Log("Reconciliating");
-
             // Here we must re-simulate any further inputs since the one that was just acknowledged.
             transform.position = s.position;
 
@@ -85,7 +81,6 @@ public class PlayerMovementPrediction : MonoBehaviour
                 newPos = PredictDirectionalMovement(positions[i].packet, currentPos);
                 UpdateJump();
             }
-            Debug.Log($"Simulated x{inputsToSimulate}. a: {startPos} b: {newPos}");
 
             transform.position = newPos;
         }

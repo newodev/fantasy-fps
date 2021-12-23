@@ -1,7 +1,8 @@
 UserSettings
 Packages
-Library
 Temp
 obj
 .vs/topdown-fighter/**
-Library/
+Library
+Logs
+Logs/*
