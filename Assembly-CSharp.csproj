@@ -53,16 +53,15 @@
     <UnityVersion>2020.3.24f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Assets\PlayerManager.cs" />
-    <Compile Include="Assets\PlayerMovementServer.cs" />
-    <Compile Include="Assets\NetworkManager.cs" />
-    <Compile Include="Assets\PlayerMovementPrediction.cs" />
-    <Compile Include="Assets\PlayerSettings.cs" />
-    <Compile Include="Assets\PlayerCameraManager.cs" />
-    <Compile Include="Assets\PlayerInput.cs" />
-    <Compile Include="Assets\PlayerStats.cs" />
-    <Compile Include="Assets\PlayerSynchroniser.cs" />
-    <Compile Include="Assets\ServerCamera.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerManager.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerSynchroniser.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerMovementServer.cs" />
+    <Compile Include="Assets\Scripts\NetworkManager.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerMovementPrediction.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerSettings.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerCameraManager.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerInput.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerStats.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Mirror\Plugins\Mono.Cecil\Mono.CecilX.dll" />
