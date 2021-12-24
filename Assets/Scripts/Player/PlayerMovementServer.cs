@@ -11,7 +11,7 @@ public class PlayerMovementServer : NetworkBehaviour
     private PlayerSettings settings;
     private PlayerStats stats;
     private Rigidbody rb;
-    private new Collider collider;
+    private Collider col;
     private NetworkIdentity id;
 
     private Transform head;
@@ -38,7 +38,7 @@ public class PlayerMovementServer : NetworkBehaviour
         settings = GetComponent<PlayerSettings>();
         stats = GetComponent<PlayerStats>();
         rb = GetComponent<Rigidbody>();
-        collider = transform.Find("Model").GetComponent<Collider>();
+        col = transform.Find("Model").GetComponent<Collider>();
         head = transform.Find("Head");
     }
 
@@ -112,7 +112,7 @@ public class PlayerMovementServer : NetworkBehaviour
         // How far below the hitbox the ground is measured
         float groundCheckDistance = 0.05f;
         // Check for environment colliders in a small area below our hitbox
-        Vector3 p = new Vector3(collider.bounds.center.x, collider.bounds.center.y - collider.bounds.extents.y - (groundCheckDistance / 2f), collider.bounds.center.z);
+        Vector3 p = new Vector3(col.bounds.center.x, col.bounds.center.y - col.bounds.extents.y - (groundCheckDistance / 2f), col.bounds.center.z);
         bool newOnGround = Physics.OverlapSphere(p, groundCheckDistance / 2f).Where(x => x.tag == "Environment").Count() > 0;
 
         // If we were on the ground last frame, and not anymore, begin coyote time countdown

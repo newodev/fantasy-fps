@@ -16,9 +16,6 @@ public class PlayerInput : NetworkBehaviour
     // Amount of input packets sent from this client to the server.
     // Also represents the ID of the next packet to send
     private int packetsSent = 0;
-    // Incremented when a packet is sent, decremented when it is acknowledged by the server.
-    // Input is acknowledged by returning a PlayerStatePacket
-    private int packetsUnacknowledged = 0;
 
     void Start()
     {
@@ -42,7 +39,6 @@ public class PlayerInput : NetworkBehaviour
 
         // Increment packets
         packetsSent++;
-        packetsUnacknowledged++;
 
         // Update all input on the server (as movement is server-authoritative)
         sync.CmdUpdateInput(newInput);

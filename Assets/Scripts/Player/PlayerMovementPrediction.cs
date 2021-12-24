@@ -18,20 +18,11 @@ public class PlayerMovementPrediction : MonoBehaviour
 {
     #region component references
     private PlayerInput input;
-    private PlayerSettings settings;
     private PlayerStats stats;
     private Rigidbody rb;
-    private PlayerSynchroniser sync;
-    private new Collider collider;
+    private Collider col;
 
-    private Transform head;
     #endregion
-
-    private float currentVerticalCameraRotation;
-    private float cameraRotationLimitUp = 85f;
-    private float cameraRotationLimitDown = -90f;
-
-    private bool canMoveCamera = true;
 
     private float jumpCooldown = 1.5f;
     private float currentJumpCooldown;
@@ -47,7 +38,7 @@ public class PlayerMovementPrediction : MonoBehaviour
 
     // The most recent server state recieved
     private List<StateSnapshot> positions = new List<StateSnapshot>();
-    public void RecieveServerAcknowledge(PlayerStatePacket s, int inputPacketID)
+    public void RecieveServerAcknowledge(PlayerStatePacket stateFromServer, int inputPacketID)
     {
         // This can occur in the player's first frame of existence
         // Return out for safety
@@ -70,41 +61,37 @@ public class PlayerMovementPrediction : MonoBehaviour
             return;
         }
 
-        if (Vector3.Distance(positions[localStateIndex].position, s.position) > reconciliationThreshold)
+        if (Vector3.Distance(positions[localStateIndex].position, stateFromServer.position) > reconciliationThreshold)
         {
-            // Here we must re-simulate any further inputs since the one that was just acknowledged.
-            transform.position = s.position;
-
-            Vector3 startPos = transform.position;
-            Vector3 newPos = transform.position;
-            for (int i = localStateIndex + 1; i < inputsToSimulate; i++)
-            {
-                Vector3 currentPos = newPos;
-                PredictGroundCheck();
-                newPos = PredictDirectionalMovement(positions[i].packet, currentPos);
-                UpdateJump();
-            }
-
-            transform.position = newPos;
+            PerformReconciliation(stateFromServer, localStateIndex, inputsToSimulate);
         }
+    }
+
+    private void PerformReconciliation(PlayerStatePacket stateFromServer, int localStateIndex, int inputsToSimulate)
+    {
+        // Here we must re-simulate any further inputs since the one that was just acknowledged.
+        transform.position = stateFromServer.position;
+
+        Vector3 startPos = transform.position;
+        Vector3 newPos = transform.position;
+        for (int i = localStateIndex + 1; i < inputsToSimulate; i++)
+        {
+            Vector3 currentPos = newPos;
+            PredictGroundCheck();
+            newPos = PredictDirectionalMovement(positions[i].packet, currentPos);
+            UpdateJump();
+        }
+
+        transform.position = newPos;
     }
 
     // Start is called before the first frame update
     void Start()
     {
         input = GetComponentInParent<PlayerInput>();
-        sync = GetComponentInParent<PlayerSynchroniser>();
-        settings = GetComponent<PlayerSettings>();
         stats = GetComponent<PlayerStats>();
         rb = GetComponent<Rigidbody>();
-        collider = transform.Find("Model").GetComponent<Collider>();
-        head = transform.Find("Head");
-    }
-
-    void Update()
-    {
-        // Rotation is updated every frame locally for responsiveness
-        UpdateRotationalMovement();
+        col = transform.Find("Model").GetComponent<Collider>();
     }
 
     void FixedUpdate()
@@ -133,33 +120,6 @@ public class PlayerMovementPrediction : MonoBehaviour
         }
     }
 
-
-    private void UpdateRotationalMovement()
-    {
-        if (!canMoveCamera)
-            return;
-
-        // Get mouse input from PlayerInput component
-        // Multiply it by sensitivity
-        Vector2 mouseInput = input.InputPacket.mouseInput * settings.Sensitivity;
-
-        Vector3 deltaHorizontal = new Vector3(0f, mouseInput.x, 0f);
-        Quaternion horizontalRotation = rb.rotation * Quaternion.Euler(deltaHorizontal);
-
-        rb.MoveRotation(horizontalRotation);
-        if (head != null)
-        {
-            currentVerticalCameraRotation -= mouseInput.y;
-            currentVerticalCameraRotation = Mathf.Clamp(currentVerticalCameraRotation, cameraRotationLimitDown, cameraRotationLimitUp);
-            Vector3 verticalRotation = new Vector3(currentVerticalCameraRotation, 0f, 0f);
-
-            head.transform.localEulerAngles = verticalRotation;
-        }
-
-        // TODO: These are the wrong way around? refactor to right order
-        sync.CmdSendRotation(new Vector3(horizontalRotation.eulerAngles.y, currentVerticalCameraRotation, 0f));
-    }
-
     private Vector3 PredictDirectionalMovement(InputPacket i, Vector3 currentPos)
     {
         // Get client input from the PlayerInput component
@@ -178,7 +138,7 @@ public class PlayerMovementPrediction : MonoBehaviour
         // How far below the hitbox the ground is measured
         float groundCheckDistance = 0.05f;
         // Check for environment colliders in a small area below our hitbox
-        Vector3 p = new Vector3(collider.bounds.center.x, collider.bounds.center.y - collider.bounds.extents.y - (groundCheckDistance / 2f), collider.bounds.center.z);
+        Vector3 p = new Vector3(col.bounds.center.x, col.bounds.center.y - col.bounds.extents.y - (groundCheckDistance / 2f), col.bounds.center.z);
         bool newOnGround = Physics.OverlapSphere(p, groundCheckDistance / 2f).Where(x => x.tag == "Environment").Count() > 0;
 
         // If we were on the ground last frame, and not anymore, begin coyote time countdown

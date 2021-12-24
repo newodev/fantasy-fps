@@ -9,12 +9,9 @@ public class PlayerSynchroniser : NetworkBehaviour
     #region component references
     private Rigidbody rb;
 
-    private PlayerMovementPrediction mv;
-    private PlayerMovementServer mvs;
+    private PlayerMovementPrediction localPlayerMovement;
+    private PlayerMovementServer serverPlayerMovement;
     #endregion
-
-    private int packetsRecieved = 0;
-    private int packetsAcknowledged = 0;
 
     private InputPacket input;
     public InputPacket InputPacket { get => input; private set => input = value; }
@@ -25,13 +22,13 @@ public class PlayerSynchroniser : NetworkBehaviour
     {
         if (isLocalPlayer && !isServer)
         {
-            mv = GetComponentInChildren<PlayerMovementPrediction>();
+            localPlayerMovement = GetComponentInChildren<PlayerMovementPrediction>();
         }
 
         if (isServer)
         {
             rb = GetComponentInChildren<Rigidbody>();
-            mvs = GetComponentInChildren<PlayerMovementServer>();
+            serverPlayerMovement = GetComponentInChildren<PlayerMovementServer>();
         }
     }
 
@@ -47,7 +44,6 @@ public class PlayerSynchroniser : NetworkBehaviour
         // Update the input from the client on the server
         // We do this because we only previously updated it on the client
         input = i;
-        packetsRecieved++;
 
         AcknowledgeInputPacket(i.id);
     }
@@ -64,14 +60,14 @@ public class PlayerSynchroniser : NetworkBehaviour
     [TargetRpc]
     void TargetSendStateUpdate(PlayerStatePacket s, int inputPacketID)
     {
-        mv?.RecieveServerAcknowledge(s, inputPacketID);
+        localPlayerMovement?.RecieveServerAcknowledge(s, inputPacketID);
     }
 
     // This is used to update rotation on the server as it is client-authoritative
     [Command]
     public void CmdSendRotation(Vector3 r)
     {
-        mvs?.RecieveRotationalMovement(r);
+        serverPlayerMovement?.RecieveRotationalMovement(r);
     }
 }
 
