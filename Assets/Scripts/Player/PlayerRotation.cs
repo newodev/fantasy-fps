@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,7 +18,8 @@ public class PlayerRotation : MonoBehaviour
     private float cameraRotationLimitUp = 85f;
     private float cameraRotationLimitDown = -90f;
 
-    private bool canRotateCamera = true;
+    private CameraMode mode = CameraMode.Unlocked;
+    private Vector3 lockedRotation;
 
     // Start is called before the first frame update
     void Start()
@@ -36,13 +38,30 @@ public class PlayerRotation : MonoBehaviour
 
     private void UpdateRotationalMovement()
     {
-        if (!canRotateCamera)
-            return;
-
         // Get mouse input from PlayerInput component
         // Multiply it by sensitivity
         Vector2 mouseInput = input.InputPacket.mouseInput * settings.Sensitivity;
 
+        Vector3 newRot = mode switch
+        {
+            CameraMode.Soft => UpdateSoftCamera(mouseInput),
+            CameraMode.Unlocked => UpdateUnlockedCamera(mouseInput),
+            CameraMode.Locked => lockedRotation,
+            _ => lockedRotation,
+        };
+
+        sync.CmdSendRotation(newRot);
+    }
+
+    // Provides softlocked mouse movement
+    private Vector3 UpdateSoftCamera(Vector2 mouseInput)
+    {
+        // TODO: implement
+        return lockedRotation;
+    }
+
+    private Vector3 UpdateUnlockedCamera(Vector2 mouseInput)
+    {
         Vector3 deltaHorizontal = new Vector3(0f, mouseInput.x, 0f);
         Quaternion horizontalRotation = rb.rotation * Quaternion.Euler(deltaHorizontal);
 
@@ -55,8 +74,14 @@ public class PlayerRotation : MonoBehaviour
 
             head.transform.localEulerAngles = verticalRotation;
         }
-
         // TODO: These are the wrong way around? refactor to right order
-        sync.CmdSendRotation(new Vector3(horizontalRotation.eulerAngles.y, currentVerticalCameraRotation, 0f));
+        return new Vector3(horizontalRotation.eulerAngles.y, currentVerticalCameraRotation, 0f);
     }
+}
+
+public enum CameraMode
+{
+    Locked,
+    Unlocked,
+    Soft
 }
