@@ -6,6 +6,7 @@ using System.Linq;
 
 public class PlayerMovementServer : NetworkBehaviour
 {
+    #region component references
     private PlayerSynchroniser sync;
     private PlayerSettings settings;
     private PlayerStats stats;
@@ -14,8 +15,8 @@ public class PlayerMovementServer : NetworkBehaviour
     private NetworkIdentity id;
 
     private Transform head;
+    #endregion
 
-    private float clientCurrentVerticalCameraRotation;
     private float cameraRotationLimitUp = 85f;
     private float cameraRotationLimitDown = -90f;
 

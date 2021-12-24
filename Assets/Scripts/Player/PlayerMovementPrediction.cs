@@ -12,8 +12,11 @@ public struct StateSnapshot
     public Vector3 position;
 }
 // This component executes solely on the player owned by the local client, and performs client-side prediction.
+// The exception to this is player rotation, which is client-authoritative and then sent to the server
+// TODO: Remove all rotation and move to a seperate component
 public class PlayerMovementPrediction : MonoBehaviour
 {
+    #region component references
     private PlayerInput input;
     private PlayerSettings settings;
     private PlayerStats stats;
@@ -22,8 +25,9 @@ public class PlayerMovementPrediction : MonoBehaviour
     private new Collider collider;
 
     private Transform head;
+    #endregion
 
-    private float clientCurrentVerticalCameraRotation;
+    private float currentVerticalCameraRotation;
     private float cameraRotationLimitUp = 85f;
     private float cameraRotationLimitDown = -90f;
 
@@ -40,8 +44,6 @@ public class PlayerMovementPrediction : MonoBehaviour
     // How far the player's server position can be from local position before reconciliating
     [SerializeField]
     private float reconciliationThreshold = 0.5f;
-    private float reconciliationTime = 1f;
-    private float reconciliationDuration = 1f;
 
     // The most recent server state recieved
     private List<StateSnapshot> positions = new List<StateSnapshot>();
@@ -55,6 +57,7 @@ public class PlayerMovementPrediction : MonoBehaviour
         // Verify that our local state after predicting with the input with this ID
         // was at least very close to what the server has
         // TODO: later maybe clean this up
+        // TODO: Re-simulating inputs doesn't take into account the player's rotation when they were first applied. Include player rotation in state packets sent by server
         IEnumerable<StateSnapshot> localState = positions.Where(x => x.packet.id == inputPacketID);
         if (localState.Count() == 0)
             return;
@@ -101,7 +104,7 @@ public class PlayerMovementPrediction : MonoBehaviour
     void Update()
     {
         // Rotation is updated every frame locally for responsiveness
-        PredictRotationalMovement();
+        UpdateRotationalMovement();
     }
 
     void FixedUpdate()
@@ -131,7 +134,7 @@ public class PlayerMovementPrediction : MonoBehaviour
     }
 
 
-    private void PredictRotationalMovement()
+    private void UpdateRotationalMovement()
     {
         if (!canMoveCamera)
             return;
@@ -146,15 +149,15 @@ public class PlayerMovementPrediction : MonoBehaviour
         rb.MoveRotation(horizontalRotation);
         if (head != null)
         {
-            clientCurrentVerticalCameraRotation -= mouseInput.y;
-            clientCurrentVerticalCameraRotation = Mathf.Clamp(clientCurrentVerticalCameraRotation, cameraRotationLimitDown, cameraRotationLimitUp);
-            Vector3 verticalRotation = new Vector3(clientCurrentVerticalCameraRotation, 0f, 0f);
+            currentVerticalCameraRotation -= mouseInput.y;
+            currentVerticalCameraRotation = Mathf.Clamp(currentVerticalCameraRotation, cameraRotationLimitDown, cameraRotationLimitUp);
+            Vector3 verticalRotation = new Vector3(currentVerticalCameraRotation, 0f, 0f);
 
             head.transform.localEulerAngles = verticalRotation;
         }
 
         // TODO: These are the wrong way around? refactor to right order
-        sync.CmdSendRotation(new Vector3(horizontalRotation.eulerAngles.y, clientCurrentVerticalCameraRotation, 0f));
+        sync.CmdSendRotation(new Vector3(horizontalRotation.eulerAngles.y, currentVerticalCameraRotation, 0f));
     }
 
     private Vector3 PredictDirectionalMovement(InputPacket i, Vector3 currentPos)
@@ -164,7 +167,7 @@ public class PlayerMovementPrediction : MonoBehaviour
         Vector3 moveInput = i.walkInput.normalized;
         // Apply move speed modifiers
         moveInput.x *= stats.MoveStrafeSpeed * stats.MoveStrafeMultiplier;
-        moveInput.z *= moveInput.z > 0f ? (i.sprintInput ? (stats.MoveSprintSpeed * stats.MoveSprintMultiplier) : (stats.MoveWalkSpeed * stats.MoveWalkMultiplier)) : (stats.MoveStrafeSpeed * stats.MoveStrafeMultiplier);
+        moveInput.z *= stats.GetModifiedForwardMoveSpeed(moveInput.z, false);
         Vector3 movement = transform.right * moveInput.x + transform.forward * moveInput.z;
 
         return rb.position + movement * Time.fixedDeltaTime;

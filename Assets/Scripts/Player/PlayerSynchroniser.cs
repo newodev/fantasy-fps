@@ -6,11 +6,12 @@ using Mirror;
 //
 public class PlayerSynchroniser : NetworkBehaviour
 {
-    // The rigidbody of the player contained within this manager
+    #region component references
     private Rigidbody rb;
 
     private PlayerMovementPrediction mv;
     private PlayerMovementServer mvs;
+    #endregion
 
     private int packetsRecieved = 0;
     private int packetsAcknowledged = 0;

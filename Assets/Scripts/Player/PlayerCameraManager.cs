@@ -15,14 +15,12 @@ public class PlayerCameraManager : MonoBehaviour
         // If we are a client, only keep our own camera
         if (!id.isLocalPlayer)
         {
-            Debug.Log("not local!!");
             cam.SetActive(false);
             return;
         }
         // If we are a server, disable all cameras
         if (id.isServer && !id.isLocalPlayer)
         {
-            Debug.Log("ams erverr!!!");
             cam.SetActive(false);
         }
     }
