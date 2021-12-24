@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -52,6 +52,9 @@
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>2020.3.24f1</UnityVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Mirror\Editor\Empty\ScriptableObjectUtility.cs" />
     <Compile Include="Assets\Mirror\Editor\SyncObjectCollectionsDrawer.cs" />
@@ -689,12 +692,6 @@
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.TestRunner">
-      <HintPath>Library\ScriptAssemblies\UnityEngine.TestRunner.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.TestRunner">
-      <HintPath>Library\ScriptAssemblies\UnityEditor.TestRunner.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Mirror.csproj">
@@ -704,6 +701,14 @@
     <ProjectReference Include="Unity.Mirror.CodeGen.csproj">
       <Project>{65827E89-428A-C456-E434-7E86A52E8A0F}</Project>
       <Name>Unity.Mirror.CodeGen</Name>
+    </ProjectReference>
+    <ProjectReference Include="UnityEngine.TestRunner.csproj">
+      <Project>{5CE54152-FEEE-E3F2-A582-27EA0900B0F3}</Project>
+      <Name>UnityEngine.TestRunner</Name>
+    </ProjectReference>
+    <ProjectReference Include="UnityEditor.TestRunner.csproj">
+      <Project>{E7541C2E-4496-EAE7-ABFA-33831EF40125}</Project>
+      <Name>UnityEditor.TestRunner</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

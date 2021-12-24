@@ -15,11 +15,11 @@ D:/gamedev/topdown-fighter
 -logFile
 Logs/AssetImportWorker0.log
 -srvPort
-61828
+62204
 Successfully changed project path to: D:/gamedev/topdown-fighter
 D:/gamedev/topdown-fighter
 Using Asset Import Pipeline V2.
-Refreshing native plugins compatible for Editor in 1110.29 ms, found 2 plugins.
+Refreshing native plugins compatible for Editor in 40.97 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Initialize engine version: 2020.3.24f1 (79c78de19888)
 [Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2020.3.24f1/Editor/Data/Resources/UnitySubsystems
@@ -35,42 +35,161 @@ Initialize mono
 Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2020.3.24f1/Editor/Data/Managed'
 Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2020.3.24f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
 Mono config path = 'C:/Program Files/Unity/Hub/Editor/2020.3.24f1/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56060
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56532
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.3.24f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.139600 seconds.
+Registered in 0.002681 seconds.
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 138.86 ms, found 2 plugins.
+Refreshing native plugins compatible for Editor in 38.87 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Mono: successfully reloaded assembly
-- Completed reload, in 12.576 seconds
+- Completed reload, in  0.623 seconds
 Domain Reload Profiling:
-	ReloadAssembly (12576ms)
-		BeginReloadAssembly (3224ms)
+	ReloadAssembly (623ms)
+		BeginReloadAssembly (64ms)
 			ExecutionOrderSort (0ms)
 			DisableScriptedObjects (0ms)
 			BackupInstance (0ms)
 			ReleaseScriptingObjects (0ms)
 			CreateAndSetChildDomain (1ms)
-		EndReloadAssembly (8961ms)
-			LoadAssemblies (3222ms)
+		EndReloadAssembly (482ms)
+			LoadAssemblies (61ms)
 			RebuildTransferFunctionScriptingTraits (0ms)
-			SetupTypeCache (480ms)
+			SetupTypeCache (163ms)
 			ReleaseScriptCaches (0ms)
-			RebuildScriptCaches (38ms)
-			SetupLoadedEditorAssemblies (8225ms)
+			RebuildScriptCaches (31ms)
+			SetupLoadedEditorAssemblies (179ms)
 				LogAssemblyErrors (0ms)
 				InitializePlatformSupportModulesInManaged (5ms)
-				SetLoadedEditorAssemblies (1ms)
-				RefreshPlugins (139ms)
-				BeforeProcessingInitializeOnLoad (20ms)
-				ProcessInitializeOnLoadAttributes (7321ms)
-				ProcessInitializeOnLoadMethodAttributes (738ms)
+				SetLoadedEditorAssemblies (0ms)
+				RefreshPlugins (39ms)
+				BeforeProcessingInitializeOnLoad (14ms)
+				ProcessInitializeOnLoadAttributes (90ms)
+				ProcessInitializeOnLoadMethodAttributes (30ms)
 				AfterProcessingInitializeOnLoad (0ms)
-				EditorAssembliesLoaded (1ms)
+				EditorAssembliesLoaded (0ms)
 			ExecutionOrderSort2 (0ms)
 			AwakeInstancesAfterBackupRestoration (0ms)
 Platform modules already initialized, skipping
 Registering precompiled user dll's ...
-Registered in 1.865291 seconds.
+Registered in 0.005623 seconds.
+Begin MonoManager ReloadAssembly
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.42 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  1.169 seconds
+Domain Reload Profiling:
+	ReloadAssembly (1170ms)
+		BeginReloadAssembly (177ms)
+			ExecutionOrderSort (0ms)
+			DisableScriptedObjects (5ms)
+			BackupInstance (0ms)
+			ReleaseScriptingObjects (0ms)
+			CreateAndSetChildDomain (26ms)
+		EndReloadAssembly (921ms)
+			LoadAssemblies (113ms)
+			RebuildTransferFunctionScriptingTraits (0ms)
+			SetupTypeCache (342ms)
+			ReleaseScriptCaches (0ms)
+			RebuildScriptCaches (49ms)
+			SetupLoadedEditorAssemblies (328ms)
+				LogAssemblyErrors (0ms)
+				InitializePlatformSupportModulesInManaged (6ms)
+				SetLoadedEditorAssemblies (1ms)
+				RefreshPlugins (0ms)
+				BeforeProcessingInitializeOnLoad (90ms)
+				ProcessInitializeOnLoadAttributes (209ms)
+				ProcessInitializeOnLoadMethodAttributes (16ms)
+				AfterProcessingInitializeOnLoad (7ms)
+				EditorAssembliesLoaded (0ms)
+			ExecutionOrderSort2 (0ms)
+			AwakeInstancesAfterBackupRestoration (6ms)
+Platform modules already initialized, skipping
+========================================================================
+Worker process is ready to serve import requests
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.11 seconds
+Refreshing native plugins compatible for Editor in 0.41 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1798 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 77.4 MB.
+System memory in use after: 77.5 MB.
+
+Unloading 24 unused Assets to reduce memory usage. Loaded Objects now: 2226.
+Total: 2.991400 ms (FindLiveObjects: 0.226100 ms CreateObjectMapping: 0.148800 ms MarkObjects: 2.507400 ms  DeleteObjects: 0.107800 ms)
+
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:video-codec-MediaFoundation-h265: 746d11721c4dcdbdad8f713fa42b33f4 -> 
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Import Request.
+  path: Assets/ScriptTemplates
+  artifactKey: Guid(8c00361129d75a941a732ef88e326a4f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptTemplates using Guid(8c00361129d75a941a732ef88e326a4f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f2089b59c468190abc102859f1c91437') in 0.013555 seconds 
+  Import took 0.016386 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000603 seconds.
+  path: Assets/ScriptTemplates/51-Mirror__Network Authenticator-NewNetworkAuthenticator.cs.txt
+  artifactKey: Guid(12dc04aca2d89f744bef5a65622ba708) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptTemplates/51-Mirror__Network Authenticator-NewNetworkAuthenticator.cs.txt using Guid(12dc04aca2d89f744bef5a65622ba708) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8be6a51dedfdc3fd84db9c11c67270da') in 0.059820 seconds 
+  Import took 0.062654 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.023718 seconds.
+  path: Assets/ScriptTemplates/52-Mirror__Network Behaviour-NewNetworkBehaviour.cs.txt
+  artifactKey: Guid(29b2ae9aeacc49b47b711838dd1876a4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptTemplates/52-Mirror__Network Behaviour-NewNetworkBehaviour.cs.txt using Guid(29b2ae9aeacc49b47b711838dd1876a4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '00c9d4547c883b8fc67946e39b400363') in 0.010821 seconds 
+  Import took 0.014336 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.803851 seconds.
+  path: Assets/ScriptTemplates/54-Mirror__Network Room Manager-NewNetworkRoomManager.cs.txt
+  artifactKey: Guid(2e5656107e61a93439544b91e5f541f6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptTemplates/54-Mirror__Network Room Manager-NewNetworkRoomManager.cs.txt using Guid(2e5656107e61a93439544b91e5f541f6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ad5e568fe1ac85c4d2a65881202f5e03') in 0.009503 seconds 
+  Import took 0.012835 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 11.431891 seconds.
+  path: Assets/ScriptTemplates/50-Mirror__Network Manager-NewNetworkManager.cs.txt
+  artifactKey: Guid(ed73cc79a95879d4abd948a36043c798) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptTemplates/50-Mirror__Network Manager-NewNetworkManager.cs.txt using Guid(ed73cc79a95879d4abd948a36043c798) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b24c684c9b0d30dd303f767caf0b21ec') in 0.008196 seconds 
+  Import took 0.012352 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 3.065779 seconds.
+  path: Assets/ScriptTemplates/55-Mirror__Network Room Player-NewNetworkRoomPlayer.cs.txt
+  artifactKey: Guid(1ca8a6309173d4248bc7fa0c6ae001e0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptTemplates/55-Mirror__Network Room Player-NewNetworkRoomPlayer.cs.txt using Guid(1ca8a6309173d4248bc7fa0c6ae001e0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'bf6d352013a7c9e9f7c496e95f2aee23') in 0.009098 seconds 
+  Import took 0.012819 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.455006 seconds.
+  path: Assets/ScriptTemplates/56-Mirror__Network Discovery-NewNetworkDiscovery.cs.txt
+  artifactKey: Guid(04337367db30af3459bf9e9f3f880734) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/ScriptTemplates/56-Mirror__Network Discovery-NewNetworkDiscovery.cs.txt using Guid(04337367db30af3459bf9e9f3f880734) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2eb3cd3011e3f03ef493ad0a7ae32e76') in 0.009926 seconds 
+  Import took 0.013443 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 14.602222 seconds.
+  path: Assets/Scripts/Player/PlayerCameraManager.cs
+  artifactKey: Guid(e7258ab0a6e76ef4cbe803fba6a04e78) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/Player/PlayerCameraManager.cs using Guid(e7258ab0a6e76ef4cbe803fba6a04e78) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5a1c1f28cee38aa97d2bbfd61b421cdc') in 0.049851 seconds 
+  Import took 0.053323 seconds .
+
