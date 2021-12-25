@@ -56,11 +56,11 @@ public class PlayerMovementServer : NetworkBehaviour
     {
         if (!canMoveCamera)
             return;
-        Vector3 horizontalRotation = new Vector3(0f, newRot.x, 0f);
+        Vector3 horizontalRotation = newRot.y * Vector3.up;
         rb.MoveRotation(Quaternion.Euler(horizontalRotation));
         if (head != null)
         {
-            float vertRot =  newRot.y;
+            float vertRot =  newRot.x;
             vertRot = Mathf.Clamp(vertRot, cameraRotationLimitDown, cameraRotationLimitUp);
             Vector3 verticalRotation = new Vector3(vertRot, 0f, 0f);
 

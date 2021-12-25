@@ -21,6 +21,8 @@ public class PlayerRotation : MonoBehaviour
     private CameraMode mode = CameraMode.Unlocked;
     private Vector3 lockedRotation;
 
+    private bool debugCameraModes = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +36,28 @@ public class PlayerRotation : MonoBehaviour
     {
         // Rotation is updated every frame locally for responsiveness
         UpdateRotationalMovement();
+        DebugCameraModes();
+    }
+
+    private void DebugCameraModes()
+    {
+        if (!debugCameraModes)
+            return;
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            mode = CameraMode.Locked;
+            lockedRotation = new Vector3(head.transform.localEulerAngles.x, transform.localEulerAngles.y, 0f);
+        }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            mode = CameraMode.Soft;
+            lockedRotation = new Vector3(head.transform.localEulerAngles.x, transform.localEulerAngles.y, 0f);
+        }
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            mode = CameraMode.Unlocked;
+        }
     }
 
     private void UpdateRotationalMovement()
@@ -49,33 +73,47 @@ public class PlayerRotation : MonoBehaviour
             CameraMode.Locked => lockedRotation,
             _ => lockedRotation,
         };
-
+        ApplyRotation(newRot);
         sync.CmdSendRotation(newRot);
     }
 
+    private void ApplyRotation(Vector3 rot)
+    {
+        // (0, rotY, 0)
+        Vector3 horizontalRotation = rot.y * Vector3.up;
+        rb.MoveRotation(Quaternion.Euler(horizontalRotation));
+
+        if (head != null)
+        {
+            float verticalAngle = Mathf.Clamp(rot.x, cameraRotationLimitDown, cameraRotationLimitUp);
+            // (rotX, 0, 0)
+            Vector3 verticalRotation = verticalAngle * Vector3.right;
+
+            head.transform.localEulerAngles = verticalRotation;
+        }
+    }
+
+    private float softCap = 1f;
+    private float rotationLimit = 30f;
     // Provides softlocked mouse movement
     private Vector3 UpdateSoftCamera(Vector2 mouseInput)
     {
+        Vector2 clampedInput = Vector2.ClampMagnitude(mouseInput, softCap);
+        Vector3 deltaRotation = new Vector3(clampedInput.y, clampedInput.x, 0f);
+
+        Quaternion newRotation = Quaternion.Euler(deltaRotation) * Quaternion.Euler(new Vector3(head.transform.localEulerAngles.x, transform.localEulerAngles.y, 0f));
+
+        if (Vector3.Distance(newRotation.eulerAngles, lockedRotation) < rotationLimit)
+            return newRotation.eulerAngles;
         // TODO: implement
         return lockedRotation;
     }
 
     private Vector3 UpdateUnlockedCamera(Vector2 mouseInput)
     {
-        Vector3 deltaHorizontal = new Vector3(0f, mouseInput.x, 0f);
-        Quaternion horizontalRotation = rb.rotation * Quaternion.Euler(deltaHorizontal);
+        Quaternion newRotation = rb.rotation * Quaternion.Euler(mouseInput);
 
-        rb.MoveRotation(horizontalRotation);
-        if (head != null)
-        {
-            currentVerticalCameraRotation -= mouseInput.y;
-            currentVerticalCameraRotation = Mathf.Clamp(currentVerticalCameraRotation, cameraRotationLimitDown, cameraRotationLimitUp);
-            Vector3 verticalRotation = new Vector3(currentVerticalCameraRotation, 0f, 0f);
-
-            head.transform.localEulerAngles = verticalRotation;
-        }
-        // TODO: These are the wrong way around? refactor to right order
-        return new Vector3(horizontalRotation.eulerAngles.y, currentVerticalCameraRotation, 0f);
+        return newRotation.eulerAngles;
     }
 }
 
