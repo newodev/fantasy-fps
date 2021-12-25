@@ -23,6 +23,14 @@ public class PlayerRotation : MonoBehaviour
 
     private bool debugCameraModes = true;
 
+    Quaternion CalculateRotation()
+    {
+        if (head is null)
+            return Quaternion.identity;
+
+        return Quaternion.Euler(new Vector3(head.transform.localEulerAngles.x, transform.localEulerAngles.y, 0f));
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -111,7 +119,7 @@ public class PlayerRotation : MonoBehaviour
 
     private Vector3 UpdateUnlockedCamera(Vector2 mouseInput)
     {
-        Quaternion newRotation = rb.rotation * Quaternion.Euler(mouseInput);
+        Quaternion newRotation = CalculateRotation() * Quaternion.Euler(mouseInput);
 
         return newRotation.eulerAngles;
     }
