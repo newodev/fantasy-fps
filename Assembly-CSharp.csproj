@@ -55,13 +55,13 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Player\PlayerManager.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerSynchroniser.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerRotation.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerMovementServer.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerMovementPrediction.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerSettings.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerCameraManager.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerInput.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerStats.cs" />
-    <Compile Include="Assets\Scripts\Player\PlayerRotation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Mirror\Plugins\Mono.Cecil\Mono.CecilX.dll" />

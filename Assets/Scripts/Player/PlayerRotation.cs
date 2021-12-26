@@ -14,7 +14,6 @@ public class PlayerRotation : MonoBehaviour
     private Transform head;
     #endregion
 
-    private float currentVerticalCameraRotation;
     private float cameraRotationLimitUp = 85f;
     private float cameraRotationLimitDown = -90f;
 
@@ -23,12 +22,12 @@ public class PlayerRotation : MonoBehaviour
 
     private bool debugCameraModes = true;
 
-    Quaternion CalculateRotation()
+    Vector3 CalculateRotation()
     {
         if (head is null)
-            return Quaternion.identity;
+            return Vector3.zero;
 
-        return Quaternion.Euler(new Vector3(head.transform.localEulerAngles.x, transform.localEulerAngles.y, 0f));
+        return new Vector3(head.transform.localEulerAngles.x, transform.localEulerAngles.y, 0f);
     }
 
     // Start is called before the first frame update
@@ -38,6 +37,7 @@ public class PlayerRotation : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         settings = GetComponent<PlayerSettings>();
         sync = GetComponentInParent<PlayerSynchroniser>();
+        head = transform.Find("Head");
     }
 
     void Update()
@@ -73,6 +73,8 @@ public class PlayerRotation : MonoBehaviour
         // Get mouse input from PlayerInput component
         // Multiply it by sensitivity
         Vector2 mouseInput = input.InputPacket.mouseInput * settings.Sensitivity;
+        // Invert vertical mouse input based on user settings
+        mouseInput.x = settings.InvertVerticalMouseInput ? mouseInput.x : -mouseInput.x;
 
         Vector3 newRot = mode switch
         {
@@ -119,9 +121,10 @@ public class PlayerRotation : MonoBehaviour
 
     private Vector3 UpdateUnlockedCamera(Vector2 mouseInput)
     {
-        Quaternion newRotation = CalculateRotation() * Quaternion.Euler(mouseInput);
+        Vector3 inputVec = mouseInput;
+        Vector3 newRotation = CalculateRotation() + inputVec;
 
-        return newRotation.eulerAngles;
+        return newRotation;
     }
 }
 

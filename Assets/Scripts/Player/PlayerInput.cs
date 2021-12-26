@@ -12,6 +12,7 @@ public class PlayerInput : NetworkBehaviour
     public bool sprinting = false;
 
     private PlayerSynchroniser sync;
+    private PlayerSettings settings;
 
     // Amount of input packets sent from this client to the server.
     // Also represents the ID of the next packet to send
@@ -20,6 +21,11 @@ public class PlayerInput : NetworkBehaviour
     void Start()
     {
         sync = GetComponent<PlayerSynchroniser>();
+        
+        if (isLocalPlayer && !isServer)
+        {
+            settings = GetComponentInChildren<PlayerSettings>();
+        }
     }
 
     void Update()
@@ -51,7 +57,7 @@ public class PlayerInput : NetworkBehaviour
         float verticalMouseInput = Input.GetAxisRaw("Mouse Y");
 
         // Combine input into a vector2
-        Vector2 mouseInput = new Vector2(horizontalMouseInput, verticalMouseInput);
+        Vector2 mouseInput = new Vector2(verticalMouseInput, horizontalMouseInput);
 
         return mouseInput;
     }
