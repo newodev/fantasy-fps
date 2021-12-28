@@ -76,6 +76,7 @@ public class PlayerRotation : MonoBehaviour
         // Invert vertical mouse input based on user settings
         mouseInput.x = settings.InvertVerticalMouseInput ? mouseInput.x : -mouseInput.x;
 
+        // Select camera movement algorithm based on camera mode
         Vector3 newRot = mode switch
         {
             CameraMode.Soft => UpdateSoftCamera(mouseInput),
@@ -83,7 +84,9 @@ public class PlayerRotation : MonoBehaviour
             CameraMode.Locked => lockedRotation,
             _ => lockedRotation,
         };
+        // Apply rotation locally
         ApplyRotation(newRot);
+        // Send rotation to server
         sync.CmdSendRotation(newRot);
     }
 

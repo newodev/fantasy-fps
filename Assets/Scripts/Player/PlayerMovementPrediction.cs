@@ -106,6 +106,7 @@ public class PlayerMovementPrediction : MonoBehaviour
         }
     }
 
+    // Simulates a single physics frame based on an input packet
     void Simulate(InputPacket i)
     {
         Vector3 currentPos = transform.position;
