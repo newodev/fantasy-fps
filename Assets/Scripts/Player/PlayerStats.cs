@@ -2,6 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum DamageType
+{
+    Slashing,
+    Crushing,
+    Piercing,
+    Burning
+}
+// A single portion of damage dealt in an instance. An instance can have multiple types
+// For example, an axe deals some slashing damage, and some crushing damage.
+public struct DamageSegment
+{
+    public DamageType type;
+    public float value;
+}
+public struct DamageInstance
+{
+    public List<DamageSegment> segments;
+}
+public struct DamageInfo
+{
+    public string AttackerName;
+    public string AttackerWeapon;
+}
 public class PlayerStats : MonoBehaviour
 {
     // Base movement speed values (units/second)
