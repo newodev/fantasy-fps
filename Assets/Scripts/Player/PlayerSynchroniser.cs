@@ -48,6 +48,8 @@ public class PlayerSynchroniser : NetworkBehaviour
         AcknowledgeInputPacket(i.id);
     }
 
+    // Used by the server to acknowledge an input packet, and send the server state after applying that input
+    // TODO: we actually send state based on input packet from LAST frame. this will need to be adjusted, otherwise, slight lag will result in rubber banding
     public void AcknowledgeInputPacket(int inputPacketID)
     {
         TargetSendStateUpdate(new PlayerStatePacket

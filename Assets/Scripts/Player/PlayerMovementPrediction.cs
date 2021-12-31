@@ -13,7 +13,6 @@ public struct StateSnapshot
 }
 // This component executes solely on the player owned by the local client, and performs client-side prediction.
 // The exception to this is player rotation, which is client-authoritative and then sent to the server
-// TODO: Remove all rotation and move to a seperate component
 public class PlayerMovementPrediction : MonoBehaviour
 {
     #region component references

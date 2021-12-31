@@ -18,6 +18,9 @@ public struct DamageSegment
 }
 public struct DamageInstance
 {
+    // Some info about the damage dealer
+    public DamageInfo info;
+    // The different types of damage that make up this instance
     public List<DamageSegment> segments;
 }
 public struct DamageInfo
