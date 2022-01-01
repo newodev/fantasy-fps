@@ -32,8 +32,12 @@ public struct HitInfo
 // Describes a physical affliction applied to an entity
 public struct AfflictionInstance
 {
-
+    public AfflictionType Type;
+    public float Size;
+    public float Severity;
 }
+// TODO: this is almost uneeeded as it is a direct 1-1 from damage type
+// TODO: added complexity could create a use for this. eg. some weapons create serrated cuts while dealing slash damage
 public enum AfflictionType
 {
     Cut,
@@ -80,4 +84,41 @@ public static class DamageCalculations
 
     public static Dictionary<BodyPart, SusceptibilityInfo> InjuryTable = new Dictionary<BodyPart, SusceptibilityInfo>()
     { {BodyPart.Head, HeadInfo}, {BodyPart.Chest, ChestInfo } };
+
+    public static AfflictionInstance CalculateDamage(HitInstance hit)
+    {
+        // TODO: implement size of affliction, currently only calculates severity
+        float size = 0.0f;
+        float severity = 0.0f;
+        AfflictionType type = AfflictionType.Cut;
+
+        float currentHighest = 0.0f;
+        foreach (HitSegment dmg in hit.segments)
+        {
+            // increase injury severity by the damage of each segment multiplied by the hit part's susceptibility
+            severity += dmg.value * InjuryTable[hit.hitPart].Table[dmg.type];
+
+
+            // The type of affliction is based on the largest damage segment in the hit
+            // A sword will cut and crush but only inflicts a cut
+            // TODO: this could be changed, to apply both afflictions, for example, swords can bruise
+            if (dmg.value > currentHighest)
+            {
+                type = dmg.type switch
+                {
+                    DamageType.Slashing => AfflictionType.Cut,
+                    DamageType.Piercing => AfflictionType.Puncture,
+                    DamageType.Crushing => AfflictionType.Break,
+                    DamageType.Burning => AfflictionType.Burn,
+                    _ => type,
+                };
+
+                currentHighest = dmg.value;
+            }
+        }
+
+        AfflictionInstance affliction = new AfflictionInstance() { Severity = severity, Size = size, Type = type };
+
+        return affliction;
+    }
 }
