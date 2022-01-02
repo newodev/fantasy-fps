@@ -6,7 +6,8 @@ public enum DamageType
     Slashing,
     Crushing,
     Piercing,
-    Burning
+    Burning,
+    Error
 }
 // A single portion of damage dealt in an instance. An instance can have multiple types
 // For example, an axe deals some slashing damage, and some crushing damage.
@@ -71,12 +72,54 @@ public struct SusceptibilityInfo
  * ULEG,    0.5,   0.5,   0.5,    0.4,  0.7
  * LLEG,    0.4,   0.4,   0.5,    0.3,  0.7
 */
+
 public static class DamageCalculations
 {
     // TODO: for online balancing, these can be adjusted to be loaded at runtime from a database on the server. (instead of readonly)
     public static readonly SusceptibilityInfo HeadInfo = ConstructSusceptibilityTable(0.7f, 1.0f, 0.6f, 0.8f);
     public static readonly SusceptibilityInfo ChestInfo = ConstructSusceptibilityTable(0.6f, 0.8f, 1.0f, 0.6f);
+
     // TODO: maybe complete rest... or just make a config loader
+    // Ordered list of the 
+    public static List<DamageType> ConfigHeaderOrder = new List<DamageType>();
+    public static void LoadSusceptibilityConfigHeader(string line)
+    {
+        List<string> columns = SplitAndTrimColumns(line);
+        // Remove first column, as it defines parts
+        columns.RemoveAt(0);
+        foreach (string column in columns)
+        {
+            DamageType t = column switch
+            {
+                "SLASH" => DamageType.Slashing,
+                "CRUSH" => DamageType.Crushing,
+                "PIERCE" => DamageType.Piercing,
+                "BURN" => DamageType.Burning,
+                _ => DamageType.Error
+            };
+
+            if (t == DamageType.Error)
+                Debug.LogError($"ConfigError: Susceptibility config header {column} doesn't match a defined DamageType");
+            
+            ConfigHeaderOrder.Add(t);
+        }
+    }
+    public static SusceptibilityInfo LoadSusceptibilityConfigLine(string line)
+    {
+        List<string> columns = SplitAndTrimColumns(line);
+
+    }
+
+    public static List<string> SplitAndTrimColumns(string line)
+    {
+        List<string> columns = new List<string>(line.Split(','));
+        for (int i = 0; i < columns.Count; i++)
+        {
+            columns[i] = columns[i].Trim();
+        }
+        return columns;
+    }
+
     public static SusceptibilityInfo ConstructSusceptibilityTable(float s, float c, float p, float b)
     {
         return new SusceptibilityInfo() { Table = new Dictionary<DamageType, float>() { { DamageType.Slashing, s }, { DamageType.Crushing, c }, { DamageType.Piercing, p }, { DamageType.Burning, b } } };
