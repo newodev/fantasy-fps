@@ -108,6 +108,8 @@ public static class DamageCalculations
     {
         List<string> columns = SplitAndTrimColumns(line);
 
+        // TODO: finish ;)
+        return new SusceptibilityInfo();
     }
 
     public static List<string> SplitAndTrimColumns(string line)
