@@ -75,9 +75,8 @@ public struct SusceptibilityInfo
 
 public static class DamageCalculations
 {
-    // TODO: for online balancing, these can be adjusted to be loaded at runtime from a database on the server. (instead of readonly)
-    public static readonly SusceptibilityInfo HeadInfo = ConstructSusceptibilityTable(0.7f, 1.0f, 0.6f, 0.8f);
-    public static readonly SusceptibilityInfo ChestInfo = ConstructSusceptibilityTable(0.6f, 0.8f, 1.0f, 0.6f);
+    // TODO: move config loading to seperate script
+    public static Dictionary<BodyPart, SusceptibilityInfo> SusceptibilityTable = new Dictionary<BodyPart, SusceptibilityInfo>();
 
     // TODO: maybe complete rest... or just make a config loader
     // Ordered list of the 
@@ -107,9 +106,25 @@ public static class DamageCalculations
     public static SusceptibilityInfo LoadSusceptibilityConfigLine(string line)
     {
         List<string> columns = SplitAndTrimColumns(line);
+        // Remove first column, as it defines parts, which is handled by the LoadSusceptibilityConfigTable function
+        columns.RemoveAt(0);
 
-        // TODO: finish ;)
-        return new SusceptibilityInfo();
+        List<float> susceptibilityVals = new List<float>();
+        foreach (string column in columns)
+        {
+            float columnVal;
+            if (float.TryParse(column, out columnVal))
+            {
+
+            }
+            else
+            {
+
+            }
+        }
+
+            // TODO: finish ;)
+            return new SusceptibilityInfo();
     }
 
     public static List<string> SplitAndTrimColumns(string line)
@@ -122,13 +137,20 @@ public static class DamageCalculations
         return columns;
     }
 
-    public static SusceptibilityInfo ConstructSusceptibilityTable(float s, float c, float p, float b)
+    public static SusceptibilityInfo ConstructSusceptibilityTable(List<float> vals)
     {
-        return new SusceptibilityInfo() { Table = new Dictionary<DamageType, float>() { { DamageType.Slashing, s }, { DamageType.Crushing, c }, { DamageType.Piercing, p }, { DamageType.Burning, b } } };
+        Dictionary<DamageType, float> table = new Dictionary<DamageType, float>();
+        for (int i = 0; i < ConfigHeaderOrder.Count; i++)
+        {
+            if (i - 1 > vals.Count)
+            {
+                Debug.LogError($"ConfigError: Incorrect number of values in susceptibility table line {vals}");
+                return new SusceptibilityInfo();
+            }
+            table.Add(ConfigHeaderOrder[i], vals[i]);
+        }
+        return new SusceptibilityInfo() { Table = table };
     }
-
-    public static Dictionary<BodyPart, SusceptibilityInfo> InjuryTable = new Dictionary<BodyPart, SusceptibilityInfo>()
-    { {BodyPart.Head, HeadInfo}, {BodyPart.Chest, ChestInfo } };
 
     public static AfflictionInstance CalculateDamage(HitInstance hit)
     {
@@ -141,7 +163,7 @@ public static class DamageCalculations
         foreach (HitSegment dmg in hit.segments)
         {
             // increase injury severity by the damage of each segment multiplied by the hit part's susceptibility
-            severity += dmg.value * InjuryTable[hit.hitPart].Table[dmg.type];
+            severity += dmg.value * SusceptibilityTable[hit.hitPart].Table[dmg.type];
 
 
             // The type of affliction is based on the largest damage segment in the hit
