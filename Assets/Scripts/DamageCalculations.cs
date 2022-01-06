@@ -78,8 +78,7 @@ public static class DamageCalculations
     // TODO: move config loading to seperate script
     public static Dictionary<BodyPart, SusceptibilityInfo> SusceptibilityTable = new Dictionary<BodyPart, SusceptibilityInfo>();
 
-    // TODO: maybe complete rest... or just make a config loader
-    // Ordered list of the 
+    // Ordered list of the damage types loaded in the SusceptibilityConfig
     public static List<DamageType> ConfigHeaderOrder = new List<DamageType>();
     public static void LoadSusceptibilityConfigHeader(string line)
     {
@@ -115,16 +114,16 @@ public static class DamageCalculations
             float columnVal;
             if (float.TryParse(column, out columnVal))
             {
-
+                susceptibilityVals.Add(columnVal);
             }
             else
             {
-
+                susceptibilityVals.Add(1.0f);
+                Debug.LogError($"ConfigError: Susceptibility config element {column} cannot be converted to float");
             }
         }
 
-            // TODO: finish ;)
-            return new SusceptibilityInfo();
+        return ConstructSusceptibilityTable(susceptibilityVals);
     }
 
     public static List<string> SplitAndTrimColumns(string line)
