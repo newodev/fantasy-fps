@@ -54,7 +54,8 @@ public enum BodyPart
     UpperArm,
     LowerArm,
     UpperLeg,
-    LowerLeg
+    LowerLeg,
+    ConfigError
 }
 
 // Describes how different affliction types affect a body part
@@ -80,6 +81,31 @@ public static class DamageCalculations
 
     // Ordered list of the damage types loaded in the SusceptibilityConfig
     public static List<DamageType> ConfigHeaderOrder = new List<DamageType>();
+
+    public static void LoadSusceptibilityConfig(List<string> lines)
+    {
+        LoadSusceptibilityConfigHeader(lines[0]);
+        lines.RemoveAt(0);
+        foreach (string line in lines)
+        {
+            string firstWord = line.Substring(0, line.IndexOf(","));
+            BodyPart p = firstWord switch
+            {
+                "HEAD" => BodyPart.Head,
+                "CHEST" => BodyPart.Chest,
+                "UARM" => BodyPart.UpperArm,
+                "LARM" => BodyPart.LowerArm,
+                "ULEG" => BodyPart.UpperLeg,
+                "LLEG" => BodyPart.LowerLeg,
+                _ => BodyPart.ConfigError
+            };
+
+            if (p == BodyPart.ConfigError)
+                Debug.LogError($"ConfigError: Susceptibility config row {firstWord} doesn't match a defined BodyPart");
+
+            SusceptibilityTable.Add(p, LoadSusceptibilityConfigLine(line));
+        }
+    }
     public static void LoadSusceptibilityConfigHeader(string line)
     {
         List<string> columns = SplitAndTrimColumns(line);
@@ -123,7 +149,7 @@ public static class DamageCalculations
             }
         }
 
-        return ConstructSusceptibilityTable(susceptibilityVals);
+        return ConstructSusceptibilityInfo(susceptibilityVals);
     }
 
     public static List<string> SplitAndTrimColumns(string line)
@@ -136,7 +162,7 @@ public static class DamageCalculations
         return columns;
     }
 
-    public static SusceptibilityInfo ConstructSusceptibilityTable(List<float> vals)
+    public static SusceptibilityInfo ConstructSusceptibilityInfo(List<float> vals)
     {
         Dictionary<DamageType, float> table = new Dictionary<DamageType, float>();
         for (int i = 0; i < ConfigHeaderOrder.Count; i++)
