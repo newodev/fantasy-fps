@@ -84,11 +84,15 @@ public static class DamageCalculations
 
     public static void LoadSusceptibilityConfig(List<string> lines)
     {
+        // Load the header to define the damage types
         LoadSusceptibilityConfigHeader(lines[0]);
+        // Remove the header line
         lines.RemoveAt(0);
+
         foreach (string line in lines)
         {
-            string firstWord = line.Substring(0, line.IndexOf(","));
+            // Get the body part using the first word
+            string firstWord = line.Substring(0, line.IndexOf(",")).ToUpper();
             BodyPart p = firstWord switch
             {
                 "HEAD" => BodyPart.Head,
@@ -103,6 +107,7 @@ public static class DamageCalculations
             if (p == BodyPart.ConfigError)
                 Debug.LogError($"ConfigError: Susceptibility config row {firstWord} doesn't match a defined BodyPart");
 
+            // Add line to table
             SusceptibilityTable.Add(p, LoadSusceptibilityConfigLine(line));
         }
     }
