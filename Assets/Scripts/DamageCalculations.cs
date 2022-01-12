@@ -86,30 +86,40 @@ public static class DamageCalculations
     {
         // Load the header to define the damage types
         LoadSusceptibilityConfigHeader(lines[0]);
-        // Remove the header line
+        // Remove the header line, as it was computed in the above function call
         lines.RemoveAt(0);
 
         foreach (string line in lines)
         {
-            // Get the body part using the first word
+            // Get the body part using the first word of each line
             string firstWord = line.Substring(0, line.IndexOf(",")).ToUpper();
-            BodyPart p = firstWord switch
-            {
-                "HEAD" => BodyPart.Head,
-                "CHEST" => BodyPart.Chest,
-                "UARM" => BodyPart.UpperArm,
-                "LARM" => BodyPart.LowerArm,
-                "ULEG" => BodyPart.UpperLeg,
-                "LLEG" => BodyPart.LowerLeg,
-                _ => BodyPart.ConfigError
-            };
+            BodyPart p = LoadSusceptibilityConfigPart(firstWord);
 
-            if (p == BodyPart.ConfigError)
-                Debug.LogError($"ConfigError: Susceptibility config row {firstWord} doesn't match a defined BodyPart");
+            // Create susceptibility info structure with the line data
+            SusceptibilityInfo susInfo = LoadSusceptibilityConfigLine(line);
 
             // Add line to table
-            SusceptibilityTable.Add(p, LoadSusceptibilityConfigLine(line));
+            SusceptibilityTable.Add(p, susInfo);
         }
+    }
+
+    public static BodyPart LoadSusceptibilityConfigPart(string word)
+    {
+        BodyPart p = word switch
+        {
+            "HEAD" => BodyPart.Head,
+            "CHEST" => BodyPart.Chest,
+            "UARM" => BodyPart.UpperArm,
+            "LARM" => BodyPart.LowerArm,
+            "ULEG" => BodyPart.UpperLeg,
+            "LLEG" => BodyPart.LowerLeg,
+            _ => BodyPart.ConfigError
+        };
+
+        if (p == BodyPart.ConfigError)
+            Debug.LogError($"ConfigError: Susceptibility config row {word} doesn't match a defined BodyPart");
+
+        return p;
     }
     public static void LoadSusceptibilityConfigHeader(string line)
     {
@@ -142,19 +152,24 @@ public static class DamageCalculations
         List<float> susceptibilityVals = new List<float>();
         foreach (string column in columns)
         {
-            float columnVal;
-            if (float.TryParse(column, out columnVal))
-            {
-                susceptibilityVals.Add(columnVal);
-            }
-            else
-            {
-                susceptibilityVals.Add(1.0f);
-                Debug.LogError($"ConfigError: Susceptibility config element {column} cannot be converted to float");
-            }
+            float columnVal = LoadSusceptibilityConfigVal(column);
+            susceptibilityVals.Add(columnVal);
         }
-
         return ConstructSusceptibilityInfo(susceptibilityVals);
+    }
+
+    public static float LoadSusceptibilityConfigVal(string column)
+    {
+        float columnVal;
+        if (float.TryParse(column, out columnVal))
+        {
+            return columnVal;
+        }
+        else
+        {
+            Debug.LogError($"ConfigError: Susceptibility config element {column} cannot be converted to float");
+            return 1.0f;
+        }
     }
 
     public static List<string> SplitAndTrimColumns(string line)
