@@ -39,7 +39,7 @@ namespace CSharp_ECS.ECSCore
             QueryResult q = region.Query(query);
             Parallel.For(0, q.Count, (i) =>
             {
-                q.GetComponent<A>(i).Id++;
+                q.SetComponent(i, new A() { Id = 2 });
             });
         }
     }

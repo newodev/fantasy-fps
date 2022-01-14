@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "48adf077-a312-4742-96fa-a6fbf1d6437c": {
+      "ProjectGuid": "48adf077-a312-4742-96fa-a6fbf1d6437c",
+      "DisplayName": "CSharp-ECS",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}

@@ -10,7 +10,14 @@ namespace CSharp_ECS.ECSCore
     {
         public QueryResult Query(HashSet<Type> query)
         {
+            // Query all archetypes that match this set
+            List<Archetype> subset = Archetypes.Where(x => query.IsSubsetOf(x.Key)).ToList();
+
+            // TODO: Finish
             return new QueryResult();
         }
+
+        public List<Archetype> Archetypes = new List<Archetype>();
+
     }
 }
