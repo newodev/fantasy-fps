@@ -25,8 +25,10 @@ namespace CSharp_ECS.ECSCore
             Key = key;
             Contents = new List<object>();
         }
-
-        // Creates a new entity in this archetype with the specified component objects
+        /// <summary>
+        /// Creates a new entity in this archetype with the specified component objects
+        /// </summary>
+        /// <param name="components">Entity's Components</param>
         public void SpawnEntity(List<object> components)
         {
             Contents.Add(new Entity() { Id = EntityCount });
@@ -38,8 +40,12 @@ namespace CSharp_ECS.ECSCore
         }
 
         // TODO: Add a destroy function
-
-        // Check if this archetype matches the query
+        /// <summary>
+        /// Check if this archetype matches a query
+        /// </summary>
+        /// <param name="query">Query to match</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public bool Contains(HashSet<Type> query)
         {
             if (query == null)
