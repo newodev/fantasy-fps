@@ -17,24 +17,27 @@ namespace CSharp_ECS.ECSCore
 
         // An entity is described as an array of components.
         // Begins with Entity, followed by the components listed in Key in alphabetical order.
-        public object[] Contents;
+        public List<object> Contents;
         public int EntityCount = 0;
 
         public Archetype(List<Type> key)
         {
             Key = key;
-            Contents = new object[EntitySize * Universe.MAX_ENTITIES_PER_ARCHETYPE];
+            Contents = new List<object>();
         }
 
+        // Creates a new entity in this archetype with the specified component objects
         public void SpawnEntity(List<object> components)
         {
-            Contents[EntityCount * EntitySize] = new Entity() { Id = EntityCount };
+            Contents.Add(new Entity() { Id = EntityCount });
             for (int i = 0; i < components.Count; i++)
             {
-                Contents[(EntityCount * EntitySize) + i + 1] = components[i];
+                Contents.Add(components[i]);
             }
             EntityCount++;
         }
+
+        // TODO: Add a destroy function
 
         // Check if this archetype matches the query
         public bool Contains(HashSet<Type> query)

@@ -26,6 +26,7 @@ namespace CSharp_ECS.ECSCore
 
         public void SpawnEntity(List<object> components)
         {
+            // Sort components by type name to match with an archetype
             components.Sort((x, y) => x.GetType().FullName.CompareTo(y.GetType().FullName));
 
             List<Type> key = new List<Type>();
@@ -35,12 +36,14 @@ namespace CSharp_ECS.ECSCore
             }
 
             List<Archetype> a = Archetypes.Where(x => x.Key.SequenceEqual(key)).ToList();
+            // If this entity doesn't match an archetype, create a new one to match it
             if (a.Count() == 0)
             {
                 Archetype newArchetype = new Archetype(key);
                 Archetypes.Add(newArchetype);
                 newArchetype.SpawnEntity(components);
             }
+            // Else add the entity to its matching archetype
             else
             {
                 a.First().SpawnEntity(components);
