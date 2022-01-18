@@ -39,6 +39,15 @@ namespace CSharp_ECS.ECSCore
             EntityCount++;
         }
 
+        public void DestroyEntity(int index)
+        {
+            for (int i = index * EntitySize; i < i * (EntitySize + 1); i++)
+            {
+                Contents.RemoveAt(i);
+            }
+            EntityCount++;
+        }
+
         // TODO: Add a destroy function
         /// <summary>
         /// Check if this archetype matches a query
