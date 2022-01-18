@@ -29,11 +29,12 @@ namespace CSharp_ECS.ECSCore
         /// Creates a new entity in this archetype with the specified component objects
         /// </summary>
         /// <param name="components">Entity's Components</param>
-        public void SpawnEntity(List<object> components)
+        public void SpawnEntity(List<IComponent> components)
         {
             Contents.Add(new Entity() { Id = EntityCount });
             for (int i = 0; i < components.Count; i++)
             {
+                components[i].Id = EntityCount;
                 Contents.Add(components[i]);
             }
             EntityCount++;
@@ -66,12 +67,17 @@ namespace CSharp_ECS.ECSCore
                 return false;
         }
     }
-    struct Entity
+    struct Entity : IComponent
     {
-        public int Id;
+        public int Id { set; get; }
     }
-    struct A
+    interface IComponent
     {
+        public int Id { set; get; }
+    }
+    struct A : IComponent
+    {
+        public int Id { set; get; }
         public int lol;
     }
 }
