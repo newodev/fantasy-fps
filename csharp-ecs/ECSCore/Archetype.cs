@@ -40,6 +40,7 @@ namespace CSharp_ECS.ECSCore
             EntityCount++;
         }
 
+        // TODO: this should operate by entity ID. The index of an entity is not easily attainable
         public void DestroyEntity(int index)
         {
             for (int i = index * EntitySize; i < i * (EntitySize + 1); i++)

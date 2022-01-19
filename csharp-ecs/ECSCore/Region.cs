@@ -24,7 +24,9 @@ namespace CSharp_ECS.ECSCore
 
         public List<Archetype> Archetypes = new List<Archetype>();
 
-        public void SpawnEntity(List<object> components)
+
+        // TODO: Add DestroyEntity function
+        public void SpawnEntity(List<IComponent> components)
         {
             // Sort components by type name to match with an archetype
             components.Sort((x, y) => x.GetType().FullName.CompareTo(y.GetType().FullName));
