@@ -8,6 +8,11 @@ namespace CSharp_ECS.ECSCore
 {
     sealed class Region
     {
+        /// <summary>
+        /// Generate a query for a set of components
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
         public QueryResult Query(HashSet<Type> query)
         {
             // Query all archetypes that match this set
@@ -15,7 +20,12 @@ namespace CSharp_ECS.ECSCore
 
             return new QueryResult(subset);
         }
-        public QueryResult Query<T>()
+        /// <summary>
+        /// Generate a query for a single component
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public QueryResult Query<T>() where T : IComponent
         {
             HashSet<Type> q = new HashSet<Type> { typeof(T) };
 
