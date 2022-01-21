@@ -11,7 +11,6 @@ namespace CSharp_ECS.ECSCore
     /// </summary>
     static class Universe
     {
-        public static readonly int MAX_ENTITIES_PER_ARCHETYPE = 10000;
         private static List<Region> Regions;
     }
 }
