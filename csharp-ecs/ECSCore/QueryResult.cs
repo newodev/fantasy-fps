@@ -59,7 +59,7 @@ namespace CSharp_ECS.ECSCore
 
         // TODO: Ideally this should not require creation of a new struct.
         // Want to be able to edit fields directly through a reference
-        public void SetComponent<T>(int i, T val) where T : struct
+        public void SetComponent<T>(int i, T val) where T : IComponent
         {
             Archetype a = FindEntityArchetype(i);
 

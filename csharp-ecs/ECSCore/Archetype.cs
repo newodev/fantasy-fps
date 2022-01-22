@@ -17,13 +17,13 @@ namespace CSharp_ECS.ECSCore
 
         // An entity is described as an array of components.
         // Begins with Entity, followed by the components listed in Key in alphabetical order.
-        public List<object> Contents;
+        public List<IComponent> Contents;
         public int EntityCount = 0;
 
         public Archetype(List<Type> key)
         {
             Key = key;
-            Contents = new List<object>();
+            Contents = new List<IComponent>();
         }
         /// <summary>
         /// Creates a new entity in this archetype with the specified component objects
@@ -66,6 +66,31 @@ namespace CSharp_ECS.ECSCore
                 return true;
             else
                 return false;
+        }
+
+        public int GetEntityIndexByID(int id)
+        {
+            return GetEntityIndexByID(id, 0, Contents.Count - 1);
+        }
+
+        private int GetEntityIndexByID(int id, int start, int end)
+        {
+            // Binary search implementation
+            int pivot = (start + end) / 2;
+
+            // TODO: Iterate the pivot backwards until we hit the actual entity, then divide it by EntitySize
+            if (Contents[pivot].Id == id)
+            {
+                return pivot + 1;
+            }
+            else if (Contents[pivot].Id < id)
+            {
+                return GetEntityIndexByID(id, pivot + 1, end);
+            }
+            else
+            {
+                return GetEntityIndexByID(id, start, pivot - 1);
+            }    
         }
     }
     struct Entity : IComponent
