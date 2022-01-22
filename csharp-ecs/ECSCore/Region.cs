@@ -16,7 +16,7 @@ namespace CSharp_ECS.ECSCore
         public QueryResult Query(HashSet<Type> query)
         {
             // Query all archetypes that match this set
-            List<Archetype> subset = Archetypes.Where(x => query.IsSubsetOf(x.Key)).ToList();
+            List<ArchetypeCollection> subset = Archetypes.Where(x => query.IsSubsetOf(x.Archetype)).ToList();
 
             return new QueryResult(subset);
         }
@@ -32,7 +32,7 @@ namespace CSharp_ECS.ECSCore
             return Query(q);
         }
 
-        public List<Archetype> Archetypes = new List<Archetype>();
+        public List<ArchetypeCollection> Archetypes = new List<ArchetypeCollection>();
 
 
         // TODO: Add DestroyEntity function
@@ -47,11 +47,11 @@ namespace CSharp_ECS.ECSCore
                 key.Add(component.GetType());
             }
 
-            List<Archetype> a = Archetypes.Where(x => x.Key.SequenceEqual(key)).ToList();
+            List<ArchetypeCollection> a = Archetypes.Where(x => x.Archetype.SequenceEqual(key)).ToList();
             // If this entity doesn't match an archetype, create a new one to match it
             if (a.Count() == 0)
             {
-                Archetype newArchetype = new Archetype(key);
+                ArchetypeCollection newArchetype = new ArchetypeCollection(key);
                 Archetypes.Add(newArchetype);
                 newArchetype.SpawnEntity(components);
             }

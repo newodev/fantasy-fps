@@ -8,21 +8,21 @@ namespace CSharp_ECS.ECSCore
 {
     // Stores a collection of entities that exist within a region.
     // All entities stored in an archetype have components that exactly match the Key.
-    internal class Archetype
+    internal class ArchetypeCollection
     {
-        // The archetype key is the components that define the archetype, eg. Position, Rotation.
+        // The archetype is the components that define the collection, eg. Position + Rotation.
         // Note that every entity also has the entity component.
-        public List<Type> Key;
-        public int EntitySize { get => Key.Count + 1; }
+        public List<Type> Archetype;
+        public int EntitySize { get => Archetype.Count + 1; }
 
         // An entity is described as an array of components.
         // Begins with Entity, followed by the components listed in Key in alphabetical order.
         public List<IComponent> Contents;
         public int EntityCount = 0;
 
-        public Archetype(List<Type> key)
+        public ArchetypeCollection(List<Type> key)
         {
-            Key = key;
+            Archetype = key;
             Contents = new List<IComponent>();
         }
         /// <summary>
@@ -62,7 +62,7 @@ namespace CSharp_ECS.ECSCore
             if (query == null)
                 throw new ArgumentNullException("query");
 
-            if (query.IsProperSubsetOf(Key))
+            if (query.IsProperSubsetOf(Archetype))
                 return true;
             else
                 return false;
