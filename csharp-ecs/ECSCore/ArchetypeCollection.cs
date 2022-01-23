@@ -43,19 +43,22 @@ namespace CSharp_ECS.ECSCore
         // TODO: this should operate by entity ID. The index of an entity is not easily attainable
         public void DestroyEntity(int index)
         {
-            for (int i = index * EntitySize; i < i * (EntitySize + 1); i++)
+            for (int i = index * EntitySize; i < index * (EntitySize + 1); i++)
             {
                 Contents.RemoveAt(i);
             }
             EntityCount++;
         }
+        public void DestroyEntityByID(int id)
+        {
+            int index = GetEntityIndexByID(id);
+            DestroyEntity(index);
+        }
 
-        // TODO: Add a destroy function
         /// <summary>
         /// Check if this archetype matches a query
         /// </summary>
         /// <param name="query">Query to match</param>
-        /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         public bool Contains(HashSet<Type> query)
         {
@@ -67,7 +70,10 @@ namespace CSharp_ECS.ECSCore
             else
                 return false;
         }
-
+        /// <summary>
+        /// Finds an entity's index in this collection based on its ID. 
+        /// </summary>
+        /// <param name="id">The entity's ID</param>
         public int GetEntityIndexByID(int id)
         {
             return GetEntityIndexByID(id, 0, Contents.Count - 1);
@@ -87,10 +93,11 @@ namespace CSharp_ECS.ECSCore
             {
                 return GetEntityIndexByID(id, pivot + 1, end);
             }
-            else
+            else if (Contents[pivot].Id > id)
             {
                 return GetEntityIndexByID(id, start, pivot - 1);
-            }    
+            }
+            return -1;
         }
     }
     struct Entity : IComponent
