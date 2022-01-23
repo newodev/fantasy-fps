@@ -53,7 +53,7 @@ namespace CSharp_ECS.ECSCore
             // If this entity doesn't match an archetype, create a new one to match it
             if (a.Count() == 0)
             {
-                ArchetypeCollection newArchetype = new ArchetypeCollection(key, Universe.GetArchetypeKey(key));
+                ArchetypeCollection newArchetype = new ArchetypeCollection(key, IDRegistry.GetArchetypeKey(key));
                 Archetypes.Add(newArchetype);
                 newArchetype.SpawnEntity(components);
             }

@@ -10,10 +10,8 @@ s.SetRegion(r);
 
 Random rand = new Random();
 
-r.SpawnEntity(new A() { lol = rand.Next(15) });
-r.SpawnEntity(new A() { lol = rand.Next(15) });
-/*
-for (int i = 0; i < 10000; i++)
+
+for (int i = 0; i < 100000; i++)
 {
     r.SpawnEntity(new A() { lol = rand.Next(15) });
 }
@@ -33,4 +31,3 @@ while (loop)
     if (input == 's')
         loop = false;
 }
-*/

@@ -12,22 +12,5 @@ namespace CSharp_ECS.ECSCore
     static class Universe
     {
         private static List<Region> Regions;
-
-        private static Dictionary<List<Type>, byte> ArchetypeKeys = new Dictionary<List<Type>, byte>();
-
-        private static byte NextKey = 0;
-        public static byte GetArchetypeKey(List<Type> key)
-        {
-            KeyValuePair<List<Type>, byte> match = ArchetypeKeys.Where(x => x.Key.SequenceEqual(key)).FirstOrDefault();
-
-            if (match.Key != null)
-            {
-                return match.Value;
-            }
-
-            NextKey++;
-            ArchetypeKeys.Add(key, NextKey);
-            return NextKey;
-        }
     }
 }

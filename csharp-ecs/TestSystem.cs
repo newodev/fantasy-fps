@@ -14,12 +14,13 @@ namespace CSharp_ECS
             HashSet<Type> query = new HashSet<Type>();
             query.Add(typeof(A));
             QueryResult q = region.Query(query);
+            Random rand = new Random();
 
             Parallel.For(0, q.Count, (i) =>
             {
                 A a = q.GetComponent<A>(i);
 
-                a.lol *= 2;
+                a.lol += rand.Next(3) - 1;
 
                 q.SetComponent(i, a);
             });

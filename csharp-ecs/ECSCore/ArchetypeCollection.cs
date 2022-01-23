@@ -41,9 +41,7 @@ namespace CSharp_ECS.ECSCore
         /// <param name="components">Entity's Components</param>
         public void SpawnEntity(List<IComponent> components)
         {
-            // Bitwise-generated IDs containing archetype key and entity ID within the archetype
-            int archKey = Key << 24;
-            int id = archKey | EntityCount;
+            int id = IDRegistry.GetNewID(Key);
             Console.WriteLine(Convert.ToString(id, 2));
             Contents.Add(new Entity() { Id = id });
             for (int i = 0; i < components.Count; i++)
@@ -60,9 +58,9 @@ namespace CSharp_ECS.ECSCore
         {
             for (int i = index * EntitySize; i < index * (EntitySize + 1); i++)
             {
-                Contents.RemoveAt(i);
+                Contents.RemoveAt(index * EntitySize);
             }
-            EntityCount++;
+            EntityCount--;
         }
         public void DestroyEntityByID(int id)
         {
@@ -99,10 +97,15 @@ namespace CSharp_ECS.ECSCore
             // Binary search implementation
             int pivot = (start + end) / 2;
 
-            // TODO: Iterate the pivot backwards until we hit the actual entity, then divide it by EntitySize
             if (Contents[pivot].Id == id)
             {
-                return pivot + 1;
+                bool isEntity = Contents[pivot].GetType() == typeof(Entity);
+                while (!isEntity)
+                {
+                    pivot--;
+                    isEntity = Contents[pivot].GetType() == typeof(Entity);
+                }
+                return pivot / EntitySize;
             }
             else if (Contents[pivot].Id < id)
             {
