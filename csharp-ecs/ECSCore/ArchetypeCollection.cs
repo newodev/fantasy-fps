@@ -31,10 +31,11 @@ namespace CSharp_ECS.ECSCore
         /// <param name="components">Entity's Components</param>
         public void SpawnEntity(List<IComponent> components)
         {
-            Contents.Add(new Entity() { Id = EntityCount });
+            int id = Universe.NextID();
+            Contents.Add(new Entity() { Id = id });
             for (int i = 0; i < components.Count; i++)
             {
-                components[i].Id = EntityCount;
+                components[i].Id = id;
                 Contents.Add(components[i]);
             }
             EntityCount++;

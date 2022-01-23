@@ -11,6 +11,12 @@ namespace CSharp_ECS.ECSCore
     /// </summary>
     static class Universe
     {
+        private static int EntityID = 0;
+        public static int NextID()
+        {
+            EntityID++;
+            return EntityID;
+        }
         private static List<Region> Regions;
     }
 }
