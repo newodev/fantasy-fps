@@ -54,6 +54,7 @@ namespace CSharp_ECS.ECSCore
 
         // TODO: all calls to destroy or spawn entities should be buffered until the end of frame
         // TODO: components should be arranged as AAAAPPPPZZZZ. This also removes the needs for Entity components.
+        // TODO: fix... currently misses the correct components every time
         public void DestroyEntity(int index)
         {
             for (int i = index * EntitySize; i < index * (EntitySize + 1); i++)
@@ -99,6 +100,8 @@ namespace CSharp_ECS.ECSCore
 
             if (Contents[pivot].Id == id)
             {
+                // Iterate backwards until we reach the Entity component
+                // TODO: components should be arranged as AAAAPPPPZZZZ. This also removes the needs for Entity components.
                 bool isEntity = Contents[pivot].GetType() == typeof(Entity);
                 while (!isEntity)
                 {
