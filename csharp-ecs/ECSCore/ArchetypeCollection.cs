@@ -24,6 +24,10 @@ namespace CSharp_ECS.ECSCore
         public List<IComponent> Contents;
         public int EntityCount = 0;
 
+        // TODO finish buffer
+        private List<int> EntitiesToDestroy = new List<int>();
+        private List<IComponent[]> EntitiesToSpawn = new List<IComponent[]>();
+
         public ArchetypeCollection(List<Type> archetype, byte key)
         {
             Archetype = archetype;
