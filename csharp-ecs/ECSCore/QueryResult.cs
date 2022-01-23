@@ -48,6 +48,7 @@ namespace CSharp_ECS.ECSCore
         /// <typeparam name="T">Type of component to get</typeparam>
         /// <param name="i">Entity index (out of all archetypes that match the query)</param>
         /// <returns></returns>
+        // TODO: components should be arranged as AAAAPPPPZZZZ. This also removes the needs for Entity components.
         public T GetComponent<T>(int i) where T : struct
         {
             ArchetypeCollection a = FindEntityArchetype(i);
@@ -59,6 +60,8 @@ namespace CSharp_ECS.ECSCore
 
         // TODO: Ideally this should not require creation of a new struct.
         // Want to be able to edit fields directly through a reference
+        // TODO: components should be arranged as AAAAPPPPZZZZ. This also removes the needs for Entity components.
+
         public void SetComponent<T>(int i, T val) where T : IComponent
         {
             ArchetypeCollection a = FindEntityArchetype(i);
