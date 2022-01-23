@@ -10,6 +10,9 @@ namespace CSharp_ECS.ECSCore
     // All entities stored in an archetype have components that exactly match the Key.
     internal class ArchetypeCollection
     {
+        // TODO: components should be arranged as AAAAPPPPZZZZ. This also removes the needs for Entity components.
+
+
         // The archetype is the components that define the collection, eg. Position + Rotation.
         // Note that every entity also has the entity component.
         public List<Type> Archetype;
@@ -25,6 +28,9 @@ namespace CSharp_ECS.ECSCore
             Archetype = key;
             Contents = new List<IComponent>();
         }
+
+        // TODO: all calls to destroy or spawn entities should be buffered until the end of frame
+        // TODO: components should be arranged as AAAAPPPPZZZZ. This also removes the needs for Entity components.
         /// <summary>
         /// Creates a new entity in this archetype with the specified component objects
         /// </summary>
@@ -41,7 +47,8 @@ namespace CSharp_ECS.ECSCore
             EntityCount++;
         }
 
-        // TODO: this should operate by entity ID. The index of an entity is not easily attainable
+        // TODO: all calls to destroy or spawn entities should be buffered until the end of frame
+        // TODO: components should be arranged as AAAAPPPPZZZZ. This also removes the needs for Entity components.
         public void DestroyEntity(int index)
         {
             for (int i = index * EntitySize; i < index * (EntitySize + 1); i++)

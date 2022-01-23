@@ -11,6 +11,7 @@ namespace CSharp_ECS.ECSCore
     /// </summary>
     static class Universe
     {
+        // TODO: An entity's ID should include its archetype as the high bits.
         private static int EntityID = 0;
         public static int NextID()
         {

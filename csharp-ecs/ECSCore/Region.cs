@@ -34,8 +34,10 @@ namespace CSharp_ECS.ECSCore
 
         public List<ArchetypeCollection> Archetypes = new List<ArchetypeCollection>();
 
-
+        // TODO: An entity's ID should include its archetype as the high bits.
         // TODO: Add DestroyEntity function
+
+
         public void SpawnEntity(List<IComponent> components)
         {
             // Sort components by type name to match with an archetype
