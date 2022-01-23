@@ -53,7 +53,7 @@ namespace CSharp_ECS.ECSCore
             // If this entity doesn't match an archetype, create a new one to match it
             if (a.Count() == 0)
             {
-                ArchetypeCollection newArchetype = new ArchetypeCollection(key);
+                ArchetypeCollection newArchetype = new ArchetypeCollection(key, Universe.GetArchetypeKey(key));
                 Archetypes.Add(newArchetype);
                 newArchetype.SpawnEntity(components);
             }
@@ -64,9 +64,9 @@ namespace CSharp_ECS.ECSCore
             }
         }
 
-        public void SpawnEntity(object component)
+        public void SpawnEntity(IComponent component)
         {
-            SpawnEntity(new List<object> { component });
+            SpawnEntity(new List<IComponent> { component });
         }
     }
 }

@@ -11,7 +11,8 @@ namespace CSharp_ECS.ECSCore
     internal class ArchetypeCollection
     {
         // TODO: components should be arranged as AAAAPPPPZZZZ. This also removes the needs for Entity components.
-
+        // The key generated on a per-archetype basis
+        public readonly byte Key;
 
         // The archetype is the components that define the collection, eg. Position + Rotation.
         // Note that every entity also has the entity component.
@@ -23,21 +24,27 @@ namespace CSharp_ECS.ECSCore
         public List<IComponent> Contents;
         public int EntityCount = 0;
 
-        public ArchetypeCollection(List<Type> key)
+        public ArchetypeCollection(List<Type> archetype, byte key)
         {
-            Archetype = key;
+            Archetype = archetype;
             Contents = new List<IComponent>();
+            Key = key;
         }
 
         // TODO: all calls to destroy or spawn entities should be buffered until the end of frame
         // TODO: components should be arranged as AAAAPPPPZZZZ. This also removes the needs for Entity components.
+        // TODO: new keys will glitch out if count exceeeds 2^24. Add a cap or smth
+        // TODO: create a list of freed ID's to grab from once an entity is destroyed.
         /// <summary>
         /// Creates a new entity in this archetype with the specified component objects
         /// </summary>
         /// <param name="components">Entity's Components</param>
         public void SpawnEntity(List<IComponent> components)
         {
-            int id = Universe.NextID();
+            // Bitwise-generated IDs containing archetype key and entity ID within the archetype
+            int archKey = Key << 24;
+            int id = archKey | EntityCount;
+            Console.WriteLine(Convert.ToString(id, 2));
             Contents.Add(new Entity() { Id = id });
             for (int i = 0; i < components.Count; i++)
             {
