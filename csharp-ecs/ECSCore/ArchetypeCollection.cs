@@ -55,6 +55,7 @@ namespace CSharp_ECS.ECSCore
             }
         }
 
+        // Iterates through the destroy buffer and removes all marked entities from the collection
         private void DestroyBufferedEntities()
         {
             for (int i = 0; i < EntitiesToDestroy.Count; i++)
@@ -65,6 +66,7 @@ namespace CSharp_ECS.ECSCore
             EntitiesToDestroy.Clear();
         }
 
+        // Removes an entity from the collection
         private void DestroyBufferedEntity(int entityIndex)
         {
             int id = Contents[entityIndex].Id;
@@ -86,23 +88,19 @@ namespace CSharp_ECS.ECSCore
             Key = key;
         }
 
-        // TODO: all calls to destroy or spawn entities should be buffered until the end of frame
-        // TODO: new keys will glitch out if count exceeeds 2^24. Add a cap or smth
-        // TODO: create a list of freed ID's to grab from once an entity is destroyed.
-        // Adds an entity to the spawn buffer. Entities are truly spawned once all systems are spooled down.
+        // Adds an entity to the buffer to be instantiated at the end of frame
         public void SpawnEntity(List<IComponent> components)
         {
             // This is mini cringe. Ideally make it all run on arrays, as lists have too much memalloc
             EntitiesToSpawn.Add(components.ToArray());
         }
 
-        // TODO: all calls to destroy or spawn entities should be buffered until the end of frame
-        // TODO: fix... currently misses the correct components every time
-        // TODO: fix... isnt updated to new AABBCC mem layout
+        // Marks an entity to be destroyed at the end of frame
         public void DestroyEntity(int index)
         {
             EntitiesToDestroy.Add(index);
         }
+        // Marks an entity by ID to be destroyed at the end of frame
         public void DestroyEntityByID(int id)
         {
             int index = GetEntityIndexByID(id);
