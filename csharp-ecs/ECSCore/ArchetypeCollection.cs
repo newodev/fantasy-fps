@@ -10,7 +10,6 @@ namespace CSharp_ECS.ECSCore
     // All entities stored in an archetype have components that exactly match the Key.
     internal class ArchetypeCollection
     {
-        // TODO: components should be arranged as AAAAPPPPZZZZ. This also removes the needs for Entity components.
         // The key generated on a per-archetype basis
         public readonly byte Key;
 
@@ -20,13 +19,14 @@ namespace CSharp_ECS.ECSCore
         public int EntitySize { get => Archetype.Count; }
 
         // An entity is described as an array of components.
-        // Begins with Entity, followed by the components listed in Key in alphabetical order.
+        // Contents are layed out as AAAABBBBCCCC.
         public List<IComponent> Contents;
         public int EntityCount = 0;
 
         private List<IComponent[]> EntitiesToSpawn = new List<IComponent[]>();
         private List<int> EntitiesToDestroy = new List<int>();
 
+        // Iterates through the spawn buffer and adds them all to the collection
         private void SpawnBufferedEntities()
         {
             for (int i = 0; i < EntitiesToSpawn.Count; i++)
@@ -37,6 +37,7 @@ namespace CSharp_ECS.ECSCore
             EntitiesToSpawn.Clear();
         }
 
+        // Adds a single entity to the collection
         private void SpawnBufferedEntity(int entityIndex)
         {
             EntityCount++;
@@ -56,13 +57,9 @@ namespace CSharp_ECS.ECSCore
         }
 
         // TODO: all calls to destroy or spawn entities should be buffered until the end of frame
-        // TODO: components should be arranged as AAAAPPPPZZZZ. This also removes the needs for Entity components.
         // TODO: new keys will glitch out if count exceeeds 2^24. Add a cap or smth
         // TODO: create a list of freed ID's to grab from once an entity is destroyed.
-        /// <summary>
-        /// Creates a new entity in this archetype with the specified component objects
-        /// </summary>
-        /// <param name="components">Entity's Components</param>
+        // Adds an entity to the spawn buffer. Entities are truly spawned once all systems are spooled down.
         public void SpawnEntity(List<IComponent> components)
         {
             int id = IDRegistry.GetNewID(Key);
@@ -76,8 +73,8 @@ namespace CSharp_ECS.ECSCore
         }
 
         // TODO: all calls to destroy or spawn entities should be buffered until the end of frame
-        // TODO: components should be arranged as AAAAPPPPZZZZ. This also removes the needs for Entity components.
         // TODO: fix... currently misses the correct components every time
+        // TODO: fix... isnt updated to new AABBCC mem layout
         public void DestroyEntity(int index)
         {
             for (int i = index * EntitySize; i < index * (EntitySize + 1); i++)
@@ -113,7 +110,7 @@ namespace CSharp_ECS.ECSCore
         /// <param name="id">The entity's ID</param>
         public int GetEntityIndexByID(int id)
         {
-            return GetEntityIndexByID(id, 0, Contents.Count - 1);
+            return GetEntityIndexByID(id, 0, EntityCount - 1);
         }
 
         private int GetEntityIndexByID(int id, int start, int end)
@@ -123,15 +120,7 @@ namespace CSharp_ECS.ECSCore
 
             if (Contents[pivot].Id == id)
             {
-                // Iterate backwards until we reach the Entity component
-                // TODO: components should be arranged as AAAAPPPPZZZZ. This also removes the needs for Entity components.
-                bool isEntity = Contents[pivot].GetType() == typeof(Entity);
-                while (!isEntity)
-                {
-                    pivot--;
-                    isEntity = Contents[pivot].GetType() == typeof(Entity);
-                }
-                return pivot / EntitySize;
+                return pivot - 1;
             }
             else if (Contents[pivot].Id < id)
             {
@@ -144,10 +133,7 @@ namespace CSharp_ECS.ECSCore
             return -1;
         }
     }
-    struct Entity : IComponent
-    {
-        public int Id { set; get; }
-    }
+
     interface IComponent
     {
         public int Id { set; get; }
