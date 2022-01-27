@@ -17,12 +17,36 @@ namespace CSharp_ECS.ECSCore
         // The archetype is the components that define the collection, eg. Position + Rotation.
         // Note that every entity also has the entity component.
         public List<Type> Archetype;
-        public int EntitySize { get => Archetype.Count + 1; }
+        public int EntitySize { get => Archetype.Count; }
 
         // An entity is described as an array of components.
         // Begins with Entity, followed by the components listed in Key in alphabetical order.
         public List<IComponent> Contents;
         public int EntityCount = 0;
+
+        private List<IComponent[]> EntitiesToSpawn = new List<IComponent[]>();
+        private List<int> EntitiesToDestroy = new List<int>();
+
+        private void SpawnBufferedEntities()
+        {
+            for (int i = 0; i < EntitiesToSpawn.Count; i++)
+            {
+                SpawnBufferedEntity(i);
+            }
+
+            EntitiesToSpawn.Clear();
+        }
+
+        private void SpawnBufferedEntity(int entityIndex)
+        {
+            EntityCount++;
+            for (int i = 0; i < EntitiesToSpawn[entityIndex].Length; i++)
+            {
+                // Insert all components into the collection, starting at the back to simplify the algorithm
+                int insertTarget = (Contents.Count - i) * EntityCount;
+                Contents.Insert(insertTarget, EntitiesToSpawn[entityIndex][EntitySize - i]);
+            }
+        }
 
         public ArchetypeCollection(List<Type> archetype, byte key)
         {
@@ -43,13 +67,12 @@ namespace CSharp_ECS.ECSCore
         {
             int id = IDRegistry.GetNewID(Key);
             Console.WriteLine(Convert.ToString(id, 2));
-            Contents.Add(new Entity() { Id = id });
             for (int i = 0; i < components.Count; i++)
             {
                 components[i].Id = id;
-                Contents.Add(components[i]);
             }
-            EntityCount++;
+            // This is mini cringe. Ideally make it all run on arrays, as lists have too much memalloc
+            EntitiesToSpawn.Add(components.ToArray());
         }
 
         // TODO: all calls to destroy or spawn entities should be buffered until the end of frame
