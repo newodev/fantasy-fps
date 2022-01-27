@@ -19,6 +19,7 @@ for (int i = 0; i < 100000; i++)
 bool loop = true;
 while (loop)
 {
+    r.Archetypes[0].ResolveBuffers();
     s.Update();
 
     Console.Clear();

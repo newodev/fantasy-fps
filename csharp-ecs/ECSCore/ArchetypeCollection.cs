@@ -26,6 +26,12 @@ namespace CSharp_ECS.ECSCore
         private List<IComponent[]> EntitiesToSpawn = new List<IComponent[]>();
         private List<int> EntitiesToDestroy = new List<int>();
 
+        public void ResolveBuffers()
+        {
+            DestroyBufferedEntities();
+            SpawnBufferedEntities();
+        }
+
         // Iterates through the spawn buffer and adds them all to the collection
         private void SpawnBufferedEntities()
         {
@@ -49,6 +55,8 @@ namespace CSharp_ECS.ECSCore
                 IComponent component = EntitiesToSpawn[entityIndex][i];
                 component.Id = id;
 
+
+                // TODO: Fix, index exceepds list size
                 // Insert all components into the collection, starting at the back to simplify the algorithm
                 int insertTarget = (Contents.Count - i) * EntityCount;
                 Contents.Insert(insertTarget, component);

@@ -52,7 +52,11 @@ namespace CSharp_ECS.ECSCore
         {
             ArchetypeCollection a = FindEntityArchetype(i);
             int offset = a.Archetype.IndexOf(typeof(T)) + 1;
-            int index = offset + a.EntitySize * i;
+
+            if (offset == 0)
+                throw new ArgumentException("The type requested in function GetComponent<T>(i) was not in the query");
+
+            int index = offset * i + a.EntitySize;
 
             return (T)a.Contents[index];
         }
@@ -64,7 +68,10 @@ namespace CSharp_ECS.ECSCore
             ArchetypeCollection a = FindEntityArchetype(i);
 
             int offset = a.Archetype.IndexOf(typeof(T)) + 1;
-            int index = offset + a.EntitySize * i;
+            int index = offset * i + a.EntitySize;
+
+            if (offset == 0)
+                throw new ArgumentException("The type requested in function GetComponent<T>(i) was not in the query");
 
             a.Contents[index] = val;
         }

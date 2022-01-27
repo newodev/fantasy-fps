@@ -34,7 +34,6 @@ namespace CSharp_ECS.ECSCore
 
         public List<ArchetypeCollection> Archetypes = new List<ArchetypeCollection>();
 
-        // TODO: An entity's ID should include its archetype as the high bits.
         // TODO: Add DestroyEntity function
 
 
