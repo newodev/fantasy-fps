@@ -31,7 +31,8 @@ namespace CSharp_ECS.ECSCore
         private static Dictionary<byte, int> highestID = new Dictionary<byte, int>();
         // All the IDs that are now freed due to destroyed entities available in the archetype
         private static Dictionary<byte, List<int>> freedIDs = new Dictionary<byte, List<int>>();
-        // Generates a new id for an entity
+
+        // Generates a new id for an entity, or grabs the first freed ID
         public static int GetNewID(byte archKey)
         {
             int newID = 0;
@@ -53,9 +54,10 @@ namespace CSharp_ECS.ECSCore
             return newID;
         }
 
-        public static void FreeID(int id, int key)
+        // Frees an ID. Called when an entity is destroyed
+        public static void FreeID(int id, byte key)
         {
-            
+            freedIDs[key].Add(id);
         }
     }
 }

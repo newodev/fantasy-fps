@@ -40,12 +40,18 @@ namespace CSharp_ECS.ECSCore
         // Adds a single entity to the collection
         private void SpawnBufferedEntity(int entityIndex)
         {
+            int id = IDRegistry.GetNewID(Key);
+            Console.WriteLine(Convert.ToString(id, 2));
+
             EntityCount++;
             for (int i = 0; i < EntitiesToSpawn[entityIndex].Length; i++)
             {
+                IComponent component = EntitiesToSpawn[entityIndex][i];
+                component.Id = id;
+
                 // Insert all components into the collection, starting at the back to simplify the algorithm
                 int insertTarget = (Contents.Count - i) * EntityCount;
-                Contents.Insert(insertTarget, EntitiesToSpawn[entityIndex][EntitySize - i]);
+                Contents.Insert(insertTarget, component);
             }
         }
 
@@ -62,12 +68,6 @@ namespace CSharp_ECS.ECSCore
         // Adds an entity to the spawn buffer. Entities are truly spawned once all systems are spooled down.
         public void SpawnEntity(List<IComponent> components)
         {
-            int id = IDRegistry.GetNewID(Key);
-            Console.WriteLine(Convert.ToString(id, 2));
-            for (int i = 0; i < components.Count; i++)
-            {
-                components[i].Id = id;
-            }
             // This is mini cringe. Ideally make it all run on arrays, as lists have too much memalloc
             EntitiesToSpawn.Add(components.ToArray());
         }
@@ -77,6 +77,8 @@ namespace CSharp_ECS.ECSCore
         // TODO: fix... isnt updated to new AABBCC mem layout
         public void DestroyEntity(int index)
         {
+            // Move this to buffer
+            IDRegistry.FreeID(Contents[index].Id, Key);
             for (int i = index * EntitySize; i < index * (EntitySize + 1); i++)
             {
                 Contents.RemoveAt(index * EntitySize);
