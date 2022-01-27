@@ -55,6 +55,30 @@ namespace CSharp_ECS.ECSCore
             }
         }
 
+        private void DestroyBufferedEntities()
+        {
+            for (int i = 0; i < EntitiesToDestroy.Count; i++)
+            {
+                DestroyBufferedEntity(i);
+            }
+
+            EntitiesToDestroy.Clear();
+        }
+
+        private void DestroyBufferedEntity(int entityIndex)
+        {
+            int id = Contents[entityIndex].Id;
+            IDRegistry.FreeID(id, Key);
+
+            for (int i = 0; i < EntitySize; i++)
+            {
+                // Destroy all components that compose the entity, starting from the back
+                int destroyTarget = (EntitySize - i) * EntityCount + entityIndex;
+                EntitiesToDestroy.RemoveAt(destroyTarget);
+            }
+            EntityCount--;
+        }
+
         public ArchetypeCollection(List<Type> archetype, byte key)
         {
             Archetype = archetype;
@@ -77,13 +101,7 @@ namespace CSharp_ECS.ECSCore
         // TODO: fix... isnt updated to new AABBCC mem layout
         public void DestroyEntity(int index)
         {
-            // Move this to buffer
-            IDRegistry.FreeID(Contents[index].Id, Key);
-            for (int i = index * EntitySize; i < index * (EntitySize + 1); i++)
-            {
-                Contents.RemoveAt(index * EntitySize);
-            }
-            EntityCount--;
+            EntitiesToDestroy.Add(index);
         }
         public void DestroyEntityByID(int id)
         {
@@ -122,7 +140,7 @@ namespace CSharp_ECS.ECSCore
 
             if (Contents[pivot].Id == id)
             {
-                return pivot - 1;
+                return pivot;
             }
             else if (Contents[pivot].Id < id)
             {
