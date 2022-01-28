@@ -34,6 +34,14 @@ namespace CSharp_ECS.ECSCore
 
         public List<ArchetypeCollection> Archetypes = new List<ArchetypeCollection>();
 
+        public void ResolveBuffers()
+        {
+            for (int i = 0; i < Archetypes.Count; i++)
+            {
+                Archetypes[i].ResolveBuffers();
+            }
+        }
+
         // TODO: Add DestroyEntity function
 
 
