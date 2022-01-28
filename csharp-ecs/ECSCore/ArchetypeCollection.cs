@@ -136,6 +136,9 @@ namespace CSharp_ECS.ECSCore
         /// <param name="id">The entity's ID</param>
         public int GetEntityIndexByID(int id)
         {
+            // Binary search along the first component array in the collection
+            // eg. AAAAPPPPZZZZ
+            // Searches along the A's for a match
             return GetEntityIndexByID(id, 0, EntityCount - 1);
         }
 

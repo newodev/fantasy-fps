@@ -13,15 +13,21 @@ namespace CSharp_ECS.ECSCore
         private static byte NextKey = 0;
         public static byte GetArchetypeKey(List<Type> key)
         {
+            // Search for an existing key if the archetype already exists in the Universe
+            // (IDs are unique even across regions)
             KeyValuePair<List<Type>, byte> match = ArchetypeKeys.Where(x => x.Key.SequenceEqual(key)).FirstOrDefault();
-
             if (match.Key != null)
             {
                 return match.Value;
             }
 
+            // If there is no existing key, generate a new one and inilitialise
+            // The key of this archetype is one higher than the previous
             NextKey++;
+
+            // Register the key
             ArchetypeKeys.Add(key, NextKey);
+            // Initialise ID lists for the new Archetype
             freedIDs.Add(NextKey, new List<int>());
             highestID.Add(NextKey, 0);
             return NextKey;
@@ -45,6 +51,8 @@ namespace CSharp_ECS.ECSCore
             else
             {
                 // Bitwise-generated IDs containing archetype key and entity ID within the archetype
+                // A = key byte, E = local id byte
+                // AEEE
                 int shiftedKey = archKey << 24;
                 newID = shiftedKey | highestID[archKey];
 
