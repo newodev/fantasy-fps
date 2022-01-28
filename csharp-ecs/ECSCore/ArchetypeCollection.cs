@@ -163,14 +163,4 @@ namespace CSharp_ECS.ECSCore
             return -1;
         }
     }
-
-    interface IComponent
-    {
-        public int Id { set; get; }
-    }
-    struct A : IComponent
-    {
-        public int Id { set; get; }
-        public int lol;
-    }
 }
