@@ -23,6 +23,7 @@ namespace CSharp_ECS.ECSCore
         public List<IComponent> Contents;
         public int EntityCount = 0;
 
+        // Entity creation/destruction buffers. This is to ensure entity indexes remain the same throughout each frame
         private List<IComponent[]> EntitiesToSpawn = new List<IComponent[]>();
         private List<int> EntitiesToDestroy = new List<int>();
 

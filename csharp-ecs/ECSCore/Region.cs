@@ -47,6 +47,8 @@ namespace CSharp_ECS.ECSCore
 
         public void SpawnEntity(List<IComponent> components)
         {
+            // TODO: this is allocating multiple lists... and a complex expression.... Look to simplify
+
             // Sort components by type name to match with an archetype
             components.Sort((x, y) => x.GetType().FullName.CompareTo(y.GetType().FullName));
 
@@ -56,6 +58,7 @@ namespace CSharp_ECS.ECSCore
                 key.Add(component.GetType());
             }
 
+            // Find an archetype that matches this new entity
             List<ArchetypeCollection> a = Archetypes.Where(x => x.Archetype.SequenceEqual(key)).ToList();
             // If this entity doesn't match an archetype, create a new one to match it
             if (a.Count() == 0)
@@ -71,6 +74,7 @@ namespace CSharp_ECS.ECSCore
             }
         }
 
+        // Overload for convenience with a single component
         public void SpawnEntity(IComponent component)
         {
             SpawnEntity(new List<IComponent> { component });
