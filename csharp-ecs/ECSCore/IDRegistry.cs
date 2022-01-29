@@ -41,6 +41,14 @@ namespace CSharp_ECS.ECSCore
             return HighestKey;
         }
 
+        public static byte GetArchetypeKeyFromID(int entityID)
+        {
+            int shiftedID = entityID >> 24;
+            byte key = (byte)shiftedID;
+
+            return key;
+        }
+
         // Generates a new id for an entity, or grabs the first freed ID
         public static int GetNewID(byte archKey)
         {

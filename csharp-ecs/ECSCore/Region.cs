@@ -8,6 +8,19 @@ namespace CSharp_ECS.ECSCore
 {
     sealed class Region
     {
+        public List<ArchetypeCollection> Archetypes = new List<ArchetypeCollection>();
+
+        public ArchetypeCollection? FindArchetypeFromKey(byte key)
+        {
+            for (int i = 0; i < Archetypes.Count; i++)
+            {
+                if (Archetypes[i].Key == key)
+                    return Archetypes[i];
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Generate a query for a set of components
         /// </summary>
@@ -32,8 +45,7 @@ namespace CSharp_ECS.ECSCore
             return Query(q);
         }
 
-        public List<ArchetypeCollection> Archetypes = new List<ArchetypeCollection>();
-
+        // Resolves all the Spawn/Destroy buffers within each ArchetypeCollection
         public void ResolveBuffers()
         {
             for (int i = 0; i < Archetypes.Count; i++)
@@ -43,7 +55,19 @@ namespace CSharp_ECS.ECSCore
         }
 
         // TODO: Add DestroyEntity function
+        public void DestroyEntity(int entityID)
+        {
+            byte key = IDRegistry.GetArchetypeKeyFromID(entityID);
+            ArchetypeCollection? match = FindArchetypeFromKey(key);
 
+            if (match != null)
+            {
+                match.DestroyEntityByID(entityID);
+            }
+
+            // TODO: some quiet error system
+            // ECSError: Cannot destroy entity {entityID} as it does not exist in region {regionName}
+        }
 
         public void SpawnEntity(List<IComponent> components)
         {
