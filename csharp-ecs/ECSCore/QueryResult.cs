@@ -8,6 +8,8 @@ namespace CSharp_ECS.ECSCore
 {
     class QueryResult
     {
+        // TODO: Remake Querys to work by returning three generic collections, each referencing a single component type of the query.
+
         public int Count;
         List<ArchetypeCollection> matches;
 
@@ -68,6 +70,7 @@ namespace CSharp_ECS.ECSCore
             a.Contents[index] = val;
         }
 
+        // Finds the index of a component based on its type and the entity's index
         private int FindComponentIndex<T>(int i, ArchetypeCollection a) where T : IComponent
         {
             // Find the location of the component in the collection

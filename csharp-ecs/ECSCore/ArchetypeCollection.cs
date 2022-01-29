@@ -61,15 +61,19 @@ namespace CSharp_ECS.ECSCore
         // Adds a single entity to the collection
         private void SpawnBufferedEntity(int entityIndex)
         {
+            // Get an ID for this new entity
             int id = IDRegistry.GetNewID(Key);
-            Console.WriteLine(Convert.ToString(id, 2));
+            
+            // Console.WriteLine(Convert.ToString(id, 2));
 
             EntityCount++;
+
+            // Add each of the components to the correct location in the list
             for (int i = 0; i < EntitiesToSpawn[entityIndex].Length; i++)
             {
+                // Set the entity ID of each component
                 IComponent component = EntitiesToSpawn[entityIndex][i];
                 component.Id = id;
-
 
                 // TODO: Fix, index exceepds list size
                 // Insert all components into the collection, starting at the back to simplify the algorithm
@@ -78,16 +82,16 @@ namespace CSharp_ECS.ECSCore
             }
         }
 
-        // Marks an entity to be destroyed at the end of frame
-        public void DestroyEntity(int index)
-        {
-            EntitiesToDestroy.Add(index);
-        }
         // Marks an entity by ID to be destroyed at the end of frame
         public void DestroyEntityByID(int id)
         {
             int index = GetEntityIndexByID(id);
             DestroyEntity(index);
+        }
+        // Marks an entity to be destroyed at the end of frame
+        public void DestroyEntity(int index)
+        {
+            EntitiesToDestroy.Add(index);
         }
 
         // Iterates through the destroy buffer and removes all marked entities from the collection
