@@ -48,16 +48,10 @@ namespace CSharp_ECS.ECSCore
         /// <typeparam name="T">Type of component to get</typeparam>
         /// <param name="i">Entity index (out of all archetypes that match the query)</param>
         /// <returns></returns>
-        public T GetComponent<T>(int i) where T : struct
+        public T GetComponent<T>(int i) where T : IComponent
         {
             ArchetypeCollection a = FindEntityArchetype(i);
-
-            // Find the location of the component in the collection
-            int offset = a.Archetype.IndexOf(typeof(T)) + 1;
-            int index = offset * i + a.EntitySize;
-
-            if (offset == 0)
-                throw new ArgumentException("The type requested in function GetComponent<T>(i) was not in the query");
+            int index = FindComponentIndex<T>(i, a);
 
             // Copy the component
             return (T)a.Contents[index];
@@ -68,7 +62,14 @@ namespace CSharp_ECS.ECSCore
         public void SetComponent<T>(int i, T val) where T : IComponent
         {
             ArchetypeCollection a = FindEntityArchetype(i);
+            int index = FindComponentIndex<T>(i, a);
 
+            // Apply the value changes
+            a.Contents[index] = val;
+        }
+
+        private int FindComponentIndex<T>(int i, ArchetypeCollection a) where T : IComponent
+        {
             // Find the location of the component in the collection
             int offset = a.Archetype.IndexOf(typeof(T)) + 1;
             int index = offset * i + a.EntitySize;
@@ -76,8 +77,7 @@ namespace CSharp_ECS.ECSCore
             if (offset == 0)
                 throw new ArgumentException("The type requested in function GetComponent<T>(i) was not in the query");
 
-            // Apply the value changes
-            a.Contents[index] = val;
+            return index;
         }
     }
 }
