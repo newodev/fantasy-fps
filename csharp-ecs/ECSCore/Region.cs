@@ -16,7 +16,7 @@ namespace CSharp_ECS.ECSCore
         public QueryResult Query(HashSet<Type> query)
         {
             // Query all archetypes that match this set
-            List<ArchetypeCollection> subset = Archetypes.Where(x => query.IsSubsetOf(x.Archetype)).ToList();
+            List<ArchetypeCollection> subset = Archetypes.Where(x => x.Contains(query)).ToList();
 
             return new QueryResult(subset);
         }

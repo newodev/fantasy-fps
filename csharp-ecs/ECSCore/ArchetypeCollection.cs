@@ -27,10 +27,24 @@ namespace CSharp_ECS.ECSCore
         private List<IComponent[]> EntitiesToSpawn = new List<IComponent[]>();
         private List<int> EntitiesToDestroy = new List<int>();
 
+        public ArchetypeCollection(List<Type> archetype, byte key)
+        {
+            Archetype = archetype;
+            Contents = new List<IComponent>();
+            Key = key;
+        }
+
         public void ResolveBuffers()
         {
             DestroyBufferedEntities();
             SpawnBufferedEntities();
+        }
+
+        // Adds an entity to the buffer to be instantiated at the end of frame
+        public void SpawnEntity(List<IComponent> components)
+        {
+            // This is mini cringe. Ideally make it all run on arrays, as lists have too much memalloc
+            EntitiesToSpawn.Add(components.ToArray());
         }
 
         // Iterates through the spawn buffer and adds them all to the collection
@@ -64,6 +78,18 @@ namespace CSharp_ECS.ECSCore
             }
         }
 
+        // Marks an entity to be destroyed at the end of frame
+        public void DestroyEntity(int index)
+        {
+            EntitiesToDestroy.Add(index);
+        }
+        // Marks an entity by ID to be destroyed at the end of frame
+        public void DestroyEntityByID(int id)
+        {
+            int index = GetEntityIndexByID(id);
+            DestroyEntity(index);
+        }
+
         // Iterates through the destroy buffer and removes all marked entities from the collection
         private void DestroyBufferedEntities()
         {
@@ -88,32 +114,6 @@ namespace CSharp_ECS.ECSCore
                 EntitiesToDestroy.RemoveAt(destroyTarget);
             }
             EntityCount--;
-        }
-
-        public ArchetypeCollection(List<Type> archetype, byte key)
-        {
-            Archetype = archetype;
-            Contents = new List<IComponent>();
-            Key = key;
-        }
-
-        // Adds an entity to the buffer to be instantiated at the end of frame
-        public void SpawnEntity(List<IComponent> components)
-        {
-            // This is mini cringe. Ideally make it all run on arrays, as lists have too much memalloc
-            EntitiesToSpawn.Add(components.ToArray());
-        }
-
-        // Marks an entity to be destroyed at the end of frame
-        public void DestroyEntity(int index)
-        {
-            EntitiesToDestroy.Add(index);
-        }
-        // Marks an entity by ID to be destroyed at the end of frame
-        public void DestroyEntityByID(int id)
-        {
-            int index = GetEntityIndexByID(id);
-            DestroyEntity(index);
         }
 
         /// <summary>
