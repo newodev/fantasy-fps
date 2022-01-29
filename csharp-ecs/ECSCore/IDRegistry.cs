@@ -8,9 +8,17 @@ namespace CSharp_ECS.ECSCore
 {
     static class IDRegistry
     {
+        // Map of each Archetype's footprint to its Key
         private static Dictionary<List<Type>, byte> ArchetypeKeys = new Dictionary<List<Type>, byte>();
 
-        private static byte NextKey = 0;
+        // The key of the newest Archetype to be created. The next archetype will have this+1.
+        private static byte HighestKey = 0;
+
+        // Map of the highest ID currently available in each archetype. If this exceeds the maximum, it is rolled to -1 and only freedIDs are used
+        private static Dictionary<byte, int> highestID = new Dictionary<byte, int>();
+        // All the IDs that are now freed due to destroyed entities available in the archetype. This allows a new entity to take an old one's ID.
+        private static Dictionary<byte, List<int>> freedIDs = new Dictionary<byte, List<int>>();
+
         public static byte GetArchetypeKey(List<Type> key)
         {
             // Search for an existing key if the archetype already exists in the Universe
@@ -23,20 +31,15 @@ namespace CSharp_ECS.ECSCore
 
             // If there is no existing key, generate a new one and inilitialise
             // The key of this archetype is one higher than the previous
-            NextKey++;
+            HighestKey++;
 
             // Register the key
-            ArchetypeKeys.Add(key, NextKey);
+            ArchetypeKeys.Add(key, HighestKey);
             // Initialise ID lists for the new Archetype
-            freedIDs.Add(NextKey, new List<int>());
-            highestID.Add(NextKey, 0);
-            return NextKey;
+            freedIDs.Add(HighestKey, new List<int>());
+            highestID.Add(HighestKey, 0);
+            return HighestKey;
         }
-
-        // Map of the highest ID currently available in each archetype. If this exceeds the maximum, it is rolled to -1 and only freedIDs are used
-        private static Dictionary<byte, int> highestID = new Dictionary<byte, int>();
-        // All the IDs that are now freed due to destroyed entities available in the archetype
-        private static Dictionary<byte, List<int>> freedIDs = new Dictionary<byte, List<int>>();
 
         // Generates a new id for an entity, or grabs the first freed ID
         public static int GetNewID(byte archKey)
