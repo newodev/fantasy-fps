@@ -65,20 +65,21 @@ namespace CSharp_ECS.ECSCore
             int id = IDRegistry.GetNewID(Key);
             
             // Console.WriteLine(Convert.ToString(id, 2));
-            EntityCount++;
 
             // Add each of the components to the correct location in the list
-            for (int i = 0; i < EntitiesToSpawn[entityIndex].Length; i++)
+            for (int i = EntitySize; i > 0; i--)
             {
+                // Insert all components into the collection, starting at the back to simplify the algorithm
                 // Set the entity ID of each component
-                IComponent component = EntitiesToSpawn[entityIndex][i];
+                IComponent component = EntitiesToSpawn[entityIndex][i - 1];
                 component.Id = id;
 
                 // TODO: Fix, index exceepds list size
-                // Insert all components into the collection, starting at the back to simplify the algorithm
-                int insertTarget = (Contents.Count - i) * EntityCount;
+                int insertTarget = EntityCount * i;
                 Contents.Insert(insertTarget, component);
             }
+
+            EntityCount++;
         }
 
         // Marks an entity by ID to be destroyed at the end of frame
@@ -130,7 +131,7 @@ namespace CSharp_ECS.ECSCore
             if (query == null)
                 throw new ArgumentNullException("query");
 
-            if (query.IsProperSubsetOf(Archetype))
+            if (query.IsSubsetOf(Archetype))
                 return true;
             else
                 return false;

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace CSharp_ECS.ECSCore
 {
     // -------------- DIAGRAM ---------------
+    //
     //                universe
     //          _________|_________
     //          |                 |
@@ -17,7 +18,7 @@ namespace CSharp_ECS.ECSCore
     //      A (id=10011)
     //      B (id=10001)
     //      B (id=10011)
-
+    //
     // --------------------------------------
     // SPAWN ORDER:
     // - region1.Spawn(AB)

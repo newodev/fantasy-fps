@@ -10,10 +10,12 @@ s.SetRegion(r);
 
 Random rand = new Random();
 
-r.SpawnEntity(new A());
+r.SpawnEntity(new List<IComponent> { new A(), new B() });
+r.SpawnEntity(new List<IComponent> { new A(), new B() });
+r.SpawnEntity(new List<IComponent> { new A(), new B() });
+r.SpawnEntity(new List<IComponent> { new A(), new B() });
 r.ResolveBuffers();
 QueryResult q = r.Query(new HashSet<Type> { typeof(A) });
-q.GetComponent<B>(0);
 /*
 
 for (int i = 0; i < 100000; i++)
