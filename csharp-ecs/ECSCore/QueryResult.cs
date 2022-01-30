@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CSharp_ECS.ECSCore.Exceptions;
 
 namespace CSharp_ECS.ECSCore
 {
@@ -73,12 +74,13 @@ namespace CSharp_ECS.ECSCore
         // Finds the index of a component based on its type and the entity's index
         private int FindComponentIndex<T>(int i, ArchetypeCollection a) where T : IComponent
         {
+            Type componentType = typeof(T);
             // Find the location of the component in the collection
-            int offset = a.Archetype.IndexOf(typeof(T)) + 1;
+            int offset = a.Archetype.IndexOf(componentType) + 1;
             int index = offset * i + a.EntitySize;
 
             if (offset == 0)
-                throw new ArgumentException("The type requested in function GetComponent<T>(i) was not in the query");
+                throw new ECSArchetypeException(componentType, a.Key, $"FindComponentIndex<{componentType.Name}>({i})");
 
             return index;
         }

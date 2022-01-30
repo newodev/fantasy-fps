@@ -17,4 +17,10 @@ namespace CSharp_ECS.ECSCore
         public int Id { set; get; }
         public int lol;
     }
+
+    struct B : IComponent
+    {
+        public int Id { set; get; }
+        public int lol;
+    }
 }

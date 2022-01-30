@@ -6,3 +6,6 @@ obj
 Library
 Logs
 Logs/*
+.vs/CSharp-ECS/DesignTimeBuild/.dtbcache.v2
+.vs/CSharp-ECS/v17/.futdcache.v1
+.vs/CSharp-ECS/v17/.suo

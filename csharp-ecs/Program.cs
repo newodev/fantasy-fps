@@ -10,6 +10,11 @@ s.SetRegion(r);
 
 Random rand = new Random();
 
+r.SpawnEntity(new A());
+r.ResolveBuffers();
+QueryResult q = r.Query(new HashSet<Type> { typeof(A) });
+q.GetComponent<B>(0);
+/*
 
 for (int i = 0; i < 100000; i++)
 {
@@ -32,3 +37,5 @@ while (loop)
     if (input == 's')
         loop = false;
 }
+
+*/
