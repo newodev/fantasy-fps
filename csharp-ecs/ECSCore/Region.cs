@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CSharp_ECS.ECSCore.Exceptions;
 
 namespace CSharp_ECS.ECSCore
 {
@@ -65,11 +66,13 @@ namespace CSharp_ECS.ECSCore
             {
                 match.DestroyEntityByID(entityID);
             }
-
-            // TODO: some quiet error system
-            // ECSError: Cannot destroy entity {entityID} as it does not exist in region {regionName}
+            else
+            {
+                throw new ECSException($"Cannot find archetype with key {key} in function Region.DestroyEntity({entityID})");
+            }
         }
 
+        // 'Spawns' an entity by adding its components into the collection
         public void SpawnEntity(List<IComponent> components)
         {
             // TODO: this is allocating multiple lists... and a complex expression.... Look to simplify

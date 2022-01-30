@@ -6,6 +6,23 @@ using System.Threading.Tasks;
 
 namespace CSharp_ECS.ECSCore
 {
+    // -------------- DIAGRAM ---------------
+    //                universe
+    //          _________|_________
+    //          |                 |
+    //       region1           region2
+    //          |                 |
+    //      archetypeAB      archetypeB
+    //      A (id=10001)     B (id=10010)
+    //      A (id=10011)
+    //      B (id=10001)
+    //      B (id=10011)
+
+    // --------------------------------------
+    // SPAWN ORDER:
+    // - region1.Spawn(AB)
+    // - region2.Spawn(B)
+    // - region1.Spawn(AB)
     /// <summary>
     /// A Universe describes the entire existence of the game world. It then divides the universe spatially into Regions. Each server unit can work on at least one Region
     /// </summary>
