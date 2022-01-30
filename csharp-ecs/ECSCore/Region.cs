@@ -10,6 +10,7 @@ namespace CSharp_ECS.ECSCore
     {
         public List<ArchetypeCollection> Archetypes = new List<ArchetypeCollection>();
 
+        // Finds the archetype in this region that matches the key
         public ArchetypeCollection? FindArchetypeFromKey(byte key)
         {
             for (int i = 0; i < Archetypes.Count; i++)

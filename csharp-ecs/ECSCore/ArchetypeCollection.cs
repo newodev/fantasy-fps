@@ -65,7 +65,6 @@ namespace CSharp_ECS.ECSCore
             int id = IDRegistry.GetNewID(Key);
             
             // Console.WriteLine(Convert.ToString(id, 2));
-
             EntityCount++;
 
             // Add each of the components to the correct location in the list
@@ -108,6 +107,7 @@ namespace CSharp_ECS.ECSCore
         // Removes an entity from the collection
         private void DestroyBufferedEntity(int entityIndex)
         {
+            // Frees the ID of this entity in the registry
             int id = Contents[entityIndex].Id;
             IDRegistry.FreeID(id, Key);
 

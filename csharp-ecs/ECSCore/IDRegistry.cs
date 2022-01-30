@@ -41,6 +41,7 @@ namespace CSharp_ECS.ECSCore
             return HighestKey;
         }
 
+        // Gets the key byte out of an entity's ID, which can then be used to find the archetype the entity belongs to.
         public static byte GetArchetypeKeyFromID(int entityID)
         {
             int shiftedID = entityID >> 24;
