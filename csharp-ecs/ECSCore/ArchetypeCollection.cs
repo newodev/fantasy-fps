@@ -36,6 +36,7 @@ namespace CSharp_ECS.ECSCore
 
         public void ResolveBuffers()
         {
+            // Destroy entities first so that new entities can take their freed IDs
             DestroyBufferedEntities();
             SpawnBufferedEntities();
         }
@@ -121,11 +122,7 @@ namespace CSharp_ECS.ECSCore
             EntityCount--;
         }
 
-        /// <summary>
-        /// Check if this archetype matches a query
-        /// </summary>
-        /// <param name="query">Query to match</param>
-        /// <exception cref="ArgumentNullException"></exception>
+        // Returns true if the input query is a subset of this Archetype
         public bool Contains(HashSet<Type> query)
         {
             if (query == null)
