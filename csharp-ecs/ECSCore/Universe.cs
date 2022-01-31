@@ -28,5 +28,7 @@ namespace CSharp_ECS.ECSCore
     static class Universe
     {
         private static List<Region> Regions;
+
+        // TODO: implement universal update that runs at different rates per-region
     }
 }

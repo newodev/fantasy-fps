@@ -64,6 +64,7 @@ namespace CSharp_ECS.ECSCore
             a.Contents[index] = val;
         }
 
+        // TODO: Test for new system
         // Finds the index of a component based on its type and the entity's index
         private int FindComponentIndex<T>(int i, ArchetypeCollection a) where T : IComponent
         {
