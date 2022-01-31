@@ -24,9 +24,7 @@ namespace CSharp_ECS.ECSCore
             }
         }
 
-        /// <summary>
-        /// Finds the archetype of an entity that matches the query based on its index out of all matching archetypes
-        /// <summary>
+        // Finds the archetype of an entity that matches the query based on its index out of all matching archetypes
         public ArchetypeCollection FindEntityArchetype(int i)
         {
             if (matches.Count == 1)
@@ -45,12 +43,7 @@ namespace CSharp_ECS.ECSCore
             throw new IndexOutOfRangeException("Index i out of bounds in QueryResult Find(i)");
         }
 
-        /// <summary>
-        /// Gets the component of specified type of entity at index i
-        /// </summary>
-        /// <typeparam name="T">Type of component to get</typeparam>
-        /// <param name="i">Entity index (out of all archetypes that match the query)</param>
-        /// <returns></returns>
+        // Gets the component of type T at index i, where i ranges from 0 to Count (includes all matching Archetypes)
         public T GetComponent<T>(int i) where T : IComponent
         {
             ArchetypeCollection a = FindEntityArchetype(i);

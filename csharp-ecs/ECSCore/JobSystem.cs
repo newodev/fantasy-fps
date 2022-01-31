@@ -14,9 +14,7 @@ namespace CSharp_ECS.ECSCore
             region = r;
         }
 
-        /// <summary>
-        /// Called every game tick. Tick rate is dynamic.
-        /// </summary>
+        // Called every game tick
         public virtual void Update()
         {
 
