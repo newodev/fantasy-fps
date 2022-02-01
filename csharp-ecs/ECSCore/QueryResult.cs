@@ -79,4 +79,22 @@ namespace CSharp_ECS.ECSCore
             return index;
         }
     }
+
+    class ComponentCollection<T> where T : IComponent
+    {
+        public T this[int index]
+        {
+            get => GetComponent(index);
+        }
+
+        public T GetComponent(int i)
+        {
+            // TODO: implement
+        }
+
+        public void SetComponent(int i, T val)
+        {
+            // TODO: implement
+        }
+    }
 }
