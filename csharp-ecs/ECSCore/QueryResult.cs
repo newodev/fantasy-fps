@@ -7,10 +7,9 @@ using CSharp_ECS.ECSCore.Exceptions;
 
 namespace CSharp_ECS.ECSCore
 {
+    // DEPRECATED
     class QueryResult
     {
-        // TODO: Remake Querys to work by returning three generic collections, each referencing a single component type of the query.
-
         public int Count;
         List<ArchetypeCollection> matches;
 

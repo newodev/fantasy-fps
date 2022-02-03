@@ -23,6 +23,38 @@ namespace CSharp_ECS.ECSCore
             return null;
         }
 
+        public void Query<T>(Action<ComponentCollection<T>> operation) 
+            where T : IComponent
+        {
+
+        }
+
+        public void Query<T1, T2>(Action<ComponentCollection<T1>, ComponentCollection<T2>> operation) 
+            where T1: IComponent
+            where T2 : IComponent
+        {
+
+        }
+
+        public void Query<T1, T2, T3>(Action<ComponentCollection<T1>, ComponentCollection<T2>, ComponentCollection<T3>> operation)
+            where T1 : IComponent
+            where T2 : IComponent
+            where T3 : IComponent
+        {
+
+        }
+
+        public void Query<T1, T2, T3, T4>(Action<ComponentCollection<T1>, ComponentCollection<T2>, ComponentCollection<T3>, ComponentCollection<T4>> operation)
+            where T1 : IComponent
+            where T2 : IComponent
+            where T3 : IComponent
+            where T4 : IComponent
+        {
+
+        }
+
+        
+        // DEPRECATED
         // Generates a query for a set of components
         public QueryResult Query(HashSet<Type> query)
         {
