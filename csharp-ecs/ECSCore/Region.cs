@@ -26,14 +26,22 @@ namespace CSharp_ECS.ECSCore
         public void Query<T>(Action<ComponentCollection<T>> operation) 
             where T : IComponent
         {
+            List<ArchetypeCollection> matches = GetMatchingArchetypes(new HashSet<Type> { typeof(T) });
 
+            ComponentCollection<T> collection = new ComponentCollection<T>(matches);
+            operation(collection);
         }
 
         public void Query<T1, T2>(Action<ComponentCollection<T1>, ComponentCollection<T2>> operation) 
             where T1: IComponent
             where T2 : IComponent
         {
+            List<ArchetypeCollection> matches = GetMatchingArchetypes(new HashSet<Type> { typeof(T1), typeof(T2) });
 
+            ComponentCollection<T1> collection1 = new ComponentCollection<T1>(matches);
+            ComponentCollection<T2> collection2 = new ComponentCollection<T2>(matches);
+
+            operation(collection1, collection2);
         }
 
         public void Query<T1, T2, T3>(Action<ComponentCollection<T1>, ComponentCollection<T2>, ComponentCollection<T3>> operation)
@@ -41,7 +49,13 @@ namespace CSharp_ECS.ECSCore
             where T2 : IComponent
             where T3 : IComponent
         {
+            List<ArchetypeCollection> matches = GetMatchingArchetypes(new HashSet<Type> { typeof(T1), typeof(T2), typeof(T3) });
 
+            ComponentCollection<T1> collection1 = new ComponentCollection<T1>(matches);
+            ComponentCollection<T2> collection2 = new ComponentCollection<T2>(matches);
+            ComponentCollection<T3> collection3 = new ComponentCollection<T3>(matches);
+
+            operation(collection1, collection2, collection3);
         }
 
         public void Query<T1, T2, T3, T4>(Action<ComponentCollection<T1>, ComponentCollection<T2>, ComponentCollection<T3>, ComponentCollection<T4>> operation)
@@ -50,10 +64,23 @@ namespace CSharp_ECS.ECSCore
             where T3 : IComponent
             where T4 : IComponent
         {
+            List<ArchetypeCollection> matches = GetMatchingArchetypes(new HashSet<Type> { typeof(T1), typeof(T2), typeof(T3), typeof(T4) });
 
+            ComponentCollection<T1> collection1 = new ComponentCollection<T1>(matches);
+            ComponentCollection<T2> collection2 = new ComponentCollection<T2>(matches);
+            ComponentCollection<T3> collection3 = new ComponentCollection<T3>(matches);
+            ComponentCollection<T4> collection4 = new ComponentCollection<T4>(matches);
+
+            operation(collection1, collection2, collection3, collection4);
         }
 
-        
+        private List<ArchetypeCollection> GetMatchingArchetypes(HashSet<Type> query)
+        {
+            List<ArchetypeCollection> subset = Archetypes.Where(x => x.Contains(query)).ToList();
+
+            return subset;
+        }
+
         // DEPRECATED
         // Generates a query for a set of components
         public QueryResult Query(HashSet<Type> query)
