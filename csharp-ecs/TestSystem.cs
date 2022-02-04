@@ -13,7 +13,8 @@ namespace CSharp_ECS
         {
             HashSet<Type> query = new HashSet<Type>();
             query.Add(typeof(A));
-            QueryResult q = region.Query(query);
+            /*
+             * QueryResult q = region.Query(query);
             Random rand = new Random();
 
             Parallel.For(0, q.Count, (i) =>
@@ -24,6 +25,7 @@ namespace CSharp_ECS
 
                 q.SetComponent(i, a);
             });
+            */
         }
     }
 }

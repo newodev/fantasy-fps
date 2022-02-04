@@ -81,24 +81,6 @@ namespace CSharp_ECS.ECSCore
             return subset;
         }
 
-        // DEPRECATED
-        // Generates a query for a set of components
-        public QueryResult Query(HashSet<Type> query)
-        {
-            // Query all archetypes that match this set
-            List<ArchetypeCollection> subset = Archetypes.Where(x => x.Contains(query)).ToList();
-
-            return new QueryResult(subset);
-        }
-        
-        // Generates a query for a single component
-        public QueryResult Query<T>() where T : IComponent
-        {
-            HashSet<Type> q = new HashSet<Type> { typeof(T) };
-
-            return Query(q);
-        }
-
         // Resolves all the Spawn/Destroy buffers within each ArchetypeCollection
         public void ResolveBuffers()
         {

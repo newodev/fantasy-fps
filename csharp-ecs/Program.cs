@@ -15,7 +15,7 @@ r.SpawnEntity(new List<IComponent> { new A(), new B() });
 r.SpawnEntity(new List<IComponent> { new A(), new B() });
 r.SpawnEntity(new List<IComponent> { new A(), new B() });
 r.ResolveBuffers();
-QueryResult q = r.Query(new HashSet<Type> { typeof(A) });
+// QueryResult q = r.Query(new HashSet<Type> { typeof(A) });
 /*
 
 for (int i = 0; i < 100000; i++)
