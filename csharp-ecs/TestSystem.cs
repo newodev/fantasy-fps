@@ -9,23 +9,29 @@ namespace CSharp_ECS
 {
     class TestSystem : JobSystem
     {
+        int iteration = 0;
         public override void Update()
         {
-            HashSet<Type> query = new HashSet<Type>();
-            query.Add(typeof(A));
-            /*
-             * QueryResult q = region.Query(query);
             Random rand = new Random();
-
-            Parallel.For(0, q.Count, (i) =>
+            for (int i = 0; i < 10; i++)
             {
-                A a = q.GetComponent<A>(i);
+                Console.SetCursorPosition(0, 0);
+                Console.WriteLine($"Frame: {iteration}");
+                region.Query((ComponentCollection<A> a, ComponentCollection<B> b) =>
+                {
+                    Parallel.For(0, a.Count, (int i) =>
+                    {
+                        a[i] = new A() { lol = a[i].lol + rand.Next(-1, 2) };
+                        int val = (int)Math.Sqrt(iteration * iteration + a[i].lol);
+                        b[i] = new B() { lol = val };
 
-                a.lol += rand.Next(3) - 1;
-
-                q.SetComponent(i, a);
-            });
-            */
+                        if (i < 20)
+                            Console.WriteLine($"{a[i].Id}: {a[i].lol}, {b[i].lol}           ");
+                    });
+                });
+                iteration++;
+            }
+          
         }
     }
 }

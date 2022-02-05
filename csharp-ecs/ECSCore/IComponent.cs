@@ -8,19 +8,19 @@ namespace CSharp_ECS.ECSCore
 {
     interface IComponent
     {
-        public int Id { set; get; }
+        public int Id { get; set; }
     }
 
     // Test component implementation
     struct A : IComponent
     {
-        public int Id { set; get; }
+        public int Id { get; set; }
         public int lol;
     }
 
     struct B : IComponent
     {
-        public int Id { set; get; }
+        public int Id { get; set; }
         public int lol;
     }
 }

@@ -28,7 +28,7 @@ namespace CSharp_ECS.ECSCore
             foreach (ArchetypeCollection a in matches)
             {
                 Count += a.EntityCount;
-                componentOffsets.Add(a.Archetype.IndexOf(typeInstance) + 1);
+                componentOffsets.Add(a.Archetype.IndexOf(typeInstance));
             }
         }
 
@@ -54,6 +54,8 @@ namespace CSharp_ECS.ECSCore
             ArchetypeCollection a = matches[match];
             int index = FindComponentIndex(i, match);
 
+            // Maintain the current component's Id
+            val.Id = a.Contents[index].Id;
             // Apply the value changes
             a.Contents[index] = val;
         }
@@ -86,9 +88,9 @@ namespace CSharp_ECS.ECSCore
             ArchetypeCollection a = matches[match];
             // Find the location of the component in the collection
             int offset = componentOffsets[match];
-            int index = offset * i + a.EntitySize;
+            int index = offset * a.EntityCount + i;
 
-            if (offset == 0)
+            if (offset == -1)
                 throw new ECSArchetypeException(typeInstance, a.Key, $"FindComponentIndex({i}, {match})");
 
             return index;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CSharp_ECS.ECSCore.Exceptions;
+using System.Reflection;
 
 namespace CSharp_ECS.ECSCore
 {
@@ -21,6 +22,36 @@ namespace CSharp_ECS.ECSCore
             }
 
             return null;
+        }
+
+        public void Query(Delegate action)
+        {
+            ParameterInfo[] parameters = action.Method.GetParameters();
+            Type[] componentTypes = new Type[parameters.Length];
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                // TODO: add guards here for if the type requested is not a ComponentCollection
+                componentTypes[i] = parameters[i].ParameterType.GetGenericArguments()[0];
+            }
+
+            List<ArchetypeCollection> matches = GetMatchingArchetypes(componentTypes.ToHashSet());
+
+            // The array of ComponentCollections the delegate is called with
+            object[] args = new object[parameters.Length];
+            // Info of the ComponentCollection's constructor used to generate generics at runtime (with Reflection)
+            Type genericCollection = typeof(ComponentCollection<>);
+            Type[] constructorParameters = new Type[] { typeof(List<ArchetypeCollection>) };
+
+            // TODO: refactor this away... possibly into a static factory method in ComponentCollection?
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                object[] constructorArgs = new object[] { matches };
+                args[i] = genericCollection
+                    .MakeGenericType(parameters[i].ParameterType)
+                    .GetConstructor(constructorParameters)
+                    .Invoke(constructorArgs);
+            }
+            action.DynamicInvoke(args);
         }
 
         public void Query<T>(Action<ComponentCollection<T>> operation) 

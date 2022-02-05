@@ -10,12 +10,23 @@ s.SetRegion(r);
 
 Random rand = new Random();
 
-r.SpawnEntity(new List<IComponent> { new A(), new B() });
-r.SpawnEntity(new List<IComponent> { new A(), new B() });
-r.SpawnEntity(new List<IComponent> { new A(), new B() });
-r.SpawnEntity(new List<IComponent> { new A(), new B() });
+for (int i = 0; i < 100000; i++)
+{
+    r.SpawnEntity(new List<IComponent>() { new A(), new B()});
+}
 r.ResolveBuffers();
-// QueryResult q = r.Query(new HashSet<Type> { typeof(A) });
+
+bool loop = true;
+while (loop)
+{
+    r.Archetypes[0].ResolveBuffers();
+    s.Update();
+
+    char input = Console.ReadKey(true).KeyChar;
+    if (input == 's')
+        loop = false;
+}
+
 /*
 
 for (int i = 0; i < 100000; i++)
