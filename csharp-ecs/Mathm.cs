@@ -16,5 +16,12 @@ namespace CSharp_ECS
             new IntPoint(0, -1), new IntPoint(1, -1) 
         };
 
+        public static float Distance(Point a, Point b)
+        {
+            float dX = a.X - b.X;
+            float dY = a.Y - b.Y;
+            return (float)Math.Sqrt((dX * dX) + (dY * dY));
+        }
+
     }
 }

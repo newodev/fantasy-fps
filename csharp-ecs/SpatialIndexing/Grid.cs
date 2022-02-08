@@ -6,10 +6,21 @@ using System.Threading.Tasks;
 
 namespace CSharp_ECS.SpatialIndexing
 {
+    // TODO: Add limits from 0, 0 to cellsX, cellsY
     class Grid
-    { 
-        GridNode[,] nodes = new GridNode[30, 30];
-        int NodeWidth = 100;
+    {
+        int GridWidth;
+        int GridHeight;
+        int CellWidth;
+        GridNode[,] nodes;
+
+        public Grid(int gridWidth, int gridHeight, int cellWidth)
+        {
+            GridWidth = gridWidth;
+            GridHeight = gridHeight;
+            CellWidth = cellWidth;
+            nodes = new GridNode[gridWidth, gridHeight];
+        }
         public void Delete(int element, Point approximatePosition)
         {
             // Check to see if element is in the approximate node
@@ -42,7 +53,32 @@ namespace CSharp_ECS.SpatialIndexing
 
         public List<int> Query(Point center, float radius)
         {
-            throw new NotImplementedException();
+            List<int> result = new List<int>();
+            int bottom = (int)((center.Y - radius) / CellWidth);
+            int top = (int)((center.Y + radius) / CellWidth) + 1;
+            int left = (int)((center.X - radius) / CellWidth);
+            int right = (int)((center.X + radius) / CellWidth) + 1;
+
+            if (bottom < 0 || left < 0)
+                return null;
+            if (right >= GridWidth || top >= GridHeight)
+                return null;
+
+            for (int y = bottom; y < top; y++)
+            {
+                for (int x = left; x < right; x++)
+                {
+                    GridNode node = nodes[x, y];
+                    int[] ids = new int[node.entities.Count];
+                    for (int i = 0; i < ids.Length; i++)
+                    {
+                        ids[i] = node.entities[i].ID;
+                    }
+                    result.AddRange(ids);
+                }
+            }
+
+            return result;
         }
 
         public void Update(int element, Point p)
@@ -86,7 +122,7 @@ namespace CSharp_ECS.SpatialIndexing
         // Translates a point in world space to the node coordinate.
         public IntPoint FindNode(Point p)
         {
-            return new IntPoint((int)(p.X / NodeWidth), (int)(p.Y / NodeWidth));
+            return new IntPoint((int)Math.Floor(p.X / CellWidth), (int)Math.Floor(p.Y / CellWidth));
         }
     }
 
