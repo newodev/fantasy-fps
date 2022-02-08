@@ -20,6 +20,14 @@ namespace CSharp_ECS.SpatialIndexing
             GridHeight = gridHeight;
             CellWidth = cellWidth;
             nodes = new GridNode[gridWidth, gridHeight];
+
+            for (int x = 0; x < GridWidth; x++)
+            {
+                for (int y = 0; y < GridHeight; y++)
+                {
+                    nodes[x, y] = new GridNode();
+                }
+            }
         }
         public void Delete(int element, Point approximatePosition)
         {
