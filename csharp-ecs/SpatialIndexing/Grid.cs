@@ -10,7 +10,7 @@ namespace CSharp_ECS.SpatialIndexing
     { 
         GridNode[,] nodes = new GridNode[30, 30];
         int NodeWidth = 100;
-        public void Delete(int element)
+        public void Delete(int element, Point approximatePosition)
         {
             throw new NotImplementedException();
         }
@@ -18,8 +18,9 @@ namespace CSharp_ECS.SpatialIndexing
         public void Insert(int element, Point p)
         {
             // TODO: fix/finish
-            IntPoint node = FindNode(p);
-            nodes[node.X, node.Y].entities.Add(new EntityFootprint() { ID = element, Position = p });
+            IntPoint nodePoint = FindNode(p);
+            GridNode node = nodes[nodePoint.X, nodePoint.Y];
+            node.Add(element, p);
         }
 
         public List<int> Query(Point center, float radius)
@@ -43,10 +44,9 @@ namespace CSharp_ECS.SpatialIndexing
             if (adjacentNodePoint != new IntPoint(-1, -1))
             {
                 GridNode adjacentNode = nodes[adjacentNodePoint.X, adjacentNodePoint.Y];
-                // TODO: add a function to do this cleanly
-                node.entities.RemoveAt(node.Find(element));
-                // TODO: this as well
-                adjacentNode.entities.Add(new EntityFootprint() { ID = element, Position = p });
+                // Remove from old node, add to new
+                node.Remove(element);
+                adjacentNode.Add(element, p );
             }
         }
 
@@ -55,7 +55,8 @@ namespace CSharp_ECS.SpatialIndexing
             for (int i = 0; i < Mathm.Adjacents.Length; i++)
             {
                 IntPoint searchPoint = Mathm.Adjacents[i] + centerPoint;
-                if (nodes[searchPoint.X, searchPoint.Y].Find(entity) != -1)
+                GridNode searchNode = nodes[searchPoint.X, searchPoint.Y];
+                if (searchNode.Find(entity) != -1)
                 {
                     return searchPoint;
                 }
@@ -87,6 +88,17 @@ namespace CSharp_ECS.SpatialIndexing
             }
 
             return -1;
+        }
+
+        public void Remove(int entity)
+        {
+            entities.RemoveAt(Find(entity));
+        }
+
+        public void Add(int entity, Point p)
+        {
+            EntityFootprint footprint = new EntityFootprint() { ID = entity, Position = p };
+            entities.Add(footprint);
         }
 
         public bool UpdateEntity(int entity, Point p)
