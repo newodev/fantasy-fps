@@ -12,12 +12,29 @@ namespace CSharp_ECS.SpatialIndexing
         int NodeWidth = 100;
         public void Delete(int element, Point approximatePosition)
         {
-            throw new NotImplementedException();
+            // Check to see if element is in the approximate node
+            IntPoint nodePoint = FindNode(approximatePosition);
+            GridNode node = nodes[nodePoint.X, nodePoint.Y];
+            // If it is in that node, update it and return
+            if (node.Remove(element))
+            {
+                return;
+            }
+
+            // Entity is not in approximate node, search adjacents
+            IntPoint adjacentNodePoint = FindEntityNodeInAdjacents(element, nodePoint);
+            if (adjacentNodePoint != new IntPoint(-1, -1))
+            {
+                GridNode adjacentNode = nodes[adjacentNodePoint.X, adjacentNodePoint.Y];
+
+                node.Remove(element);
+
+                return;
+            }
         }
 
         public void Insert(int element, Point p)
         {
-            // TODO: fix/finish
             IntPoint nodePoint = FindNode(p);
             GridNode node = nodes[nodePoint.X, nodePoint.Y];
             node.Add(element, p);
@@ -47,6 +64,8 @@ namespace CSharp_ECS.SpatialIndexing
                 // Remove from old node, add to new
                 node.Remove(element);
                 adjacentNode.Add(element, p );
+
+                return;
             }
         }
 
@@ -90,9 +109,16 @@ namespace CSharp_ECS.SpatialIndexing
             return -1;
         }
 
-        public void Remove(int entity)
+        // Returns true and removes an entity if it is in this node.
+        public bool Remove(int entity)
         {
-            entities.RemoveAt(Find(entity));
+            int index = Find(entity);
+            if (index != -1)
+            {
+                entities.RemoveAt(index);
+                return true;
+            }
+            return false;
         }
 
         public void Add(int entity, Point p)
@@ -101,6 +127,7 @@ namespace CSharp_ECS.SpatialIndexing
             entities.Add(footprint);
         }
 
+        // Returns true and updates it with a new position if it is in this node.
         public bool UpdateEntity(int entity, Point p)
         {
             int index = Find(entity);
