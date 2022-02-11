@@ -16,9 +16,9 @@ namespace CSharp_ECS
             grid = new Grid(5, 5, 1);
 
             int id = 0;
-            for (float x = 0; x < 5; x++)
+            for (float y = 0; y < 5; y++)
             {
-                for (float y = 0; y < 5; y++)
+                for (float x = 0; x < 5; x++)
                 {
                     id++;
                     grid.Insert(id, new Point(x + 0.5f, y + 0.5f));
