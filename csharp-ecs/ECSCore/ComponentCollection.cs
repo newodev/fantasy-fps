@@ -81,7 +81,6 @@ namespace CSharp_ECS.ECSCore
             throw new IndexOutOfRangeException("Index i out of bounds in QueryResult Find(i)");
         }
 
-        // TODO: Test for new system
         // Finds the index of a component based on its type and the entity's index
         private int FindComponentIndex(int i, int match)
         {

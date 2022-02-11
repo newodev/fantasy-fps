@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace CSharp_ECS.SpatialIndexing
 {
     // TODO: Add limits from 0, 0 to cellsX, cellsY
+    // A spatial indexing format used to accelerate spatial queries
     class Grid
     {
         int GridWidth;

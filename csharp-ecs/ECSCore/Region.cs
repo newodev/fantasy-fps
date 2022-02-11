@@ -24,6 +24,8 @@ namespace CSharp_ECS.ECSCore
             return null;
         }
 
+        // Generates a query for the components specified in the delegate args, then calls the delegate
+        // Usage: region.Query((ComponentCollection<C1> c1, ComponentCollection<C2> c2) => { loop through collections });
         public void Query(Delegate action)
         {
             ParameterInfo[] parameters = action.Method.GetParameters();
@@ -70,7 +72,6 @@ namespace CSharp_ECS.ECSCore
             }
         }
 
-        // TODO: Add DestroyEntity function
         public void DestroyEntity(int entityID)
         {
             byte key = IDRegistry.GetArchetypeKeyFromID(entityID);
