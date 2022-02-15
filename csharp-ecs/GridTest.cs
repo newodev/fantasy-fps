@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CSharp_ECS.SpatialIndexing;
+using OpenTK.Mathematics;
 
 namespace CSharp_ECS
 {
@@ -21,11 +22,11 @@ namespace CSharp_ECS
                 for (float x = 0; x < 5; x++)
                 {
                     id++;
-                    grid.Insert(id, new Point(x + 0.5f, y + 0.5f));
+                    grid.Insert(id, new Vector2(x + 0.5f, y + 0.5f));
                 }
             }
 
-            List<int> query = grid.Query(new Point(1.5f, 1.5f), 1.1f);
+            List<int> query = grid.Query(new Vector2(1.5f, 1.5f), 1.1f);
             for (int i = 0; i < query.Count; i++)
             {
                 Console.WriteLine(query[i]);
