@@ -60,7 +60,7 @@ namespace CSharp_ECS.SpatialIndexing
             node.Add(element, p);
         }
 
-        public List<int> Query(Point center, float radius)
+        public List<int>? Query(Point center, float radius)
         {
             List<int> result = new List<int>();
             int bottom = (int)((center.Y - radius) / CellWidth);
