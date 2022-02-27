@@ -1,3 +1,7 @@
 26/02/22
 - Added undead concepts
 - Added aquatic beast concepts
+- Added sentient reptilian concepts
+- Added mimic concepts
+28/02/22
+- Reworked undead concepts
