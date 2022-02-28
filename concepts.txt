@@ -5,3 +5,5 @@
 - Added mimic concepts
 28/02/22
 - Reworked undead concepts
+- Expanded mimic concepts
+- Added saurian concepts
