@@ -5,3 +5,11 @@
 - Added mimic concepts
 28/02/22
 - Reworked undead concepts
+3/03/22
+- Added weapon concepts
+5/03/22
+- Added exploration concepts
+8/03/22
+- Added ecosim architecture design
+9/03/22
+- Added server architecture design
