@@ -15,3 +15,5 @@
 - Added ecosim architecture design
 9/03/22
 - Added server architecture design
+10/03/22
+- Reworked undead concepts to be more unique
