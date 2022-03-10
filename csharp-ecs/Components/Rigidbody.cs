@@ -11,6 +11,6 @@ namespace CSharp_ECS
     {
         public int parentID;
         public Vector3 offsetFromParent;
-        
+        public Vector3 velocity;
     }
 }
