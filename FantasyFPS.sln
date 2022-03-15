@@ -10,7 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mechanics", "Mechanics\Mechanics.csproj", "{EF7B3C2B-9B85-4DB0-B1B3-0E211B6AD8F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game", "Mechanics\Game.csproj", "{EF7B3C2B-9B85-4DB0-B1B3-0E211B6AD8F5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{48ADF077-A312-4742-96FA-A6FBF1D6437C} = {48ADF077-A312-4742-96FA-A6FBF1D6437C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
