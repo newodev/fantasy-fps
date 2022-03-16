@@ -10,7 +10,7 @@ namespace Game
     class Window : GameWindow
     {
 
-        public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
+        public Window() : base(ApplicationSettings.MakeGWS(), ApplicationSettings.MakeNWS())
         {
             
         }
