@@ -12,9 +12,17 @@ namespace CSharp_ECS.ECSCore
     {
         // Some list of connections to servers
 
-        private void NetRecieve()
+        /*
+         * This ECSWorld:
+         *  a. Contains culled regions of interest to the player
+         *  b. Runs predictive systems on them
+        */
+        private ECSWorld world = new ECSWorld();
+
+        public ECSClient()
         {
-            // Get everything that happened on the server, solve desync
+            // Initialise some server connections
+            // Initialise systems, ECSworld
         }
     }
 }

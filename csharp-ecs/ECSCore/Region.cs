@@ -25,7 +25,7 @@ namespace CSharp_ECS.ECSCore
         }
 
         // Generates a query for the components specified in the delegate args, then calls the delegate
-        // Usage: region.Query((ComponentCollection<C1> c1, ComponentCollection<C2> c2) => { loop through collections });
+        // Usage: region.Query((ComponentCollection<C1> c1s, ComponentCollection<C2> c2s) => { loop through collections });
         public void Query(Delegate action)
         {
             ParameterInfo[] parameters = action.Method.GetParameters();
@@ -40,7 +40,7 @@ namespace CSharp_ECS.ECSCore
 
             // The array of ComponentCollections the delegate is called with
             object[] args = new object[parameters.Length];
-            // Info of the ComponentCollection's constructor used to generate generics at runtime (with Reflection)
+            // Info of the ComponentCollection<>'s constructor used to generate generics at runtime
             Type genericCollection = typeof(ComponentCollection<>);
             Type[] constructorParameters = new Type[] { typeof(List<ArchetypeCollection>) };
 
@@ -48,8 +48,12 @@ namespace CSharp_ECS.ECSCore
             for (int i = 0; i < parameters.Length; i++)
             {
                 object[] constructorArgs = new object[] { matches };
-                args[i] = genericCollection
-                    .MakeGenericType(parameters[i].ParameterType)
+                // Convert the generic ComponentCollection<> type to a ComponentCollection<C>
+                Type collectionType = genericCollection
+                    .MakeGenericType(parameters[i].ParameterType.GenericTypeArguments[0]);
+
+                // Invoke the constructor of this ComponentCollection<C> to create our collection
+                args[i] = collectionType
                     .GetConstructor(constructorParameters)
                     .Invoke(constructorArgs);
             }

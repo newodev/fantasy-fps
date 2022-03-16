@@ -1,10 +1,10 @@
 ﻿using CSharp_ECS.ECSCore;
 using CSharp_ECS;
 
-GridTest grid = new GridTest();
+//GridTest grid = new GridTest();
 
 
-/*
+
 Region r = new Region();
 
 JobSystem s = new TestSystem();
@@ -28,7 +28,7 @@ while (loop)
     if (input == 's')
         loop = false;
 }
-*/
+
 
 /*
 
