@@ -25,38 +25,23 @@ namespace CSharp_ECS.ECSCore
         }
 
         // Generates a query for the components specified in the delegate args, then calls the delegate
-        // Usage: region.Query((ComponentCollection<C1> c1s, ComponentCollection<C2> c2s) => { loop through collections });
+        // Usage: region.Query((ComponentArray<C1> c1s, ComponentArray<C2> c2s) => { loop through collections });
         public void Query(Delegate action)
         {
             ParameterInfo[] parameters = action.Method.GetParameters();
             Type[] componentTypes = new Type[parameters.Length];
             for (int i = 0; i < parameters.Length; i++)
             {
-                // TODO: add guards here for if the type requested is not a ComponentCollection
+                // TODO: add guards here for if the type requested is not a ComponentArray
                 componentTypes[i] = parameters[i].ParameterType.GetGenericArguments()[0];
             }
 
             List<ArchetypeCollection> matches = GetMatchingArchetypes(componentTypes.ToHashSet());
 
+
             // The array of ComponentCollections the delegate is called with
-            object[] args = new object[parameters.Length];
-            // Info of the ComponentCollection<>'s constructor used to generate generics at runtime
-            Type genericCollection = typeof(ComponentCollection<>);
-            Type[] constructorParameters = new Type[] { typeof(List<ArchetypeCollection>) };
+            object[] args = ComponentArrayFactory.ConstructCollections(parameters, matches);
 
-            // TODO: refactor this away... possibly into a static factory method in ComponentCollection?
-            for (int i = 0; i < parameters.Length; i++)
-            {
-                object[] constructorArgs = new object[] { matches };
-                // Convert the generic ComponentCollection<> type to a ComponentCollection<C>
-                Type collectionType = genericCollection
-                    .MakeGenericType(parameters[i].ParameterType.GenericTypeArguments[0]);
-
-                // Invoke the constructor of this ComponentCollection<C> to create our collection
-                args[i] = collectionType
-                    .GetConstructor(constructorParameters)
-                    .Invoke(constructorArgs);
-            }
             action.DynamicInvoke(args);
         }
 

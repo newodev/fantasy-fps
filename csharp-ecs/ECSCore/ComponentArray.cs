@@ -4,22 +4,59 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CSharp_ECS.ECSCore.Exceptions;
+using System.Reflection;
 
 namespace CSharp_ECS.ECSCore
 {
-    class ComponentCollection<T> where T : IComponent
+    class ComponentArrayFactory
+    {
+        // Info of the ComponentArray<>'s constructor used to generate generics at runtime
+        public static readonly Type Generic = typeof(ComponentArray<>);
+        public static readonly Type[] ConstructorParams = new Type[] { typeof(List<ArchetypeCollection>) };
+
+        // Generate an array of ComponentCollections, based on the input component types
+        public static object[] ConstructCollections(ParameterInfo[] parameters, List<ArchetypeCollection> matches)
+        {
+            object[] collections = new object[parameters.Length];
+
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                collections[i] = ConstructCollection(parameters[i], matches);
+            }
+
+            return collections;
+        }
+
+        // Generate a ComponentArray of the type specified in parameter, using reflection
+        private static object ConstructCollection(ParameterInfo parameter, List<ArchetypeCollection> matches)
+        {
+            object[] constructorArgs = new object[] { matches };
+            // Convert the generic ComponentArray<> type to a ComponentArray<C>
+            Type collectionType = ComponentArrayFactory.Generic
+                .MakeGenericType(parameter.ParameterType.GenericTypeArguments[0]);
+
+            // Invoke the constructor of this ComponentArray<C> to create our collection
+            object collection = collectionType
+                .GetConstructor(ComponentArrayFactory.ConstructorParams)
+                .Invoke(constructorArgs);
+
+            return collection;
+        }
+    }
+
+    class ComponentArray<T> where T : IComponent
     {
         public int Count;
         private List<ArchetypeCollection> matches;
         // Represents the base 1 index of this collection's component type in each ArchetypeCollection's archetype
-        // eg. ComponentCollection<C>
+        // eg. ComponentArray<C>
         //     matches: ABC BCD CDE
         //     offsets: 3   2   1
         private List<int> componentOffsets;
         // An instance of T so that it doesn't have to be repeatedly instantiated to query
         private Type typeInstance;
 
-        public ComponentCollection(List<ArchetypeCollection> _matches)
+        public ComponentArray(List<ArchetypeCollection> _matches)
         {
             matches = _matches;
             Count = 0;

@@ -12,12 +12,15 @@ s.SetRegion(r);
 
 Random rand = new Random();
 
-for (int i = 0; i < 100000; i++)
+int entityCount = 100000;
+
+for (int i = 0; i < entityCount; i++)
 {
     r.SpawnEntity(new List<IComponent>() { new A(), new B()});
 }
 r.ResolveBuffers();
 
+Console.WriteLine($"Running on {entityCount} entities...");
 bool loop = true;
 while (loop)
 {
