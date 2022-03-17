@@ -14,6 +14,9 @@ using CSharp_ECS.ECSCore;
  *          - Regions of interest to player
  *          - Local prediction systems
  *  - Window
+ *  - Input
+ *  - Audio
+ *  - Renderer
  *  
  * Server Architecture:
  *  - ECSServer
@@ -32,13 +35,24 @@ namespace Game
 {
     class Game
     {
+        // The class that runs the ECS game world
         private ECSClient client;
+        // The window is the OpenTK structure, used for rendering, audio, and getting input
         private Window window;
+        // Wraps OpenTK input into a more usable system
+        private Input input;
 
         public Game()
         {
-            client = new ECSClient();
-            window = new Window();
+            client = new();
+            window = new();
+            input = new();
+
+        }
+
+        public void OnGameUpdate(double deltaTime)
+        {
+
         }
     }
 }
