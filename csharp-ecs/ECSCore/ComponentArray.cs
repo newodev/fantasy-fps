@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace CSharp_ECS.ECSCore;
 
-class ComponentArrayFactory
+internal static class ComponentArrayFactory
 {
     // Info of the ComponentArray<>'s constructor used to generate generics at runtime
     public static readonly Type Generic = typeof(ComponentArray<>);
@@ -32,12 +32,13 @@ class ComponentArrayFactory
     {
         object[] constructorArgs = new object[] { matches };
         // Convert the generic ComponentArray<> type to a ComponentArray<C>
-        Type collectionType = ComponentArrayFactory.Generic
+        Type collectionType = Generic
             .MakeGenericType(parameter.ParameterType.GenericTypeArguments[0]);
 
         // Invoke the constructor of this ComponentArray<C> to create our collection
-        object collection = collectionType
-            .GetConstructor(ComponentArrayFactory.ConstructorParams)
+        // Use the binding flags as the constructor is internal
+        var constructor = collectionType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, ConstructorParams);
+        object collection = constructor
             .Invoke(constructorArgs);
 
         return collection;
