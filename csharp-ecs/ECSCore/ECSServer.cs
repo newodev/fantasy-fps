@@ -6,9 +6,16 @@ using System.Threading.Tasks;
 
 namespace CSharp_ECS.ECSCore;
 
-public class ECSServer : ECSWorld
+public class ECSServer
 {
+    private ECSWorld World;
     // Some list of client connections
+
+
+    public ECSServer()
+    {
+        World = new ECSWorld();
+    }
 
     private void NetSend()
     {

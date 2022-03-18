@@ -12,13 +12,10 @@ namespace Game;
 
 class Window : GameWindow
 {
-    public event EventHandler<double> GameUpdate;
+    // Event that is called every game update. Used by the ECSClient to update the simulation.
+    public event EventHandler<double>? GameUpdate;
 
-
-    public Window() : base(ApplicationSettings.MakeGWS(), ApplicationSettings.MakeNWS())
-    {
-            
-    }
+    public Window() : base(ApplicationSettings.MakeGWS(), ApplicationSettings.MakeNWS()) { }
 
     protected override void OnUpdateFrame(FrameEventArgs args)
     {

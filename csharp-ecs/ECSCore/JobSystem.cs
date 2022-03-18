@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CSharp_ECS.ECSCore;
 
-abstract class JobSystem
+public abstract class JobSystem
 {
     protected Region region;
     public void SetRegion(Region r)

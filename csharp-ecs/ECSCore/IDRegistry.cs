@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CSharp_ECS.ECSCore;
 
-static class IDRegistry
+public static class IDRegistry
 {
     // Map of each Archetype's footprint to its Key
     private static Dictionary<List<Type>, byte> ArchetypeKeys = new Dictionary<List<Type>, byte>();

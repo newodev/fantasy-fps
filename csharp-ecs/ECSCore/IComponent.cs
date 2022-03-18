@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CSharp_ECS.ECSCore;
 
-interface IComponent
+public interface IComponent
 {
     public int Id { get; set; }
 }

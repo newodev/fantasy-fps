@@ -24,10 +24,11 @@ namespace CSharp_ECS.ECSCore;
 // - region1.Spawn(AB)
 // - region2.Spawn(B)
 // - region1.Spawn(AB)
-// A Universe describes the entire existence of the game world. It then divides the universe spatially into Regions. Each server unit can work on at least one Region
+
+
+// A Universe describes the entire existence of the game world. It then divides the universe spatially into Regions. Each server unit can work on at least one Region.
+// It acts as the database used by servers to communicate
 static class Universe
 {
     private static List<Region> Regions;
-
-    // TODO: implement universal update that runs at different rates per-region
 }

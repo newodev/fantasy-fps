@@ -44,7 +44,7 @@ class ComponentArrayFactory
     }
 }
 
-class ComponentArray<T> where T : IComponent
+public class ComponentArray<T> where T : IComponent
 {
     public int Count;
     private List<ArchetypeCollection> matches;
@@ -56,7 +56,7 @@ class ComponentArray<T> where T : IComponent
     // An instance of T so that it doesn't have to be repeatedly instantiated to query
     private Type typeInstance;
 
-    public ComponentArray(List<ArchetypeCollection> _matches)
+    internal ComponentArray(List<ArchetypeCollection> _matches)
     {
         matches = _matches;
         Count = 0;

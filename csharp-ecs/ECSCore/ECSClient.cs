@@ -8,7 +8,7 @@ namespace CSharp_ECS.ECSCore;
 
 // A single instance of this class exists on every player's client
 // It handles the networked changes to the ECSWorld and sends input to the server
-public class ECSClient : ECSWorld
+public class ECSClient
 {
     // Some list of connections to servers
 
@@ -17,11 +17,12 @@ public class ECSClient : ECSWorld
      *  a. Contains culled regions of interest to the player
      *  b. Runs predictive systems on them
     */
-    private ECSWorld world = new ECSWorld();
+    private ECSWorld world;
 
     public ECSClient()
     {
         // Initialise some server connections
         // Initialise systems, ECSworld
+        world = new ECSWorld();
     }
 }

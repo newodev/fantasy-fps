@@ -8,12 +8,12 @@ using System.Reflection;
 
 namespace CSharp_ECS.ECSCore;
 
-sealed class Region
+public class Region
 {
-    public List<ArchetypeCollection> Archetypes = new List<ArchetypeCollection>();
+    internal List<ArchetypeCollection> Archetypes = new List<ArchetypeCollection>();
 
     // Finds the archetype in this region that matches the key
-    public ArchetypeCollection? FindArchetypeFromKey(byte key)
+    internal ArchetypeCollection? FindArchetypeFromKey(byte key)
     {
         for (int i = 0; i < Archetypes.Count; i++)
         {
