@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
 using CSharp_ECS.ECSCore;
-
+namespace Game;
 /*
  * Game:
  *  - ECSClient
@@ -31,29 +31,26 @@ using CSharp_ECS.ECSCore;
  *      - Holds entire game state
  *      - used to mediate connections between servers that interact
 */
-namespace Game
+class Game
 {
-    class Game
+    // The class that runs the ECS game world
+    private ECSClient client;
+    // The window is the OpenTK structure, used for rendering, audio, and getting input
+    private Window window;
+    // Wraps OpenTK input into a more usable system
+    private Input input;
+
+    public Game()
     {
-        // The class that runs the ECS game world
-        private ECSClient client;
-        // The window is the OpenTK structure, used for rendering, audio, and getting input
-        private Window window;
-        // Wraps OpenTK input into a more usable system
-        private Input input;
+        client = new();
+        window = new();
+        input = new();
 
-        public Game()
-        {
-            client = new();
-            window = new();
-            input = new();
+        window.GameUpdate += OnGameUpdate;
+    }
 
-            window.GameUpdate += OnGameUpdate;
-        }
-
-        public void OnGameUpdate(object? s, double deltaTime)
-        {
-            input.Update(deltaTime, window.KeyboardState, window.MouseState);
-        }
+    public void OnGameUpdate(object? s, double deltaTime)
+    {
+        input.Update(deltaTime, window.KeyboardState, window.MouseState);
     }
 }

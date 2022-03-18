@@ -5,12 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Mathematics;
 
-namespace CSharp_ECS
+namespace CSharp_ECS;
+
+struct Rigidbody
 {
-    struct Rigidbody
-    {
-        public int parentID;
-        public Vector3 offsetFromParent;
-        public Vector3 velocity;
-    }
+    public int parentID;
+    public Vector3 offsetFromParent;
+    public Vector3 velocity;
 }

@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSharp_ECS.ECSCore.Exceptions
+namespace CSharp_ECS.ECSCore.Exceptions;
+
+internal class ECSArchetypeException : ECSException
 {
-    internal class ECSArchetypeException : ECSException
-    {
-        public ECSArchetypeException(Type t, byte key, string function) : base($"Archetype of key {key} does not contain component type {t.Name} (function {function} )") { }
-    }
+    public ECSArchetypeException(Type t, byte key, string function) : base($"Archetype of key {key} does not contain component type {t.Name} (function {function} )") { }
 }

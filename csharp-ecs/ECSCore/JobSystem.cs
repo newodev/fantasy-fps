@@ -4,20 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSharp_ECS.ECSCore
+namespace CSharp_ECS.ECSCore;
+
+abstract class JobSystem
 {
-    abstract class JobSystem
+    protected Region region;
+    public void SetRegion(Region r)
     {
-        protected Region region;
-        public void SetRegion(Region r)
-        {
-            region = r;
-        }
+        region = r;
+    }
 
-        // Called every game tick
-        public virtual void Update()
-        {
+    // Called every game tick
+    public virtual void Update()
+    {
 
-        }
     }
 }

@@ -5,3 +5,5 @@ dotnet_diagnostic.CS8602.severity = silent
 
 # CS8600: Converting null literal or possible null value to non-nullable type.
 dotnet_diagnostic.CS8600.severity = silent
+csharp_style_expression_bodied_methods=when_on_single_line:silent
+csharp_style_namespace_declarations=file_scoped:silent

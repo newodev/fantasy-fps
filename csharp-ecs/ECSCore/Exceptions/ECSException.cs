@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSharp_ECS.ECSCore.Exceptions
+namespace CSharp_ECS.ECSCore.Exceptions;
+
+internal class ECSException : Exception
 {
-    internal class ECSException : Exception
-    {
-        public ECSException(string error) : base("ECSException: " + error) { }
-    }
+    public ECSException(string error) : base("ECSException: " + error) { }
 }

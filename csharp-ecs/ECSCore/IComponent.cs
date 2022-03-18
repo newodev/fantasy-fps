@@ -4,23 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSharp_ECS.ECSCore
+namespace CSharp_ECS.ECSCore;
+
+interface IComponent
 {
-    interface IComponent
-    {
-        public int Id { get; set; }
-    }
+    public int Id { get; set; }
+}
 
-    // Test component implementation
-    struct A : IComponent
-    {
-        public int Id { get; set; }
-        public int lol;
-    }
+// Test component implementation
+struct A : IComponent
+{
+    public int Id { get; set; }
+    public int lol;
+}
 
-    struct B : IComponent
-    {
-        public int Id { get; set; }
-        public int lol;
-    }
+struct B : IComponent
+{
+    public int Id { get; set; }
+    public int lol;
 }

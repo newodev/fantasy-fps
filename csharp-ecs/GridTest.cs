@@ -6,31 +6,30 @@ using System.Threading.Tasks;
 using CSharp_ECS.SpatialIndexing;
 using OpenTK.Mathematics;
 
-namespace CSharp_ECS
+namespace CSharp_ECS;
+
+class GridTest
 {
-    class GridTest
+    Grid grid;
+
+    public GridTest()
     {
-        Grid grid;
+        grid = new Grid(5, 5, 1);
 
-        public GridTest()
+        int id = 0;
+        for (float y = 0; y < 5; y++)
         {
-            grid = new Grid(5, 5, 1);
-
-            int id = 0;
-            for (float y = 0; y < 5; y++)
+            for (float x = 0; x < 5; x++)
             {
-                for (float x = 0; x < 5; x++)
-                {
-                    id++;
-                    grid.Insert(id, new Vector2(x + 0.5f, y + 0.5f));
-                }
+                id++;
+                grid.Insert(id, new Vector2(x + 0.5f, y + 0.5f));
             }
+        }
 
-            List<int> query = grid.Query(new Vector2(1.5f, 1.5f), 1.1f);
-            for (int i = 0; i < query.Count; i++)
-            {
-                Console.WriteLine(query[i]);
-            }
+        List<int> query = grid.Query(new Vector2(1.5f, 1.5f), 1.1f);
+        for (int i = 0; i < query.Count; i++)
+        {
+            Console.WriteLine(query[i]);
         }
     }
 }

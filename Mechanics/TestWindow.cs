@@ -9,20 +9,16 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Game;
-
-class Window : GameWindow
+class TestWindow : GameWindow
 {
-    public event EventHandler<double> GameUpdate;
-
-
-    public Window() : base(ApplicationSettings.MakeGWS(), ApplicationSettings.MakeNWS())
+    public TestWindow() : base(ApplicationSettings.MakeGWS(), ApplicationSettings.MakeNWS())
     {
-            
+
     }
 
     protected override void OnUpdateFrame(FrameEventArgs args)
     {
-        // Invoke the game update event, which is used to run the game loop.
-        GameUpdate.Invoke(this, args.Time);
+            
     }
 }
+

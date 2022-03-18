@@ -5,12 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Mathematics;
 
-namespace CSharp_ECS
+namespace CSharp_ECS;
+
+struct Transform
 {
-    struct Transform
-    {
-        public Vector3 position;
-        public Quaternion rotation;
-        public Vector3 scale;
-    }
+    public Vector3 position;
+    public Quaternion rotation;
+    public Vector3 scale;
 }
