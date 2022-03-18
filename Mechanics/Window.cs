@@ -12,7 +12,7 @@ namespace Game
 {
     class Window : GameWindow
     {
-        public EventHandler<double> GameUpdate;
+        public event EventHandler<double> GameUpdate;
 
 
         public Window() : base(ApplicationSettings.MakeGWS(), ApplicationSettings.MakeNWS())

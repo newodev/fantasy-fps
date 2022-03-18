@@ -48,11 +48,12 @@ namespace Game
             window = new();
             input = new();
 
+            window.GameUpdate += OnGameUpdate;
         }
 
-        public void OnGameUpdate(double deltaTime)
+        public void OnGameUpdate(object? s, double deltaTime)
         {
-
+            input.Update(deltaTime, window.KeyboardState, window.MouseState);
         }
     }
 }
