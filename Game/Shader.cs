@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 
 namespace Game;
 
 public class Shader : IDisposable
 {
-    int Handle;
+    public int Handle;
 
     public Shader(string vertexPath, string fragmentPath)
     {
@@ -88,4 +89,33 @@ public class Shader : IDisposable
         Dispose(true);
         GC.SuppressFinalize(this);
     }
+
+    public void SetInt(string name, int value)
+    {
+        int location = GL.GetUniformLocation(Handle, name);
+
+        GL.Uniform1(location, value);
+    }
+
+    public void SetMatrix4(string name, Matrix4 mat)
+    {
+        int loc = GL.GetUniformLocation(Handle, name);
+
+        GL.UniformMatrix4(loc, true, ref mat);
+    }
+
+    /*
+    public void SetUniform(string name, params float[] values)
+    {
+        int location = GL.GetUniformLocation(Handle, name);
+
+        if (values.Count() > 4 || values.Count() == 0)
+            throw new ArgumentException($"Uniform must have between 1 and 4 values");
+        if (location == -1)
+            throw new ArgumentException($"Uniform of name {name} does not exist in this shader");
+
+        // TODO: Find alternative, or make work for diff values
+        GL.Uniform4(location, values[0], values[1], values[2], values[3]);
+    }
+    */
 }
