@@ -18,10 +18,47 @@ class TestWindow : GameWindow
     Shader shader;
 
     float[] vertices = {
-         0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // top right
-         0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
-        -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
     uint[] indices = {  // note that we start from 0!
@@ -37,6 +74,9 @@ class TestWindow : GameWindow
     Matrix4 model;
     Matrix4 view;
     Matrix4 projection;
+    TestCamera cam;
+    bool firstMove;
+    Vector2 lastPos;
     public TestWindow() : base(ApplicationSettings.MakeGWS(), ApplicationSettings.MakeNWS())
     {
 
@@ -49,6 +89,55 @@ class TestWindow : GameWindow
             Close();
         }
 
+        const float cameraSpeed = 1.5f;
+        const float sensitivity = 0.2f;
+
+        if (KeyboardState.IsKeyDown(Keys.W))
+        {
+            cam.Position += cam.Front * cameraSpeed * (float)e.Time; // Forward
+        }
+
+        if (KeyboardState.IsKeyDown(Keys.S))
+        {
+            cam.Position -= cam.Front * cameraSpeed * (float)e.Time; // Backwards
+        }
+        if (KeyboardState.IsKeyDown(Keys.A))
+        {
+            cam.Position -= cam.Right * cameraSpeed * (float)e.Time; // Left
+        }
+        if (KeyboardState.IsKeyDown(Keys.D))
+        {
+            cam.Position += cam.Right * cameraSpeed * (float)e.Time; // Right
+        }
+        if (KeyboardState.IsKeyDown(Keys.Space))
+        {
+            cam.Position += cam.Up * cameraSpeed * (float)e.Time; // Up
+        }
+        if (KeyboardState.IsKeyDown(Keys.LeftShift))
+        {
+            cam.Position -= cam.Up * cameraSpeed * (float)e.Time; // Down
+        }
+
+        // Get the mouse state
+        var mouse = MouseState;
+
+        if (firstMove) // This bool variable is initially set to true.
+        {
+            lastPos = new Vector2(mouse.X, mouse.Y);
+            firstMove = false;
+        }
+        else
+        {
+            // Calculate the offset of the mouse position
+            var deltaX = mouse.X - lastPos.X;
+            var deltaY = mouse.Y - lastPos.Y;
+            lastPos = new Vector2(mouse.X, mouse.Y);
+
+            // Apply the camera pitch and yaw (we clamp the pitch in the camera class)
+            cam.Yaw += deltaX * sensitivity;
+            cam.Pitch -= deltaY * sensitivity; // Reversed since y-coordinates range from bottom to top
+        }
+
         base.OnUpdateFrame(e);
     }
 
@@ -58,7 +147,7 @@ class TestWindow : GameWindow
         time += 20f * (float)args.Time;
         model = Matrix4.Identity * Matrix4.CreateRotationY((float)MathHelper.DegreesToRadians(time));
 
-        GL.Clear(ClearBufferMask.ColorBufferBit);
+        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         GL.BindVertexArray(VertexArrayObject);
 
         tex.Use(TextureUnit.Texture0);
@@ -67,10 +156,10 @@ class TestWindow : GameWindow
         shader.Use();
 
         shader.SetMatrix4("model", model);
-        shader.SetMatrix4("view", view);
-        shader.SetMatrix4("projection", projection);
+        shader.SetMatrix4("view", cam.GetViewMatrix());
+        shader.SetMatrix4("projection", cam.GetProjectionMatrix());
 
-        GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
+        GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
 
         SwapBuffers();
 
@@ -87,6 +176,8 @@ class TestWindow : GameWindow
     {
         base.OnLoad();
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+        GL.Enable(EnableCap.DepthTest);
 
         // bind Vertex Array Object
         VertexArrayObject = GL.GenVertexArray();
@@ -123,6 +214,9 @@ class TestWindow : GameWindow
         model = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(-55.0f));
         view = Matrix4.CreateTranslation(0.0f, 0.0f, -3.0f);
         projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), Size.X / Size.Y, 0.1f, 100.0f);
+
+        cam = new(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
+        CursorGrabbed = true;
     }
 
     protected override void OnUnload()
