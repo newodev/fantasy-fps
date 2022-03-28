@@ -17,12 +17,20 @@ class TestWindow : GameWindow
     Shader shader;
 
     float[] vertices = {
-        -0.5f, -0.5f, 0.0f, // Bottom-left vertex
-         0.5f, -0.5f, 0.0f, // Bottom-right vertex
-         0.0f,  0.5f, 0.0f  // Top vertex
+         0.5f,  0.5f, 0.0f,  // top right
+         0.5f, -0.5f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f,  // bottom left
+        -0.5f,  0.5f, 0.0f   // top left
     };
+
+    uint[] indices = {  // note that we start from 0!
+        0, 1, 3,   // first triangle
+        1, 2, 3    // second triangle
+    };
+
     int VertexBufferObject;
     int VertexArrayObject;
+    int ElementBufferObject;
 
     public TestWindow() : base(ApplicationSettings.MakeGWS(), ApplicationSettings.MakeNWS())
     {
@@ -41,23 +49,16 @@ class TestWindow : GameWindow
 
     protected override void OnRenderFrame(FrameEventArgs args)
     {
+        base.OnRenderFrame(args);
+
         GL.Clear(ClearBufferMask.ColorBufferBit);
 
-        GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-
-        VertexBufferObject = GL.GenBuffer();
-        GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
-        GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
-
-        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
-        GL.EnableVertexAttribArray(0);
-
         shader.Use();
+
         GL.BindVertexArray(VertexArrayObject);
         GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
 
-        Context.SwapBuffers();
-        base.OnRenderFrame(args);
+        SwapBuffers();
     }
 
     protected override void OnResize(ResizeEventArgs e)
@@ -68,24 +69,39 @@ class TestWindow : GameWindow
 
     protected override void OnLoad()
     {
-        shader = new Shader("shader.vert", "shader.frag");
+        base.OnLoad();
+        GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-        // 1. bind Vertex Array Object
-        GL.BindVertexArray(VertexArrayObject);
-        // 2. copy our vertices array in a buffer for OpenGL to use
+        // copy our vertices array in a buffer for OpenGL to use
+        VertexBufferObject = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
         GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
-        // 3. then set our vertex attributes pointers
+
+        // bind Vertex Array Object
+        VertexArrayObject = GL.GenVertexArray();
+        GL.BindVertexArray(VertexArrayObject);
+
+        // then set our vertex attributes pointers
         GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
         GL.EnableVertexAttribArray(0);
 
-        base.OnLoad();
+
+        shader = new Shader("shader.vert", "shader.frag");
+        shader.Use();
+
     }
 
     protected override void OnUnload()
     {
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        GL.BindVertexArray(0);
+        GL.UseProgram(0);
+
+        // Delete all the resources.
         GL.DeleteBuffer(VertexBufferObject);
+        GL.DeleteVertexArray(VertexArrayObject);
+
+        base.OnUnload();
 
         shader.Dispose();
         base.OnUnload();

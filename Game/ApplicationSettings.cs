@@ -22,7 +22,7 @@ static class ApplicationSettings
     private static bool StartVisible = true;
     private static string WindowName = "ECSENGINE";
     private static WindowBorder ResizeMode = WindowBorder.Fixed;
-    private static WindowState StartMode = WindowState.Fullscreen;
+    private static WindowState StartMode = WindowState.Maximized;
 
     public static GameWindowSettings MakeGWS()
     {
