@@ -49,20 +49,22 @@ public class ComponentArray<T> where T : IComponent
 {
     public int Count;
     private List<ArchetypeCollection> matches;
+
     // Represents the base 1 index of this collection's component type in each ArchetypeCollection's archetype
     // eg. ComponentArray<C>
     //     matches: ABC BCD CDE
     //     offsets: 3   2   1
     private List<int> componentOffsets;
+
     // An instance of T so that it doesn't have to be repeatedly instantiated to query
-    private Type typeInstance;
+    private Type typeInstance = typeof(T);
 
     internal ComponentArray(List<ArchetypeCollection> _matches)
     {
         matches = _matches;
+
         Count = 0;
         componentOffsets = new List<int>();
-        typeInstance = typeof(T);
         foreach (ArchetypeCollection a in matches)
         {
             Count += a.EntityCount;
@@ -99,9 +101,10 @@ public class ComponentArray<T> where T : IComponent
     }
 
 
-    // Finds the index in matches of the archetype of the entity at i in this collection
+    // Finds the index in matches of the ArchetypeCollection of the entity at i in this array
     public int FindEntityArchetype(int entityIndex)
     {
+        // TODO: This is a point that could use a lot of optimisation. Could possibly cache ranges and just go straight to the correct Collection
         if (matches.Count == 1)
             return 0;
         for (int i = 0; i < matches.Count; i++)
@@ -119,11 +122,11 @@ public class ComponentArray<T> where T : IComponent
         throw new IndexOutOfRangeException("Index i out of bounds in QueryResult Find(i)");
     }
 
-    // Finds the index of a component based on its type and the entity's index
+    // Finds the index of a component based on 
     private int FindComponentIndex(int i, int match)
     {
         ArchetypeCollection a = matches[match];
-        // Find the location of the component in the collection
+        // Find the location of the component in the ArchetypeCollection denoted by match
         int offset = componentOffsets[match];
         int index = offset * a.EntityCount + i;
 

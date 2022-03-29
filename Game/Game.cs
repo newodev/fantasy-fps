@@ -34,26 +34,31 @@ namespace Game;
 class Game
 {
     // The class that runs the ECS game world
-    private ECSClient client;
+    private ECSClient client = new();
     // The window is the OpenTK object used for rendering, and getting input
-    private Window window;
+    private Window window = new();
     // The renderer draws to the OpenTK window
-    private Renderer renderer;
+    private Renderer renderer = new();
     // Wraps OpenTK input into a more usable system
-    private Input input;
+    private Input input = new();
 
     public Game()
     {
-        client = new();
-        window = new();
-        input = new();
-        renderer = new();
-
         window.GameUpdate += OnGameUpdate;
+        window.FrameUpdate += OnFrameUpdate;
     }
 
     public void OnGameUpdate(object? s, double deltaTime)
     {
         input.Update(deltaTime, window.KeyboardState, window.MouseState);
+
+        // Update all gameplay ECS systems
+    }
+
+    public void OnFrameUpdate(object? s, double deltaTime)
+    {
+        input.Update(deltaTime, window.KeyboardState, window.MouseState);
+
+        // Update ECS RenderSystem.
     }
 }
