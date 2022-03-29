@@ -96,6 +96,12 @@ public class Shader : IDisposable
 
         GL.Uniform1(location, value);
     }
+    public void SetFloat(string name, float value)
+    {
+        int location = GL.GetUniformLocation(Handle, name);
+
+        GL.Uniform1(location, value);
+    }
 
     public void SetMatrix4(string name, Matrix4 mat)
     {

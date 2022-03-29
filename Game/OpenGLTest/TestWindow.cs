@@ -72,8 +72,6 @@ class TestWindow : GameWindow
     Texture tex;
     Texture tex2;
     Matrix4 model;
-    Matrix4 view;
-    Matrix4 projection;
     TestCamera cam;
     bool firstMove;
     Vector2 lastPos;
@@ -192,7 +190,7 @@ class TestWindow : GameWindow
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
         GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
 
-        shader = new Shader("shader.vert", "shader.frag");
+        shader = new Shader("OpenGLTest/shader.vert", "OpenGLTest/shader.frag");
         shader.Use();
 
         var vertexLocation = GL.GetAttribLocation(shader.Handle, "aPosition");
@@ -203,17 +201,15 @@ class TestWindow : GameWindow
         GL.EnableVertexAttribArray(texCoordLocation);
         GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
-        tex = new("pepe.jpg");
+        tex = new("OpenGLTest/pepe.jpg");
         tex.Use();
-        tex2 = new("peeposad.jpg");
+        tex2 = new("OpenGLTest/peeposad.jpg");
         tex.Use(TextureUnit.Texture1);
        
         shader.SetInt("texture1", 0);
         shader.SetInt("texture2", 1);
 
         model = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(-55.0f));
-        view = Matrix4.CreateTranslation(0.0f, 0.0f, -3.0f);
-        projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), Size.X / Size.Y, 0.1f, 100.0f);
 
         cam = new(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
         CursorGrabbed = true;

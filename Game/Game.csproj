@@ -17,16 +17,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="peeposad.jpg">
+    <None Update="OpenGLTest\peeposad.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="pepe.jpg">
+    <None Update="OpenGLTest\pepe.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="shader.frag">
+    <None Update="OpenGLTest\shader.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="shader.vert">
+    <None Update="OpenGLTest\shader.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

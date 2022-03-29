@@ -35,8 +35,10 @@ class Game
 {
     // The class that runs the ECS game world
     private ECSClient client;
-    // The window is the OpenTK structure, used for rendering, audio, and getting input
+    // The window is the OpenTK object used for rendering, and getting input
     private Window window;
+    // The renderer draws to the OpenTK window
+    private Renderer renderer;
     // Wraps OpenTK input into a more usable system
     private Input input;
 
@@ -45,6 +47,7 @@ class Game
         client = new();
         window = new();
         input = new();
+        renderer = new();
 
         window.GameUpdate += OnGameUpdate;
     }
