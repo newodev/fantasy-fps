@@ -7,10 +7,7 @@ using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 
-// Used to load the window icon
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
+using Game.Resources;
 
 namespace Game;
 
@@ -54,30 +51,10 @@ static class ApplicationSettings
         return nws;
     }
 
-    // Ideally have this handled and OpenGL textures in a resource loader
     private static WindowIcon MakeWindowIcon(string iconPath)
     {
-        var image = SixLabors.ImageSharp.Image.Load<Rgba32>(iconPath);
-
-        // Convert to array of color bytes
-        var pixels = new List<byte>(4 * image.Width * image.Height);
-
-        image.ProcessPixelRows(pixelAccessor =>
-        {
-            for (int y = 0; y < image.Height; y++)
-            {
-                Span<Rgba32> row = pixelAccessor.GetRowSpan(y);
-
-                for (int x = 0; x < image.Width; x++)
-                {
-                    pixels.Add(row[x].R);
-                    pixels.Add(row[x].G);
-                    pixels.Add(row[x].B);
-                    pixels.Add(row[x].A);
-                }
-            }
-        });
-        OpenTK.Windowing.Common.Input.Image img = new(image.Width, image.Height, pixels.ToArray());
+        Bitmap resource = Resource.LoadBitmap(iconPath);
+        Image img = new(resource.Width, resource.Height, resource.Data);
         return new WindowIcon(img);
     }
 }
