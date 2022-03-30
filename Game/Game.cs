@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
 using CSharp_ECS.ECSCore;
+
+using Game.Rendering;
+
 namespace Game;
 /*
  * Game:
@@ -57,7 +60,7 @@ class Game
 
     public void OnFrameUpdate(object? s, double deltaTime)
     {
-        input.Update(deltaTime, window.KeyboardState, window.MouseState);
+        renderer.Update();
 
         // Update ECS RenderSystem.
     }
