@@ -195,7 +195,7 @@ class TestWindow : GameWindow
         tex = new("OpenGLTest/pepe.jpg");
         tex.Use();
         tex2 = new("OpenGLTest/peeposad.jpg");
-        tex.Use(TextureUnit.Texture1);
+        tex2.Use(TextureUnit.Texture1);
        
         shader.SetInt("texture1", 0);
         shader.SetInt("texture2", 1);

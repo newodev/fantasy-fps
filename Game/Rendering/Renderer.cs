@@ -74,6 +74,8 @@ class Renderer
 
     public void Init()
     {
+        GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
         renderables.Add(999, new Renderable(new Shader("OpenGLTest/shader.vert", "OpenGLTest/shader.frag"), Resource.LoadMaterial(new Texture("Resources/pepe.jpg")), Resource.GenCube()));
     }
 }

@@ -50,6 +50,6 @@ static class Mathm
 
     public static Matrix4 GetProjectionMatrix(Camera cam)
     {
-        return Matrix4.CreatePerspectiveFieldOfView(cam.FieldOfView, cam.AspectRatio, cam.NearPlane, cam.FarPlane);
+        return Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(cam.FieldOfView), cam.AspectRatio, cam.NearPlane, cam.FarPlane);
     }
 }

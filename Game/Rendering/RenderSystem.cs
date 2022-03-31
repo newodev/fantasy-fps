@@ -19,17 +19,22 @@ class RenderSystem : JobSystem
     public override void Init()
     {
         region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f), Scale = new Vector3(1f), Rotation = Quaternion.Identity }, new RenderableComponent() { RenderableID = 999 } });
-        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f), Scale = new Vector3(1f), Rotation = Quaternion.Identity }, new Camera() { AspectRatio = Settings.AspectRatio, FarPlane = 100f, NearPlane = 100f, FieldOfView = 90f } });
+        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f, 0f, -3f), Scale = new Vector3(1f), Rotation = Quaternion.Identity }, new Camera() { AspectRatio = Settings.AspectRatio, FarPlane = 100f, NearPlane = 0.01f, FieldOfView = 90f } });
     }
 
     public override void Update()
     {
-        Camera mainCam;
-        Transform camPos;
+        Vector3 rot;
         region.Query((ComponentArray<Transform> t, ComponentArray<Camera> cam) =>
         {
-            mainCam = cam[0];
-            camPos = t[0];
+            Transform camPos = t[0];
+            Camera mainCam = cam[0];
+            rot = camPos.Rotation.ToEulerAngles();
+            rot.Y += 0.1f;
+            camPos.Rotation = new Quaternion(rot);
+            t[0] = camPos;
+
+            Renderer.UpdateCamera(camPos, mainCam);
         });
 
         region.Query((ComponentArray<Transform> t, ComponentArray<RenderableComponent> r) =>

@@ -53,6 +53,7 @@ class GameClient
         renderer.Init();
         List<JobSystem> systems = new() { new RenderSystem(renderer) };
         client = new(systems);
+        client.Init();
 
         window.Run();
     }

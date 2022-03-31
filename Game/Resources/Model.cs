@@ -25,8 +25,6 @@ class Model
         // Use a VAO to draw the vertices
         VAO = GL.GenVertexArray();
         GL.BindVertexArray(VAO);
-
-
     }
 
     public void Unload()

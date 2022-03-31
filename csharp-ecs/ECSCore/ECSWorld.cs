@@ -28,6 +28,7 @@ class ECSWorld
         {
             systems[i].Init();
         }
+        region.ResolveBuffers();
     }
 
     public void Update()
@@ -36,6 +37,8 @@ class ECSWorld
         {
             systems[i].Update();
         }
+
+        region.ResolveBuffers();
     }
 
     public void FrameUpdate()
