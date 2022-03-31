@@ -77,7 +77,7 @@ class TestWindow : GameWindow
     protected override void OnUpdateFrame(FrameEventArgs e)
     {
         time += 20f * (float)e.Time;
-        model = Matrix4.Identity * Matrix4.CreateRotationY((float)MathHelper.DegreesToRadians(time));
+        model = Matrix4.CreateRotationY((float)MathHelper.DegreesToRadians(time));
 
         if (KeyboardState.IsKeyDown(Keys.Escape))
         {
@@ -144,7 +144,6 @@ class TestWindow : GameWindow
         GL.BindVertexArray(VertexArrayObject);
 
         tex.Use(TextureUnit.Texture0);
-        tex2.Use(TextureUnit.Texture1);
 
         shader.Use();
 
@@ -194,15 +193,12 @@ class TestWindow : GameWindow
 
         tex = new("OpenGLTest/pepe.jpg");
         tex.Use();
-        tex2 = new("OpenGLTest/peeposad.jpg");
-        tex2.Use(TextureUnit.Texture1);
        
-        shader.SetInt("texture1", 0);
-        shader.SetInt("texture2", 1);
+        shader.SetInt("texture0", 0);
 
         model = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(-55.0f));
 
-        cam = new(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
+        cam = new(Vector3.UnitZ * -3, Size.X / (float)Size.Y);
         CursorGrabbed = true;
     }
 

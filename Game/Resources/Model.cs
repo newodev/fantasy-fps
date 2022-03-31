@@ -17,13 +17,15 @@ class Model
 
     public void Use()
     {
+        // Use a VAO to draw the vertices
+        VAO = GL.GenVertexArray();
+        GL.BindVertexArray(VAO);
+
         // Copy vertices to a GPU buffer
         VBO = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
-        GL.BufferData(BufferTarget.ArrayBuffer, Vertices.Length * sizeof(float), Vertices, BufferUsageHint.StaticDraw);
+        GL.BufferData(BufferTarget.ArrayBuffer, Vertices.Length * sizeof(float), Vertices, BufferUsageHint.DynamicDraw);
 
-        // Use a VAO to draw the vertices
-        VAO = GL.GenVertexArray();
         GL.BindVertexArray(VAO);
     }
 

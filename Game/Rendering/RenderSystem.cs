@@ -19,7 +19,7 @@ class RenderSystem : JobSystem
     public override void Init()
     {
         region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f), Scale = new Vector3(1f), Rotation = Quaternion.Identity }, new RenderableComponent() { RenderableID = 999 } });
-        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f, 0f, -3f), Scale = new Vector3(1f), Rotation = Quaternion.Identity }, new Camera() { AspectRatio = Settings.AspectRatio, FarPlane = 100f, NearPlane = 0.01f, FieldOfView = 90f } });
+        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f, 0f, 3f), Scale = new Vector3(1f), Rotation = Quaternion.FromEulerAngles(1.5f, -1.5f, 0f) }, new Camera() { AspectRatio = Settings.AspectRatio, FarPlane = 100f, NearPlane = 0.01f, FieldOfView = 90f } });
     }
 
     public override void Update()
