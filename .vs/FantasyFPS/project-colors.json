@@ -20,7 +20,12 @@
       "ProjectGuid": "fba843a0-8071-4716-82e9-1bca2945169c",
       "DisplayName": "Game",
       "ColorIndex": 2
+    },
+    "4a21c1f8-7c7f-49f0-b557-9f50812c8f73": {
+      "ProjectGuid": "4a21c1f8-7c7f-49f0-b557-9f50812c8f73",
+      "DisplayName": "CSharp-ECS",
+      "ColorIndex": 3
     }
   },
-  "NextColorIndex": 3
+  "NextColorIndex": 4
 }

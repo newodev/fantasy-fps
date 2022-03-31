@@ -15,8 +15,8 @@ static class ApplicationSettings
 {
     // Update frequency does not need to be dynamic as only clients are running OpenTK
     // Servers may require dynamic rates, but is not necessary for clients.
-    private static double RenderFrequency = 60;
-    private static double UpdateFrequency = 60;
+    private static double RenderFrequency = 0.0;
+    private static double UpdateFrequency = 60.0;
 
     // Settings for the OS window
     private static string IconPath = "Resources/pepe.jpg";

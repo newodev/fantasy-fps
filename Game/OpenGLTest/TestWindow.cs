@@ -61,11 +61,6 @@ class TestWindow : GameWindow
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
-    uint[] indices = {  // note that we start from 0!
-        0, 1, 3,   // first triangle
-        1, 2, 3    // second triangle
-    };
-
     int VertexBufferObject;
     int VertexArrayObject;
     int ElementBufferObject;
@@ -79,9 +74,11 @@ class TestWindow : GameWindow
     {
 
     }
-
     protected override void OnUpdateFrame(FrameEventArgs e)
     {
+        time += 20f * (float)e.Time;
+        model = Matrix4.Identity * Matrix4.CreateRotationY((float)MathHelper.DegreesToRadians(time));
+
         if (KeyboardState.IsKeyDown(Keys.Escape))
         {
             Close();
@@ -142,8 +139,6 @@ class TestWindow : GameWindow
     float time;
     protected override void OnRenderFrame(FrameEventArgs args)
     {
-        time += 20f * (float)args.Time;
-        model = Matrix4.Identity * Matrix4.CreateRotationY((float)MathHelper.DegreesToRadians(time));
 
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         GL.BindVertexArray(VertexArrayObject);
@@ -186,10 +181,6 @@ class TestWindow : GameWindow
         GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
         GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
 
-        ElementBufferObject = GL.GenBuffer();
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
-
         shader = new Shader("OpenGLTest/shader.vert", "OpenGLTest/shader.frag");
         shader.Use();
 
@@ -224,7 +215,6 @@ class TestWindow : GameWindow
         // Delete all the resources.
         GL.DeleteBuffer(VertexBufferObject);
         GL.DeleteVertexArray(VertexArrayObject);
-        GL.DeleteBuffer(ElementBufferObject);
 
         base.OnUnload();
 

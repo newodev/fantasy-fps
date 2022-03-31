@@ -14,7 +14,7 @@ class Bitmap
 
     public byte[] Data { get; private set; }
 
-    public Bitmap(int h, int w, byte[] data)
+    internal Bitmap(int h, int w, byte[] data)
     {
         Height = h;
         Width = w;

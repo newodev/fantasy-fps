@@ -54,14 +54,15 @@ class Game
     public void OnGameUpdate(object? s, double deltaTime)
     {
         input.Update(deltaTime, window.KeyboardState, window.MouseState);
-
+        renderer.Update();
         // Update all gameplay ECS systems
     }
 
     public void OnFrameUpdate(object? s, double deltaTime)
     {
-        renderer.Update();
-
         // Update ECS RenderSystem.
+
+        renderer.Render();
+        window.SwapBuffers();
     }
 }

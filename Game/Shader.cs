@@ -62,6 +62,13 @@ public class Shader : IDisposable
         GL.DeleteShader(VertexShader);
     }
 
+    public void InitialiseAttribute(string attribName, int size, VertexAttribPointerType type, bool normalized, int stride, int offset)
+    {
+        var loc = GL.GetAttribLocation(Handle, attribName);
+        GL.EnableVertexAttribArray(loc);
+        GL.VertexAttribPointer(loc, size, type, normalized, stride, offset);
+    }
+
     public void Use()
     {
         GL.UseProgram(Handle);
