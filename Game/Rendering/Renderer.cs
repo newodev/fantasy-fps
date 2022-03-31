@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Game.Resources;
-using CSharp_ECS.ECSCore;
 
 using OpenTK.Graphics.OpenGL4;
 
@@ -12,7 +11,7 @@ namespace Game.Rendering;
 
 // Currently this is a naive implementation. Renders should be batched
 
-class Renderer : JobSystem 
+class Renderer
 {
     struct RenderObject
     {
@@ -25,6 +24,9 @@ class Renderer : JobSystem
             RenderableID = id;
         }
     }
+
+    private Camera CurrentCamera;
+    private Transform CameraPos;
 
     // Contains the renderable of each entity
     private Dictionary<int, RenderObject> entities = new();
@@ -39,11 +41,19 @@ class Renderer : JobSystem
         entities.Add(entityID, new RenderObject(t, renderableID));
     }
 
+    public void UpdateCamera(Transform t, Camera c)
+    {
+        CameraPos = t;
+        CurrentCamera = c;
+    }
+
     public void Update()
     {
         // Swap dictionaries
         // Wipe entities (as it contains last frame)
+        entities.Clear();
     }
+
     public void Render()
     {
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -57,7 +67,7 @@ class Renderer : JobSystem
 
             Renderable r = renderables[renderableID];
 
-            r.UseWithTransform(t, );
+            r.UseWithTransform(t, CameraPos, CurrentCamera);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
         }
     }
