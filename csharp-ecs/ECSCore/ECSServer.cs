@@ -14,7 +14,7 @@ public class ECSServer
 
     public ECSServer()
     {
-        World = new ECSWorld();
+        World = new ECSWorld(new List<JobSystem>());
     }
 
     private void NetSend()

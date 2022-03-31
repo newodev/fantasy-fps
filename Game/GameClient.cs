@@ -34,7 +34,7 @@ namespace Game;
  *      - Holds entire game state
  *      - used to mediate connections between servers that interact
 */
-class Game
+class GameClient
 {
     // The class that runs the ECS game world
     private ECSClient client;
@@ -45,13 +45,16 @@ class Game
     // Wraps OpenTK input into a more usable system
     private Input input = new();
 
-    public Game()
+    public GameClient()
     {
         window.GameUpdate += OnGameUpdate;
         window.FrameUpdate += OnFrameUpdate;
 
-        List<JobSystem> systems = new() { new RenderSystem() };
+        renderer.Init();
+        List<JobSystem> systems = new() { new RenderSystem(renderer) };
         client = new(systems);
+
+        window.Run();
     }
 
     public void OnGameUpdate(object? s, double deltaTime)

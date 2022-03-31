@@ -8,6 +8,7 @@ using OpenTK.Mathematics;
 
 namespace CSharp_ECS;
 
+/*
 class GridTest
 {
     Grid grid;
@@ -33,3 +34,4 @@ class GridTest
         }
     }
 }
+*/
