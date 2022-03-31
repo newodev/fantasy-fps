@@ -19,10 +19,23 @@ public class ECSClient
     */
     private ECSWorld world;
 
-    public ECSClient()
+    public ECSClient(List<JobSystem> systems)
     {
         // Initialise some server connections
-        // Initialise systems, ECSworld
-        world = new ECSWorld();
+
+        world = new ECSWorld(systems);
+    }
+    public void Init()
+    {
+        world.Init();
+    }
+    public void Update()
+    {
+        world.Update();
+    }
+
+    public void FrameUpdate()
+    {
+        world.FrameUpdate();
     }
 }

@@ -17,6 +17,7 @@ static class Mathm
             new Vector2i(0, -1), new Vector2i(1, -1)
         };
 
+    // Turns a Transform component into a transformation matrix used for rendering
     public static Matrix4 Transform(Transform t)
     {
         Matrix4 scale = Matrix4.CreateScale(t.Scale);
@@ -26,14 +27,17 @@ static class Mathm
         return translation * rotation * scale;  
     }
 
+    // Gets the vector pointing to the right of the transform
     public static Vector3 Right(Transform t)
     {
         return t.Rotation * Vector3.UnitX;
     }
+    // Gets the vector pointing above the transform
     public static Vector3 Up(Transform t)
     {
         return t.Rotation * Vector3.UnitY;
     }
+    // Gets the vector pointing ahead of the transform
     public static Vector3 Front(Transform t)
     {
         return t.Rotation * Vector3.UnitZ;

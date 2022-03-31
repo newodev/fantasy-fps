@@ -9,14 +9,16 @@ namespace CSharp_ECS.ECSCore;
 public abstract class JobSystem
 {
     protected Region region;
+
     public void SetRegion(Region r)
     {
         region = r;
     }
 
-    // Called every game tick
-    public virtual void Update()
-    {
+    public virtual void Init() { }
 
-    }
+    // Called every game tick
+    public virtual void Update() { }
+
+    public virtual void FrameUpdate() { }
 }

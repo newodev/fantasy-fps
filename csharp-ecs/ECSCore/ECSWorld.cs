@@ -10,17 +10,40 @@ class ECSWorld
 {
     // All systems run by this game instance
     private List<JobSystem> systems = new();
-    // All regions owned/observed by this server/client
-    private List<Region> regions = new();
+    // The region owned/observed by this server/client
+    private Region region = new();
 
-    private void ECSInit()
+    public ECSWorld(List<JobSystem> s)
     {
-        // Add all systems
-        systems.Add(new TestSystem());
+        systems = s;
+        for (int i = 0; i < systems.Count; i++)
+        {
+            systems[i].SetRegion(region);
+        }
     }
 
-    public void RegisterRegion(Region r)
+    public void Init()
     {
-        regions.Add(r);
+        for (int i = 0; i < systems.Count; i++)
+        {
+            systems[i].Init();
+        }
     }
+
+    public void Update()
+    {
+        for (int i = 0; i < systems.Count; i++)
+        {
+            systems[i].Update();
+        }
+    }
+
+    public void FrameUpdate()
+    {
+        for (int i = 0; i < systems.Count; i++)
+        {
+            systems[i].FrameUpdate();
+        }
+    }
+
 }

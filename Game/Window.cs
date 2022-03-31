@@ -10,6 +10,11 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Game;
 
+public static class Settings
+{
+    public static float AspectRatio { get; set; }
+}
+
 class Window : GameWindow
 {
     // Event that is called every game update. Used by the ECSClient to update the simulation.
@@ -17,7 +22,10 @@ class Window : GameWindow
     // Event used by the renderer to take drawing out of this window
     public event EventHandler<double>? FrameUpdate;
 
-    public Window() : base(ApplicationSettings.MakeGWS(), ApplicationSettings.MakeNWS()) { }
+    public Window() : base(ApplicationSettings.MakeGWS(), ApplicationSettings.MakeNWS())
+    {
+        Settings.AspectRatio = Size.X / (float)Size.Y;
+    }
 
     protected override void OnUpdateFrame(FrameEventArgs e)
     {
