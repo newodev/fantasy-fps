@@ -7,7 +7,7 @@ using OpenTK.Input;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 
 namespace Game;
@@ -147,6 +147,9 @@ class TestWindow : GameWindow
 
         shader.Use();
 
+        Console.WriteLine("----");
+        Console.WriteLine(cam.GetViewMatrix());
+
         shader.SetMatrix4("model", model);
         shader.SetMatrix4("view", cam.GetViewMatrix());
         shader.SetMatrix4("projection", cam.GetProjectionMatrix());
@@ -189,7 +192,7 @@ class TestWindow : GameWindow
 
         int texCoordLocation = GL.GetAttribLocation(shader.Handle, "aTexCoord");
         GL.EnableVertexAttribArray(texCoordLocation);
-        GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+        GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3);
 
         tex = new("OpenGLTest/pepe.jpg");
         tex.Use();
@@ -198,7 +201,7 @@ class TestWindow : GameWindow
 
         model = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(-55.0f));
 
-        cam = new(Vector3.UnitZ * -3, Size.X / (float)Size.Y);
+        cam = new(Vector3.Zero, Size.X / (float)Size.Y);
         CursorGrabbed = true;
     }
 

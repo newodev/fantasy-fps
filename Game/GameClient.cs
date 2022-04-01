@@ -65,6 +65,8 @@ class GameClient
 
         // Update all ECS systems
         client.Update();
+
+        Time.UpdateTime((float)deltaTime);
     }
 
     public void OnFrameUpdate(object? s, double deltaTime)

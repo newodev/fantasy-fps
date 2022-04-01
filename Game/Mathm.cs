@@ -21,7 +21,7 @@ static class Mathm
     public static Matrix4 Transform(Transform t)
     {
         Matrix4 scale = Matrix4.CreateScale(t.Scale);
-        Matrix4 rotation = Matrix4.CreateFromQuaternion(t.Rotation);
+        Matrix4 rotation = Matrix4.CreateFromQuaternion(Quaternion.FromEulerAngles(t.Rotation));
         Matrix4 translation = Matrix4.CreateTranslation(t.Position);
 
         return translation * rotation * scale;  
@@ -30,22 +30,26 @@ static class Mathm
     // Gets the vector pointing to the right of the transform
     public static Vector3 Right(Transform t)
     {
-        return t.Rotation * Vector3.UnitX;
+        return Quaternion.FromEulerAngles(t.Rotation) * Vector3.UnitX;
     }
     // Gets the vector pointing above the transform
     public static Vector3 Up(Transform t)
     {
-        return t.Rotation * Vector3.UnitY;
+        Vector3 result = Quaternion.FromEulerAngles(t.Rotation) * Vector3.UnitY;
+        return result;
     }
     // Gets the vector pointing ahead of the transform
     public static Vector3 Front(Transform t)
     {
-        return t.Rotation * Vector3.UnitZ;
+        Vector3 result = Quaternion.FromEulerAngles(t.Rotation) * Vector3.UnitZ;
+        return result;
     }
 
     public static Matrix4 GetViewMatrix(Transform t)
     {
-        return Matrix4.LookAt(t.Position, t.Position + Front(t), Up(t));
+        Matrix4 result = Matrix4.LookAt(t.Position, t.Position + Front(t), Up(t));
+        Console.WriteLine(result);
+        return result;
     }
 
     public static Matrix4 GetProjectionMatrix(Camera cam)

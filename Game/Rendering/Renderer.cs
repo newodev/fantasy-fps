@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Game.Resources;
+using OpenTK.Mathematics;
 
-using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL;
 
 namespace Game.Rendering;
 
@@ -56,8 +57,7 @@ class Renderer
 
     public void Render()
     {
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
+        /*
         // Render each renderable
         for (int i = 0; i < entities.Count; i++)
         {
@@ -66,16 +66,39 @@ class Renderer
             Transform t = entity.Value.Transform;
 
             Renderable r = renderables[renderableID];
-
             r.UseWithTransform(t, CameraPos, CurrentCamera);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
         }
+        */
+        Console.WriteLine("---");
+        if (entities.Count < 1) return;
+
+        Renderable r = renderables[entities.ElementAt(0).Value.RenderableID];
+
+        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        r.Model.Use(VAO, VBO);
+
+        r.Material.Texture.Use(TextureUnit.Texture0);
+
+        r.Shader.Use();
+        r.Shader.InitialiseAttribute("aPosition", 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
+        r.Shader.InitialiseAttribute("aTexCoord", 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3);
+
+        r.Shader.SetMatrix4("model", Mathm.Transform(entities.ElementAt(0).Value.Transform));
+        r.Shader.SetMatrix4("view", Mathm.GetViewMatrix(CameraPos));
+        r.Shader.SetMatrix4("projection", Mathm.GetProjectionMatrix(CurrentCamera));
+
+        GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
     }
 
+    int VAO;
+    int VBO;
     public void Init()
     {
+        VAO = GL.GenVertexArray();
+        VBO = GL.GenBuffer();
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-
+        GL.Enable(EnableCap.DepthTest);
         renderables.Add(999, new Renderable(new Shader("OpenGLTest/shader.vert", "OpenGLTest/shader.frag"), Resource.LoadMaterial(new Texture("Resources/pepe.jpg")), Resource.GenCube()));
     }
 }

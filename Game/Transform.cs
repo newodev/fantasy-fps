@@ -13,6 +13,6 @@ struct Transform : IComponent
     public int Id { get; set; }
 
     public Vector3 Position;
-    public Quaternion Rotation;
+    public Vector3 Rotation;
     public Vector3 Scale;
 }

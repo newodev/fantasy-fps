@@ -12,29 +12,16 @@ class Model
 {
     public float[] Vertices { get; internal set; }
 
-    public int VBO { get; private set; }
-    public int VAO { get; private set; }
-
-    public void Use()
+    public void Use(int VAO, int VBO)
     {
         // Use a VAO to draw the vertices
-        VAO = GL.GenVertexArray();
+        
         GL.BindVertexArray(VAO);
 
         // Copy vertices to a GPU buffer
-        VBO = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
         GL.BufferData(BufferTarget.ArrayBuffer, Vertices.Length * sizeof(float), Vertices, BufferUsageHint.DynamicDraw);
 
         GL.BindVertexArray(VAO);
-    }
-
-    public void Unload()
-    {
-        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-        GL.BindVertexArray(0);
-
-        GL.DeleteBuffer(VBO);
-        GL.DeleteVertexArray(VAO);
     }
 }
