@@ -18,9 +18,9 @@ class RenderSystem : JobSystem
 
     public override void Init()
     {
-        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0.5f), Scale = new Vector3(1f), Rotation = Vector3.Zero }, new RenderableComponent() { RenderableID = 999 } });
+        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(), Scale = new Vector3(1f), Rotation = Vector3.Zero }, new RenderableComponent() { RenderableID = 999 } });
 
-        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f, 0f, 0f), Scale = new Vector3(1f), Rotation = Vector3.Zero }, new Camera() { AspectRatio = Settings.AspectRatio, FarPlane = 100f, NearPlane = 0.01f, FieldOfView = 90f } });
+        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(1f, 0f, -2f), Scale = new Vector3(1f), Rotation = Vector3.Zero }, new Camera() { AspectRatio = Settings.AspectRatio, FarPlane = 100f, NearPlane = 0.01f, FieldOfView = 90f } });
     }
 
     public override void Update()
@@ -31,16 +31,9 @@ class RenderSystem : JobSystem
             Transform camPos = t[0];
             Camera mainCam = cam[0];
 
-            /*
-            rot = camPos.Rotation;
+            mainCam.AspectRatio = Settings.AspectRatio;
 
-            rot.X = 0f;
-            rot.Y += MathHelper.DegreesToRadians(Time.DeltaTime * 20f);
-            rot.Z = 0f;
-            camPos.Rotation = rot;
-
-            t[0] = camPos;
-            */
+            cam[0] = mainCam;
 
             Renderer.UpdateCamera(camPos, mainCam);
         });
@@ -52,7 +45,7 @@ class RenderSystem : JobSystem
                 Transform tt = t[i];
 
                 tt.Rotation.X = 0f;
-                tt.Rotation.Y += MathHelper.DegreesToRadians(Time.DeltaTime * 20f);
+                tt.Rotation.Y += MathHelper.DegreesToRadians(Time.DeltaTime * 40f);
                 tt.Rotation.Z = 0f;
 
                 t[0] = tt;

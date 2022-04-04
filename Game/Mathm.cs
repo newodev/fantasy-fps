@@ -24,7 +24,7 @@ static class Mathm
         Matrix4 rotation = Matrix4.CreateFromQuaternion(Quaternion.FromEulerAngles(t.Rotation));
         Matrix4 translation = Matrix4.CreateTranslation(t.Position);
 
-        return translation * rotation * scale;  
+        return scale * rotation * translation;  
     }
 
     // Gets the vector pointing to the right of the transform

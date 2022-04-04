@@ -7,6 +7,7 @@ using OpenTK.Input;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using OpenTK.Graphics.OpenGL;
 
 namespace Game;
 
@@ -37,8 +38,16 @@ class Window : GameWindow
 
     protected override void OnRenderFrame(FrameEventArgs e)
     {
+        Settings.AspectRatio = Size.X / (float)Size.Y;
+
         FrameUpdate.Invoke(this, e.Time);
 
         base.OnRenderFrame(e);
+    }
+
+    protected override void OnResize(ResizeEventArgs e)
+    {
+        GL.Viewport(0, 0, e.Width, e.Height);
+        base.OnResize(e);
     }
 }
