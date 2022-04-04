@@ -18,9 +18,9 @@ class RenderSystem : JobSystem
 
     public override void Init()
     {
-        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(), Scale = new Vector3(1f), Rotation = Vector3.Zero }, new RenderableComponent() { RenderableID = 999 } });
-
-        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(1f, 0f, -2f), Scale = new Vector3(1f), Rotation = Vector3.Zero }, new Camera() { AspectRatio = Settings.AspectRatio, FarPlane = 100f, NearPlane = 0.01f, FieldOfView = 90f } });
+        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(-2f, 0f, 0f), Scale = new Vector3(1f), Rotation = Vector3.Zero }, new RenderableComponent() { RenderableID = 999 } });
+        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(2f, 0f, 0f), Scale = new Vector3(1f), Rotation = new Vector3(45f, 0f, 0f) }, new RenderableComponent() { RenderableID = 999 } });
+        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f, 0f, -2f), Scale = new Vector3(1f), Rotation = Vector3.Zero }, new Camera() { AspectRatio = Settings.AspectRatio, FarPlane = 100f, NearPlane = 0.01f, FieldOfView = 90f } });
     }
 
     public override void Update()
@@ -44,11 +44,9 @@ class RenderSystem : JobSystem
             {
                 Transform tt = t[i];
 
-                tt.Rotation.X = 0f;
                 tt.Rotation.Y += MathHelper.DegreesToRadians(Time.DeltaTime * 40f);
-                tt.Rotation.Z = 0f;
 
-                t[0] = tt;
+                t[i] = tt;
                 Renderer.AddObject(t[i].Id, t[i], r[i].RenderableID);
             });
         });

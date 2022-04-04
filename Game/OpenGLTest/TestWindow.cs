@@ -78,7 +78,6 @@ class TestWindow : GameWindow
     {
         time += 20f * (float)e.Time;
         model = Matrix4.CreateRotationY((float)MathHelper.DegreesToRadians(time));
-
         if (KeyboardState.IsKeyDown(Keys.Escape))
         {
             Close();
@@ -147,9 +146,6 @@ class TestWindow : GameWindow
 
         shader.Use();
 
-        Console.WriteLine("----");
-        Console.WriteLine(cam.GetViewMatrix());
-
         shader.SetMatrix4("model", model);
         shader.SetMatrix4("view", cam.GetViewMatrix());
         shader.SetMatrix4("projection", cam.GetProjectionMatrix());
@@ -170,7 +166,7 @@ class TestWindow : GameWindow
     protected override void OnLoad()
     {
         base.OnLoad();
-        GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        GL.ClearColor(0f, 0f, 0f, 1.0f);
 
         GL.Enable(EnableCap.DepthTest);
 

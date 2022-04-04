@@ -48,7 +48,6 @@ static class Mathm
     public static Matrix4 GetViewMatrix(Transform t)
     {
         Matrix4 result = Matrix4.LookAt(t.Position, t.Position + Front(t), Up(t));
-        Console.WriteLine(result);
         return result;
     }
 

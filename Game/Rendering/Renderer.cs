@@ -57,7 +57,7 @@ class Renderer
 
     public void Render()
     {
-        /*
+        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         // Render each renderable
         for (int i = 0; i < entities.Count; i++)
         {
@@ -69,13 +69,13 @@ class Renderer
             r.UseWithTransform(t, CameraPos, CurrentCamera);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
         }
-        */
-        Console.WriteLine("---");
-        if (entities.Count < 1) return;
+        
+    }
 
+    private void NewMethod()
+    {
         Renderable r = renderables[entities.ElementAt(0).Value.RenderableID];
 
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         r.Model.Use(VAO, VBO);
 
         r.Material.Texture.Use(TextureUnit.Texture0);
@@ -99,6 +99,6 @@ class Renderer
         VBO = GL.GenBuffer();
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         GL.Enable(EnableCap.DepthTest);
-        renderables.Add(999, new Renderable(new Shader("OpenGLTest/shader.vert", "OpenGLTest/shader.frag"), Resource.LoadMaterial(new Texture("Resources/pepe.jpg")), Resource.GenCube()));
+        renderables.Add(999, new Renderable(new Shader("OpenGLTest/shader.vert", "OpenGLTest/shader.frag"), Resource.LoadMaterial(new Texture("Resources/pepe.jpg")), Resource.GenCube(), VAO, VBO));
     }
 }

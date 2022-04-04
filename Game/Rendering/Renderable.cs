@@ -11,7 +11,10 @@ class Renderable
     public Material Material { get; set; }
     public Model Model { get; set; }
 
-    public Renderable(Shader shader, Material material, Model model)
+    private int VAO;
+    private int VBO;
+
+    public Renderable(Shader shader, Material material, Model model, int vao, int vbo)
     {
         Shader = shader;
         shader.InitialiseAttribute("aPosition", 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
@@ -19,13 +22,20 @@ class Renderable
 
         Material = material;
         Model = model;
+
+        VAO = vao;
+        VBO = vbo;
     }
 
     public void UseWithTransform(Transform t, Transform camTransform, Camera c)
     {
-        Model.Use(0,0);
+        Model.Use(VAO, VBO);
         Material.Use();
         Shader.Use();
+
+        Shader.InitialiseAttribute("aPosition", 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
+        Shader.InitialiseAttribute("aTexCoord", 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3);
+
 
         Matrix4 model = Mathm.Transform(t);
         Shader.SetMatrix4("model", model);
