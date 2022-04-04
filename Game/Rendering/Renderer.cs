@@ -82,7 +82,7 @@ class Renderer
 
         r.Shader.Use();
         r.Shader.InitialiseAttribute("aPosition", 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
-        r.Shader.InitialiseAttribute("aTexCoord", 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3);
+        r.Shader.InitialiseAttribute("aTexCoord", 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
         r.Shader.SetMatrix4("model", Mathm.Transform(entities.ElementAt(0).Value.Transform));
         r.Shader.SetMatrix4("view", Mathm.GetViewMatrix(CameraPos));

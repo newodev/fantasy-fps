@@ -21,7 +21,7 @@ static class Mathm
     public static Matrix4 Transform(Transform t)
     {
         Matrix4 scale = Matrix4.CreateScale(t.Scale);
-        Matrix4 rotation = Matrix4.CreateFromQuaternion(Quaternion.FromEulerAngles(t.Rotation));
+        Matrix4 rotation = Matrix4.CreateRotationX(t.Rotation.X) * Matrix4.CreateRotationY(t.Rotation.Y) * Matrix4.CreateRotationZ(t.Rotation.Z);
         Matrix4 translation = Matrix4.CreateTranslation(t.Position);
 
         return scale * rotation * translation;  

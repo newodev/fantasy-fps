@@ -18,8 +18,8 @@ class RenderSystem : JobSystem
 
     public override void Init()
     {
-        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(-2f, 0f, 0f), Scale = new Vector3(1f), Rotation = Vector3.Zero }, new RenderableComponent() { RenderableID = 999 } });
-        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(2f, 0f, 0f), Scale = new Vector3(1f), Rotation = new Vector3(45f, 0f, 0f) }, new RenderableComponent() { RenderableID = 999 } });
+        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f, 0f, 0f), Scale = new Vector3(1f), Rotation = Vector3.Zero }, new RenderableComponent() { RenderableID = 999 } });
+        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f, 0f, 0f), Scale = new Vector3(1f), Rotation = new Vector3(MathHelper.PiOver4, 0f, 0f) }, new RenderableComponent() { RenderableID = 999 } });
         region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f, 0f, -2f), Scale = new Vector3(1f), Rotation = Vector3.Zero }, new Camera() { AspectRatio = Settings.AspectRatio, FarPlane = 100f, NearPlane = 0.01f, FieldOfView = 90f } });
     }
 

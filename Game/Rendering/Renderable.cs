@@ -34,8 +34,7 @@ class Renderable
         Shader.Use();
 
         Shader.InitialiseAttribute("aPosition", 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
-        Shader.InitialiseAttribute("aTexCoord", 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3);
-
+        Shader.InitialiseAttribute("aTexCoord", 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
         Matrix4 model = Mathm.Transform(t);
         Shader.SetMatrix4("model", model);
