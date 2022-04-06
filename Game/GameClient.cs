@@ -42,13 +42,13 @@ class GameClient
     private Window window = new();
     // The renderer draws to the OpenTK window
     private Renderer renderer = new();
-    // Wraps OpenTK input into a more usable system
-    private Input input = new();
 
     public GameClient()
     {
         window.GameUpdate += OnGameUpdate;
         window.FrameUpdate += OnFrameUpdate;
+
+        Input.Init();
 
         renderer.Init();
         List<JobSystem> systems = new() { new RenderSystem(renderer) };
@@ -60,7 +60,7 @@ class GameClient
 
     public void OnGameUpdate(object? s, double deltaTime)
     {
-        input.Update(deltaTime, window.KeyboardState, window.MouseState);
+        Input.Update(deltaTime, window.KeyboardState, window.MouseState);
         renderer.Update();
 
         // Update all ECS systems

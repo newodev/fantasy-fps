@@ -4,34 +4,50 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Input;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Game;
 
-class Input
+static class Input
 {
-    private Keys[] KeyList;
-    private MouseButton[] MBList;
-    private InputAction[] ActionList;
-    public List<KeyBinding> Keybindings = new List<KeyBinding>();
+    private static Keys[] KeyList;
+    private static MouseButton[] MBList;
+    private static InputAction[] ActionList;
+    public static List<KeyBinding> Keybindings = new List<KeyBinding>();
 
     // How long an input has been held down for, in seconds
-    private Dictionary<InputAction, double> KeyHeld = new Dictionary<InputAction, double>();
+    private static Dictionary<InputAction, double> KeyHeld = new Dictionary<InputAction, double>();
     // Whether an input was first clicked in this frame
-    private Dictionary<InputAction, bool> KeyPressed = new Dictionary<InputAction, bool>();
+    private static Dictionary<InputAction, bool> KeyPressed = new Dictionary<InputAction, bool>();
     // Whether an input was released in this frame
-    private Dictionary<InputAction, bool> KeyReleased = new Dictionary<InputAction, bool>();
+    private static Dictionary<InputAction, bool> KeyReleased = new Dictionary<InputAction, bool>();
 
-    public Input()
+    public static Vector2 MouseDelta { get; private set; }
+
+    public static void Init()
     {
         KeyList = (Keys[]) Enum.GetValues(typeof(Keys));
         MBList = (MouseButton[])Enum.GetValues(typeof(MouseButton));
         ActionList = (InputAction[])Enum.GetValues(typeof(InputAction));
 
+        KeyBinding k = new(InputAction.Forward);
+        k.Add(Keys.W);
+        Keybindings.Add(k);
+        k = new(InputAction.Backward);
+        k.Add(Keys.S);
+        Keybindings.Add(k);
+        k = new(InputAction.Left);
+        k.Add(Keys.A);
+        Keybindings.Add(k);
+        k = new(InputAction.Right);
+        k.Add(Keys.D);
+        Keybindings.Add(k);
+
         PopulateDictionaries();
     }
 
-    private void PopulateDictionaries()
+    private static void PopulateDictionaries()
     {
         for (int i = 0; i < ActionList.Length; i++)
         {
@@ -41,13 +57,13 @@ class Input
         }
     }
 
-    public void Update(double deltaTime, KeyboardState kb, MouseState mouse)
+    public static void Update(double deltaTime, KeyboardState kb, MouseState mouse)
     {
         UpdateKeyboard(deltaTime, kb);
         UpdateMouse(deltaTime, mouse);
     }
 
-    private void UpdateKeyboard(double deltaTime, KeyboardState kb)
+    private static void UpdateKeyboard(double deltaTime, KeyboardState kb)
     {
         for (int i = 0; i < KeyList.Length; i++)
         {
@@ -69,7 +85,7 @@ class Input
         }
     }
 
-    private void UpdateMouse(double deltaTime, MouseState mouse)
+    private static void UpdateMouse(double deltaTime, MouseState mouse)
     {
         for (int i = 0; i < MBList.Length; i++)
         {
@@ -89,9 +105,11 @@ class Input
             KeyPressed[bind.action] = mouse.IsButtonDown(MBList[i]) && !mouse.WasButtonDown(MBList[i]);
             KeyReleased[bind.action] = !mouse.IsButtonDown(MBList[i]) && mouse.WasButtonDown(MBList[i]);
         }
+
+        MouseDelta = mouse.Delta;
     }
 
-    private KeyBinding? GetKeyBinding(Keys key)
+    private static KeyBinding? GetKeyBinding(Keys key)
     {
         for (int i = 0; i < Keybindings.Count; i++)
         {
@@ -102,7 +120,7 @@ class Input
         return null;
     }
 
-    private KeyBinding? GetKeyBinding(MouseButton mb)
+    private static KeyBinding? GetKeyBinding(MouseButton mb)
     {
         for (int i = 0; i < Keybindings.Count; i++)
         {
@@ -114,9 +132,9 @@ class Input
     }
 
 
-    public double GetKeyHeld(InputAction i) => KeyHeld[i];
-    public bool GetKeyPressed(InputAction i) => KeyPressed[i];
-    public bool GetKeyReleased(InputAction i) => KeyReleased[i];
+    public static double GetKeyHeld(InputAction i) => KeyHeld[i];
+    public static bool GetKeyPressed(InputAction i) => KeyPressed[i];
+    public static bool GetKeyReleased(InputAction i) => KeyReleased[i];
 }
 
 public class KeyBinding
