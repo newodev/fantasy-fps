@@ -24,6 +24,7 @@ static class Input
     private static Dictionary<InputAction, bool> KeyReleased = new Dictionary<InputAction, bool>();
 
     public static Vector2 MouseDelta { get; private set; }
+    private static Vector2 LastPos = Vector2.Zero;
 
     public static void Init()
     {
@@ -106,7 +107,8 @@ static class Input
             KeyReleased[bind.action] = !mouse.IsButtonDown(MBList[i]) && mouse.WasButtonDown(MBList[i]);
         }
 
-        MouseDelta = mouse.Delta;
+        MouseDelta = mouse.Position - LastPos;
+        LastPos = mouse.Position;
     }
 
     private static KeyBinding? GetKeyBinding(Keys key)

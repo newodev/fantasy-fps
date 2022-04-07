@@ -81,8 +81,11 @@ public class ComponentArray<T> where T : IComponent
     public T GetComponent(int i)
     {
         int match = FindEntityArchetype(i);
+        int entityIndex = FindEntityIndexInArchetype(i);
+
         ArchetypeCollection a = matches[match];
-        int index = FindComponentIndex(i, match);
+
+        int index = FindComponentIndex(entityIndex, match);
 
         // Copy the component
         return (T)a.Contents[index];
@@ -91,8 +94,11 @@ public class ComponentArray<T> where T : IComponent
     public void SetComponent(int i, T val)
     {
         int match = FindEntityArchetype(i);
+        int entityIndex = FindEntityIndexInArchetype(i);
+
         ArchetypeCollection a = matches[match];
-        int index = FindComponentIndex(i, match);
+
+        int index = FindComponentIndex(entityIndex, match);
 
         // Maintain the current component's Id
         val.Id = a.Contents[index].Id;
@@ -102,7 +108,7 @@ public class ComponentArray<T> where T : IComponent
 
 
     // Finds the index in matches of the ArchetypeCollection of the entity at i in this array
-    public int FindEntityArchetype(int entityIndex)
+    public int FindEntityArchetype(int totalIndex)
     {
         // TODO: This is a point that could use a lot of optimisation. Could possibly cache ranges and just go straight to the correct Collection
         if (matches.Count == 1)
@@ -110,16 +116,34 @@ public class ComponentArray<T> where T : IComponent
         for (int i = 0; i < matches.Count; i++)
         {
             ArchetypeCollection a = matches[i];
-            if (entityIndex > a.EntityCount)
+            if (totalIndex >= a.EntityCount)
             {
-                entityIndex -= a.EntityCount;
+                totalIndex -= a.EntityCount;
             }
             else
             {
                 return i;
             }
         }
-        throw new IndexOutOfRangeException("Index i out of bounds in QueryResult Find(i)");
+        throw new IndexOutOfRangeException("Index out of bounds in ComponentArray");
+    }
+
+    public int FindEntityIndexInArchetype(int totalIndex)
+    {
+        int entityIndex = totalIndex;
+        for (int i = 0; i < matches.Count; i++)
+        {
+            ArchetypeCollection a = matches[i];
+            if (entityIndex >= a.EntityCount)
+            {
+                entityIndex -= a.EntityCount;
+            }
+            else
+            {
+                return entityIndex;
+            }
+        }
+        throw new IndexOutOfRangeException("Index out of bounds in ComponentArray");
     }
 
     // Finds the index of a component based on 
