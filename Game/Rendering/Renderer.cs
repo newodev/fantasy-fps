@@ -57,7 +57,7 @@ class Renderer
 
     public void Render()
     {
-        // TODO: OCCLUDE RENDERABLES BASED ON CAMERA TRANSFORM
+        // TODO: FRUSTRUM CULLING
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         // Render each renderable
@@ -71,7 +71,6 @@ class Renderer
             r.UseWithTransform(t, CameraPos, CurrentCamera);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
         }
-        
     }
 
     private void NewMethod()

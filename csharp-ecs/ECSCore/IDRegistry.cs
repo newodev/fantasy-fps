@@ -6,27 +6,48 @@ using System.Threading.Tasks;
 
 namespace CSharp_ECS.ECSCore;
 
-public static class IDRegistry
+public static class ECS
+{
+    public static bool EntityHasComponent(Type componentType, int entityID)
+    {
+        ReadOnlySpan<Type> components = IDRegistry.ComponentTypesFromID(entityID);
+        for (int i = 0; i < components.Length; i++)
+        {
+            if (components[i] == componentType)
+                return true;
+        }
+        return false;
+    }
+}
+internal static class IDRegistry
 {
     // Map of each Archetype's footprint to its Key
-    private static Dictionary<List<Type>, byte> ArchetypeKeys = new Dictionary<List<Type>, byte>();
+    private static Dictionary<byte, List<Type>> ArchetypeKeys = new();
 
     // The key of the newest Archetype to be created. The next archetype will have this+1.
     private static byte HighestKey = 0;
 
     // Map of the highest ID currently available in each archetype. If this exceeds the maximum, it is rolled to -1 and only freedIDs are used
-    private static Dictionary<byte, int> highestID = new Dictionary<byte, int>();
+    private static Dictionary<byte, int> highestID = new();
     // All the IDs that are now freed due to destroyed entities available in the archetype. This allows a new entity to take an old one's ID.
-    private static Dictionary<byte, List<int>> freedIDs = new Dictionary<byte, List<int>>();
+    private static Dictionary<byte, List<int>> freedIDs = new();
+
+    public static ReadOnlySpan<Type> ComponentTypesFromID(int entityID)
+    {
+        byte key = GetArchetypeKeyFromID(entityID);
+        // TODO: This ToArray is creating an allocation and ruining all optimisation of this. Adjust the registry to store as arrays from the beginning
+        ReadOnlySpan<Type> result = new ReadOnlySpan<Type>(ArchetypeKeys[key].ToArray());
+        return result;
+    }
 
     public static byte GetArchetypeKey(List<Type> key)
     {
         // Search for an existing key if the archetype already exists in the Universe
         // (IDs are unique even across regions)
-        KeyValuePair<List<Type>, byte> match = ArchetypeKeys.Where(x => x.Key.SequenceEqual(key)).FirstOrDefault();
-        if (match.Key != null)
+        KeyValuePair<byte, List<Type>> match = ArchetypeKeys.Where(x => x.Value.SequenceEqual(key)).FirstOrDefault();
+        if (match.Value != null)
         {
-            return match.Value;
+            return match.Key;
         }
 
         // If there is no existing key, generate a new one and inilitialise
@@ -34,7 +55,7 @@ public static class IDRegistry
         HighestKey++;
 
         // Register the key
-        ArchetypeKeys.Add(key, HighestKey);
+        ArchetypeKeys.Add(HighestKey, key);
         // Initialise ID lists for the new Archetype
         freedIDs.Add(HighestKey, new List<int>());
         highestID.Add(HighestKey, 0);
