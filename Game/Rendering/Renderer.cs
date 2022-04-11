@@ -57,7 +57,9 @@ class Renderer
 
     public void Render()
     {
+        // TODO: OCCLUDE RENDERABLES BASED ON CAMERA TRANSFORM
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
         // Render each renderable
         for (int i = 0; i < entities.Count; i++)
         {

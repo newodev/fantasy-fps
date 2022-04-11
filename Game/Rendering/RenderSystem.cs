@@ -39,7 +39,7 @@ class RenderSystem : JobSystem
             Renderer.UpdateCamera(camPos, mainCam);
         });
 
-        region.Query((ComponentArray < Transform > t, ComponentArray < InputComponent> i) =>
+        region.Query((ComponentArray<Transform> t, ComponentArray<InputComponent> i) =>
         {
             Parallel.For(0, t.Count, (i) =>
             {
@@ -54,8 +54,8 @@ class RenderSystem : JobSystem
                 if (Input.GetKeyHeld(InputAction.Right) > 0)
                     tt.Position.X -= 2 * Time.DeltaTime;
         
-                tt.Rotation.Y += MathHelper.DegreesToRadians(Input.MouseDelta.X);
-                tt.Rotation.X -= MathHelper.DegreesToRadians(Input.MouseDelta.Y);
+                tt.Rotation.Y += MathHelper.DegreesToRadians(Input.MouseDelta.X) * 0.3f;
+                tt.Rotation.X -= MathHelper.DegreesToRadians(Input.MouseDelta.Y) * 0.3f;
         
                 t[i] = tt;
             });
