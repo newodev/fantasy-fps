@@ -60,6 +60,7 @@ class Renderer
         // TODO: FRUSTRUM CULLING
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
+        // TODO: Render shadow maps from each light source
         // Render each renderable
         for (int i = 0; i < entities.Count; i++)
         {
@@ -71,6 +72,12 @@ class Renderer
             r.UseWithTransform(t, CameraPos, CurrentCamera);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
         }
+    }
+
+    public void CullFrustrum(Camera cam, Transform camPos)
+    {
+        // TODO: Loop through entities in spatial index
+        // TODO: Ones that intersect frustrum are kept for this render
     }
 
     private void NewMethod()

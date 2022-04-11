@@ -31,12 +31,13 @@ internal static class ComponentArrayFactory
     private static object ConstructCollection(ParameterInfo parameter, List<ArchetypeCollection> matches)
     {
         object[] constructorArgs = new object[] { matches };
+
         // Convert the generic ComponentArray<> type to a ComponentArray<C>
         Type collectionType = Generic
             .MakeGenericType(parameter.ParameterType.GenericTypeArguments[0]);
 
         // Invoke the constructor of this ComponentArray<C> to create our collection
-        // Use the binding flags as the constructor is internal
+        // Use the binding flags as the constructor is internal (can't be instantiated by other assemblies)
         var constructor = collectionType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, ConstructorParams);
         object collection = constructor
             .Invoke(constructorArgs);
