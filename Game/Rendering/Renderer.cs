@@ -80,6 +80,11 @@ class Renderer
         // TODO: Ones that intersect frustrum are kept for this render
     }
 
+    public void RenderShadowMap()
+    {
+
+    }
+
     private void NewMethod()
     {
         Renderable r = renderables[entities.ElementAt(0).Value.RenderableID];
