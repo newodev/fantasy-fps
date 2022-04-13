@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CSharp_ECS.ECSCore;
-namespace Game;
+namespace Game.InputDevices;
 
 struct InputComponent : IComponent
 {

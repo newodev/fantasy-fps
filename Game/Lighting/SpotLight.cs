@@ -5,14 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using CSharp_ECS.ECSCore;
 
-namespace Game;
+namespace Game.Lighting;
 
-struct Camera : IComponent
+struct SpotLight : IComponent
 {
     public int Id { get; set; }
 
-    public float FieldOfView;
-    public float AspectRatio;
-    public float NearPlane;
-    public float FarPlane;
+    float luminosity;
 }

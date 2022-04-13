@@ -7,7 +7,7 @@ using OpenTK.Input;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
-namespace Game;
+namespace Game.InputDevices;
 
 static class Input
 {

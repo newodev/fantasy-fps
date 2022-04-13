@@ -6,7 +6,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using Game.Resources;
 
-namespace Game;
+namespace Game.Rendering;
 
 class Texture
 {
