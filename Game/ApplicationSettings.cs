@@ -19,7 +19,7 @@ static class ApplicationSettings
     private static double UpdateFrequency = 60.0;
 
     // Settings for the OS window
-    private static string IconPath = "Resources/pepe.jpg";
+    private static string IconPath = "Resources/Textures/pepe.jpg";
     private static bool StartFocused = true;
     private static bool StartVisible = true;
     private static string WindowName = "ECSENGINE";

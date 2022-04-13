@@ -32,7 +32,8 @@ public class Region
         Type[] componentTypes = new Type[parameters.Length];
         for (int i = 0; i < parameters.Length; i++)
         {
-            // TODO: add guards here for if the type requested is not a ComponentArray
+            if (!parameters[i].ParameterType.IsGenericType || parameters[i].ParameterType.GetGenericTypeDefinition() != ComponentArrayFactory.Generic)
+                throw new ECSException("Query type " + parameters[i].ParameterType.FullName + " is not a ComponentArray");
             componentTypes[i] = parameters[i].ParameterType.GetGenericArguments()[0];
         }
 
