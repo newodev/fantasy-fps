@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
 using CSharp_ECS.ECSCore;
+using Game.InputDevices;
 
 using Game.Rendering;
 

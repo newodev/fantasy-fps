@@ -8,6 +8,7 @@ using OpenTK.Mathematics;
 
 using OpenTK.Graphics.OpenGL;
 
+
 namespace Game.Rendering;
 
 // Currently this is a naive implementation. Renders should be batched
@@ -112,7 +113,11 @@ class Renderer
         VBO = GL.GenBuffer();
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         GL.Enable(EnableCap.DepthTest);
-        renderables.Add(999, new Renderable(new Shader("OpenGLTest/shader.vert", "OpenGLTest/shader.frag"), Resource.LoadMaterial(new Texture("Resources/pepe.jpg")), Resource.GenCube(), VAO, VBO));
-        renderables.Add(998, new Renderable(new Shader("OpenGLTest/shader.vert", "OpenGLTest/shader.frag"), Resource.LoadMaterial(new Texture("Resources/floor.png")), Resource.GenCube(), VAO, VBO));
+
+        // TODO: Make a 
+        Shader s = new("OpenGLTest/shader.vert", "OpenGLTest/shader.frag");
+        Model cube = Resource.GenCube();
+        renderables.Add(999, new Renderable(s, Resource.LoadMaterial(new Texture("Resources/pepe.jpg")), cube, VAO, VBO));
+        renderables.Add(998, new Renderable(s, Resource.LoadMaterial(new Texture("Resources/floor.png")), cube, VAO, VBO));
     }
 }

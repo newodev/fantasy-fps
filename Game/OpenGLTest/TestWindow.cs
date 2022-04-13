@@ -9,6 +9,8 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using Game.Rendering;
+using Game.Resources;
 
 namespace Game;
 
