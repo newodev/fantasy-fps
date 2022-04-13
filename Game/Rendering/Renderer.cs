@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Game.Resources;
 using OpenTK.Mathematics;
+using Game.Lighting;
 
 using OpenTK.Graphics.OpenGL;
 
@@ -15,6 +16,7 @@ namespace Game.Rendering;
 
 class Renderer
 {
+    public Illumination Light = new();
     struct RenderObject
     {
         public Transform Transform;

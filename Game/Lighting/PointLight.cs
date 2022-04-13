@@ -7,7 +7,7 @@ using CSharp_ECS.ECSCore;
 
 namespace Game.Lighting;
 
-struct SpotLight : IComponent
+struct PointLight : IComponent
 {
     public int Id { get; set; }
 
