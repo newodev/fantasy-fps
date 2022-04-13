@@ -86,25 +86,6 @@ class Renderer
 
     }
 
-    private void NewMethod()
-    {
-        Renderable r = renderables[entities.ElementAt(0).Value.RenderableID];
-
-        r.Model.Use(VAO, VBO);
-
-        r.Material.Texture.Use(TextureUnit.Texture0);
-
-        r.Shader.Use();
-        r.Shader.InitialiseAttribute("aPosition", 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
-        r.Shader.InitialiseAttribute("aTexCoord", 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
-
-        r.Shader.SetMatrix4("model", Mathm.Transform(entities.ElementAt(0).Value.Transform));
-        r.Shader.SetMatrix4("view", Mathm.GetViewMatrix(CameraPos));
-        r.Shader.SetMatrix4("projection", Mathm.GetProjectionMatrix(CurrentCamera));
-
-        GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
-    }
-
     int VAO;
     int VBO;
     public void Init()
@@ -114,10 +95,10 @@ class Renderer
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         GL.Enable(EnableCap.DepthTest);
 
-        // TODO: Make a 
-        Shader s = new("OpenGLTest/shader.vert", "OpenGLTest/shader.frag");
+        // TODO: Make a configurable resource loader
+        Shader s = new("Resources/Shaders/Standard/Opaque/shader.vert", "Resources/Shaders/Standard/Opaque/shader.frag");
         Model cube = Resource.GenCube();
-        renderables.Add(999, new Renderable(s, Resource.LoadMaterial(new Texture("Resources/pepe.jpg")), cube, VAO, VBO));
-        renderables.Add(998, new Renderable(s, Resource.LoadMaterial(new Texture("Resources/floor.png")), cube, VAO, VBO));
+        renderables.Add(999, new Renderable(s, Resource.LoadMaterial(new Texture("Resources/Textures/pepe.jpg")), cube, VAO, VBO));
+        renderables.Add(998, new Renderable(s, Resource.LoadMaterial(new Texture("Resources/Textures/floor.png")), cube, VAO, VBO));
     }
 }
