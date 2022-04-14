@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CSharp_ECS.ECSCore;
+using System.Drawing;
 
 namespace Game.Lighting;
 
@@ -11,5 +12,7 @@ struct PointLight : IComponent
 {
     public int Id { get; set; }
 
-    float luminosity;
+    public float Luminosity;
+    public Color LightColor;
+    public float Distance;
 }
