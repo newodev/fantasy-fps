@@ -10,14 +10,19 @@ namespace Game.Resources;
 
 class Material
 {
-    public Texture Texture { get; private set; }
-    internal Material(Texture t)
+    public Texture Diffuse { get; private set; }
+    public Texture Specular { get; private set; }
+    public float Shininess;
+    internal Material(Texture d, Texture s, float shininess)
     {
-        Texture = t;
+        Diffuse = d;
+        Specular = s;
+        Shininess = shininess;
     }
 
     public void Use()
     {
-        Texture.Use(TextureUnit.Texture0);
+        Diffuse.Use(TextureUnit.Texture0);
+        Specular.Use(TextureUnit.Texture1);
     }
 }

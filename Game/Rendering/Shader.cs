@@ -117,6 +117,20 @@ public class Shader : IDisposable
         GL.UniformMatrix4(loc, true, ref mat);
     }
 
+    public void SetMatrix3(string name, Matrix3 mat)
+    {
+        int loc = GL.GetUniformLocation(Handle, name);
+
+        GL.UniformMatrix3(loc, true, ref mat);
+    }
+
+    public void SetVec3(string name, Vector3 vec)
+    {
+        int loc = GL.GetUniformLocation(Handle, name);
+
+        GL.Uniform3(loc, vec);
+    }
+
     /*
     public void SetUniform(string name, params float[] values)
     {

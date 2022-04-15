@@ -60,11 +60,14 @@ class Renderer
 
     public void Render()
     {
+        Console.WriteLine("Start " + GL.GetError());
+        
         // TODO: FRUSTRUM CULLING
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         // TODO: Render shadow maps from each light source
         // Render each renderable
+
         for (int i = 0; i < entities.Count; i++)
         {
             var entity = entities.ElementAt(i);
@@ -73,8 +76,32 @@ class Renderer
 
             Renderable r = renderables[renderableID];
             r.UseWithTransform(t, CameraPos, CurrentCamera);
+
+            r.Shader.SetInt("numDirLight", Light.DirectionalCount);
+
+            for (int j = 0; j < Light.DirectionalCount; j++)
+            {
+                UseDirectional(j, r, Light.Directionals[j], Light.DirectionalDirections[j]);
+            }
+
+            r.Shader.SetInt("numPointLight", Light.PointCount);
+
+            for (int j = 0; j < Light.PointCount; j++)
+            {
+                UseDirectional(j, r, Light.Directionals[j], Light.DirectionalDirections[j]);
+            }
+
             GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
         }
+
+        Console.WriteLine("End " + GL.GetError());
+
+    }
+
+    private void UseDirectional(int i, Renderable r, DirectionalLight light, Transform transform)
+    {
+        r.Shader.SetVec3($"directionalLights[{i}].direction", Mathm.Front(transform));
+        r.Shader.SetVec3($"directionalLights[{i}].color", new Vector3(light.LightColor.R, light.LightColor.G, light.LightColor.B));
     }
 
     public void CullFrustrum(Camera cam, Transform camPos)
@@ -100,7 +127,7 @@ class Renderer
         // TODO: Make a configurable resource loader
         Shader s = new("Resources/Shaders/Standard/Opaque/shader.vert", "Resources/Shaders/Standard/Opaque/shader.frag");
         Model cube = Resource.GenCube();
-        renderables.Add(999, new Renderable(s, Resource.LoadMaterial(new Texture("Resources/Textures/pepe.jpg")), cube, VAO, VBO));
-        renderables.Add(998, new Renderable(s, Resource.LoadMaterial(new Texture("Resources/Textures/floor.png")), cube, VAO, VBO));
+        renderables.Add(999, new Renderable(s, Resource.LoadMaterial("Resources/Textures/pepe.jpg", "Resources/Textures/specular.jpg", 1f), cube, VAO, VBO));
+        renderables.Add(998, new Renderable(s, Resource.LoadMaterial("Resources/Textures/floor.png", "Resources/Textures/specular.jpg", 20.5f), cube, VAO, VBO));
     }
 }

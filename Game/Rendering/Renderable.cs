@@ -17,8 +17,9 @@ class Renderable
     public Renderable(Shader shader, Material material, Model model, int vao, int vbo)
     {
         Shader = shader;
-        shader.InitialiseAttribute("aPosition", 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
-        shader.InitialiseAttribute("aTexCoord", 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3);
+        shader.InitialiseAttribute("aPosition", 3, VertexAttribPointerType.Float, false, 8 * sizeof(float), 0);
+        shader.InitialiseAttribute("aNormal", 3, VertexAttribPointerType.Float, false, 8 * sizeof(float), 3 * sizeof(float));
+        shader.InitialiseAttribute("aTexCoord", 2, VertexAttribPointerType.Float, false, 8 * sizeof(float), 6 * sizeof(float));
 
         Material = material;
         Model = model;
@@ -31,10 +32,10 @@ class Renderable
     {
         Model.Use(VAO, VBO);
         Material.Use();
+        Shader.SetInt("material.diffuse", 0);
+        Shader.SetInt("material.specular", 1);
+        Shader.SetFloat("material.shininess", Material.Shininess);
         Shader.Use();
-
-        Shader.InitialiseAttribute("aPosition", 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
-        Shader.InitialiseAttribute("aTexCoord", 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
         Matrix4 model = Mathm.Transform(t);
         Shader.SetMatrix4("model", model);
@@ -42,5 +43,10 @@ class Renderable
         Shader.SetMatrix4("view", view);
         Matrix4 projection = Mathm.GetProjectionMatrix(c);
         Shader.SetMatrix4("projection", projection);
+        Matrix4 normal = model;
+        normal.Invert();
+        normal.Transpose();
+        Shader.SetMatrix3("normalMat", new Matrix3(normal));
+        Shader.SetVec3("viewPos", camTransform.Position);
     }
 }

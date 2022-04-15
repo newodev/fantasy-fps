@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using CSharp_ECS.ECSCore;
 using Game.InputDevices;
 using OpenTK.Mathematics;
+using Game.Lighting;
+using System.Drawing;
 
 namespace Game.Rendering;
 
@@ -23,6 +25,7 @@ class RenderSystem : JobSystem
         region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f, 0f, 0f), Scale = new Vector3(1f), Rotation = new Vector3(0f) }, new RenderableComponent() { RenderableID = 999 }, new InputComponent() });
         region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f, 1f, 0f), Scale = new Vector3(0.8f), Rotation = new Vector3(0f) }, new RenderableComponent() { RenderableID = 999 }, new InputComponent() });
         region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f, 0f, -2f), Scale = new Vector3(1f), Rotation = Vector3.Zero }, new Camera() { AspectRatio = Settings.AspectRatio, FarPlane = 100f, NearPlane = 0.01f, FieldOfView = 90f } });
+        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f), Rotation = Vector3.Zero }, new DirectionalLight() { LightColor = Color.White } });
     }
 
     public override void Update()
@@ -68,6 +71,14 @@ class RenderSystem : JobSystem
             {
                 Renderer.AddObject(t[i].Id, t[i], r[i].RenderableID);
             });
+        });
+
+        region.Query((ComponentArray<Transform> t, ComponentArray<DirectionalLight> l) =>
+        {
+            for(int i = 0; i < t.Count; i++)
+            {
+                Renderer.Light.AddDirectional(l[i], t[i]);
+            }
         });
     }
 }
