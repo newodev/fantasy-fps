@@ -29,6 +29,9 @@
     <None Update="OpenGLTest\shader.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Shaders\Standard\Opaque\lighting.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Shaders\Standard\Opaque\shader.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

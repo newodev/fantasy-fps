@@ -56,12 +56,13 @@ class Renderer
         // Swap dictionaries
         // Wipe entities (as it contains last frame)
         entities.Clear();
+        Light.DirectionalCount = 0;
+        Light.PointCount = 0;
+
     }
 
     public void Render()
     {
-        Console.WriteLine("Start " + GL.GetError());
-        
         // TODO: FRUSTRUM CULLING
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -93,9 +94,6 @@ class Renderer
 
             GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
         }
-
-        Console.WriteLine("End " + GL.GetError());
-
     }
 
     private void UseDirectional(int i, Renderable r, DirectionalLight light, Transform transform)
@@ -124,10 +122,12 @@ class Renderer
         GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         GL.Enable(EnableCap.DepthTest);
 
+        GL.BindVertexArray(VAO);
+        GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
         // TODO: Make a configurable resource loader
-        Shader s = new("Resources/Shaders/Standard/Opaque/shader.vert", "Resources/Shaders/Standard/Opaque/shader.frag");
+        Shader s = new("Resources/Shaders/Standard/Opaque/shader.vert", "Resources/Shaders/Standard/Opaque/lighting.frag");
         Model cube = Resource.GenCube();
-        renderables.Add(999, new Renderable(s, Resource.LoadMaterial("Resources/Textures/pepe.jpg", "Resources/Textures/specular.jpg", 1f), cube, VAO, VBO));
-        renderables.Add(998, new Renderable(s, Resource.LoadMaterial("Resources/Textures/floor.png", "Resources/Textures/specular.jpg", 20.5f), cube, VAO, VBO));
+        renderables.Add(999, new Renderable(s, Resource.LoadMaterial("Resources/Textures/pepe.jpg", "Resources/Textures/specular.jpg", 5f), cube, VAO, VBO));
+        renderables.Add(998, new Renderable(s, Resource.LoadMaterial("Resources/Textures/floor.png", "Resources/Textures/specular.jpg", 0.1f), cube, VAO, VBO));
     }
 }

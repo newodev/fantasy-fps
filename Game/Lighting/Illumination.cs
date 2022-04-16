@@ -9,12 +9,12 @@ namespace Game.Lighting;
 class Illumination
 {
     private const int MaxDirectional = 5;
-    public int DirectionalCount { get; private set; }
+    public int DirectionalCount { get; set; }
     public DirectionalLight[] Directionals = new DirectionalLight[MaxDirectional];
     public Transform[] DirectionalDirections = new Transform[MaxDirectional];
 
     private const int MaxPoint = 20;
-    public int PointCount { get; private set; }
+    public int PointCount { get; set; }
     public PointLight[] PointLights = new PointLight[MaxPoint];
     public Transform[] PointPositions = new Transform[MaxPoint];
 
@@ -29,11 +29,13 @@ class Illumination
     {
         DirectionalDirections[DirectionalCount] = direction;
         Directionals[DirectionalCount] = light;
+        DirectionalCount++;
     }
 
     public void AddPoint(PointLight light, Transform position)
     {
         PointLights[PointCount] = light;
         PointPositions[PointCount] = position;
+        PointCount++;
     }
 }
