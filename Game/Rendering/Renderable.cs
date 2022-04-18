@@ -33,10 +33,10 @@ class Renderable
         Model.Use(VAO, VBO);
         Material.Use();
         Shader.Use();
-        Shader.SetInt("material.diffuse", 0);
-        Shader.SetInt("material.specular", 1);
-        Shader.SetVec3("material.specular", new Vector3(0.5f, 0.5f, 0.5f));
-        Shader.SetFloat("material.shininess", Material.Shininess);
+        Shader.SetInt("material.albedoMap", 0);
+        Shader.SetInt("material.roughnessMap", 1);
+        Shader.SetInt("material.metallicMap", 2);
+        Shader.SetInt("material.aoMap", 3);
 
         Matrix4 model = Mathm.Transform(t);
         Shader.SetMatrix4("model", model);

@@ -10,19 +10,22 @@ namespace Game.Resources;
 
 class Material
 {
-    public Texture Diffuse { get; private set; }
-    public Texture Specular { get; private set; }
-    public float Shininess;
-    internal Material(Texture d, Texture s, float shininess)
-    {
-        Diffuse = d;
-        Specular = s;
-        Shininess = shininess;
-    }
+    public Texture Albedo { get; private set; }
+    public Texture Normal { get; private set; }
+    public Texture Roughness { get; private set; }
+    public Texture Metallic { get; private set; }
+    public Texture AO { get; private set; }
+
+
+
+    internal Material(Texture a, Texture r, Texture m, Texture ao)
+        => (Albedo, Roughness, Metallic, AO) = (a, r, m, ao);
 
     public void Use()
     {
-        Diffuse.Use(TextureUnit.Texture0);
-        Specular.Use(TextureUnit.Texture1);
+        Albedo.Use(TextureUnit.Texture0);
+        Metallic.Use(TextureUnit.Texture1);
+        Roughness.Use(TextureUnit.Texture2);
+        AO.Use(TextureUnit.Texture3);
     }
 }

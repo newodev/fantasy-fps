@@ -89,7 +89,8 @@ class Renderer
 
             for (int j = 0; j < Light.PointCount; j++)
             {
-                UseDirectional(j, r, Light.Directionals[j], Light.DirectionalDirections[j]);
+                Console.WriteLine("a");
+                UsePoint(j, r, Light.PointLights[j], Light.PointPositions[j]);
             }
 
             GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
@@ -100,6 +101,12 @@ class Renderer
     {
         r.Shader.SetVec3($"directionalLights[{i}].direction", Mathm.Front(transform));
         r.Shader.SetVec3($"directionalLights[{i}].color", new Vector3(light.LightColor.R, light.LightColor.G, light.LightColor.B));
+    }
+
+    private void UsePoint(int i, Renderable r, PointLight light, Transform transform)
+    {
+        r.Shader.SetVec3($"pointLights[{i}].position", transform.Position);
+        r.Shader.SetVec3($"pointLights[{i}].color", new Vector3(light.LightColor.R, light.LightColor.G, light.LightColor.B));
     }
 
     public void CullFrustrum(Camera cam, Transform camPos)
@@ -125,9 +132,9 @@ class Renderer
         GL.BindVertexArray(VAO);
         GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
         // TODO: Make a configurable resource loader
-        Shader s = new("Resources/Shaders/Standard/Opaque/shader.vert", "Resources/Shaders/Standard/Opaque/lighting.frag");
+        Shader s = new("Resources/Shaders/Standard/Opaque/shader.vert", "Resources/Shaders/Standard/Opaque/pbr.frag");
         Model cube = Resource.GenCube();
-        renderables.Add(999, new Renderable(s, Resource.LoadMaterial("Resources/Textures/pepe.jpg", "Resources/Textures/specular.jpg", 5f), cube, VAO, VBO));
-        renderables.Add(998, new Renderable(s, Resource.LoadMaterial("Resources/Textures/floor.png", "Resources/Textures/specular.jpg", 0.1f), cube, VAO, VBO));
+        renderables.Add(999, new Renderable(s, Resource.LoadMaterial("Resources/Textures/floor_alb.tif", "Resources/Textures/floor_rough.tif", "Resources/Textures/floor_met.tif", "Resources/Textures/floor_ao.tif"), cube, VAO, VBO));
+        renderables.Add(998, new Renderable(s, Resource.LoadMaterial("Resources/Textures/floor_alb.tif", "Resources/Textures/floor_rough.tif", "Resources/Textures/floor_met.tif", "Resources/Textures/floor_ao.tif"), cube, VAO, VBO));
     }
 }
