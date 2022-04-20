@@ -88,6 +88,8 @@ public class ComponentArray<T> where T : IComponent
 
         int index = FindComponentIndex(entityIndex, match);
 
+        // TODO: This actually causes a boxing conversion meaning a LOT of heap allocations every frame.
+        // Needs complete overhaul of storage system, probably a bunch of generic T[] arrays
         // Copy the component
         return (T)a.Contents[index];
     }
