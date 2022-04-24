@@ -9,6 +9,15 @@ namespace CSharp_ECS.ECSCore;
 internal class NewArchetypeCollection
 {
     private GenericComponentArray[] Components;
+
+    // Buffer of entities that will be destroyed at EoF (end of frame)
+    // The buffer of entities to spawn is stored in each component array
+    private List<int> EntitiesToDestroy = new();
+
+    public void DestroyEntityByID(int entityID)
+    {
+        EntitiesToDestroy.Add(entityID);
+    }
 }
 
 public class GenericComponentArray
@@ -76,5 +85,13 @@ public class NewComponentArray<T> : GenericComponentArray where T : IComponent
             return GetEntityIndexByID(id, start, pivot - 1);
         }
         return -1;
+    }
+
+    internal void DestroyByID(int entityID)
+    {
+        // Binary search for component by its ID
+        int i = GetEntityIndexByID(entityID, 0, Count - 1);
+        if (i != -1)
+            contents.RemoveAt(i);
     }
 }
