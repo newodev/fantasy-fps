@@ -18,11 +18,29 @@ internal class NewArchetypeCollection
     {
         EntitiesToDestroy.Add(entityID);
     }
+
+    public void Update()
+    {
+
+    }
+
+    private void ClearDestroyBuffer()
+    {
+        for (int i = 0; i < Components.Count(); i++)
+        {
+            for (int j = EntitiesToDestroy.Count - 1; j >= 0; j--)
+            {
+                int id = EntitiesToDestroy[j];
+                Components[i].DestroyByID(id);
+            }
+        }
+    }
 }
 
-public class GenericComponentArray
+public abstract class GenericComponentArray
 {
     public Type ComponentType { get; protected init; }
+    internal abstract void DestroyByID(int entityID);
 }
 public class NewComponentArray<T> : GenericComponentArray where T : IComponent
 {
@@ -87,7 +105,7 @@ public class NewComponentArray<T> : GenericComponentArray where T : IComponent
         return -1;
     }
 
-    internal void DestroyByID(int entityID)
+    internal override void DestroyByID(int entityID)
     {
         // Binary search for component by its ID
         int i = GetEntityIndexByID(entityID, 0, Count - 1);
