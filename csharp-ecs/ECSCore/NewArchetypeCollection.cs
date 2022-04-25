@@ -21,12 +21,16 @@ internal class NewArchetypeCollection
 
     public void Update()
     {
-
+        ClearDestroyBuffer();
+        for (int i = 0; i < Components.Length; i++)
+        {
+            Components[i].ClearSpawnBuffer();
+        }
     }
 
     private void ClearDestroyBuffer()
     {
-        for (int i = 0; i < Components.Count(); i++)
+        for (int i = 0; i < Components.Length; i++)
         {
             for (int j = EntitiesToDestroy.Count - 1; j >= 0; j--)
             {
@@ -41,16 +45,31 @@ public abstract class GenericComponentArray
 {
     public Type ComponentType { get; protected init; }
     internal abstract void DestroyByID(int entityID);
+    internal abstract void ClearSpawnBuffer();
 }
 public class NewComponentArray<T> : GenericComponentArray where T : IComponent
 {
     public int Count { get => contents.Count(); }
     private List<T> contents = new();
+
+    private List<T> spawnBuffer = new();
     // TODO: At end of each frame, ensure lists are still sorted by ID. (only sort if changed this frame)
 
     internal NewComponentArray()
     {
         ComponentType = typeof(T);
+    }
+
+    internal override void ClearSpawnBuffer()
+    {
+        if (spawnBuffer.Count == 0)
+            return;
+        for (int i = 0; i < spawnBuffer.Count; i++)
+        {
+            contents.Add(spawnBuffer[i]);
+        }
+        // TODO: SORT CONTENTS BY ID
+        spawnBuffer.Clear();
     }
 
     public T this[int index]
