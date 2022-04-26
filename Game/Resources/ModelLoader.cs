@@ -15,8 +15,142 @@ public struct Vertex
     public Vector3 Normal;
     public Vector3 Tangent;
     public Vector3 Bitangent;
+
+    public Vertex(Vector3 pos, Vector2 uv, Vector3 norm) =>
+        (Position, UV, Normal, Tangent, Bitangent) = (pos, uv, norm, Vector3.Zero, Vector3.Zero);
+    public Vertex(float px, float py, float pz, float u, float v, float nx, float ny, float nz) =>
+        (Position, UV, Normal, Tangent, Bitangent) = (new Vector3(px, py, pz), new Vector2(u, v), new Vector3(nx, ny, nz), Vector3.Zero, Vector3.Zero);
 }
 
-public class ModelLoader
+public struct Triangle
 {
+    public Vertex V1;
+    public Vertex V2;
+    public Vertex V3;
+
+    public Triangle(Vertex v1, Vertex v2, Vertex v3) =>
+        (V1, V2, V3) = (v1, v2, v3);
+
+    public void CalculateTangents()
+    {
+        Vector3 edge1 = V2.Position - V1.Position;
+        Vector3 edge2 = V3.Position - V1.Position;
+        Vector2 deltaUV1 = V2.UV - V1.UV;
+        Vector2 deltaUV2 = V3.UV - V1.UV;
+
+        Vector3 tangent, bitangent;
+        float f = 1.0f / (deltaUV1.X * deltaUV2.Y - deltaUV2.X * deltaUV1.Y);
+
+        tangent.X = f * (deltaUV2.Y * edge1.X - deltaUV1.Y * edge2.X);
+        tangent.Y = f * (deltaUV2.Y * edge1.Y - deltaUV1.Y * edge2.Y);
+        tangent.Z = f * (deltaUV2.Y * edge1.Z - deltaUV1.Y * edge2.Z);
+
+        bitangent.X = f * (-deltaUV2.X * edge1.X + deltaUV1.X * edge2.X);
+        bitangent.Y = f * (-deltaUV2.X * edge1.Y + deltaUV1.X * edge2.Y);
+        bitangent.Z = f * (-deltaUV2.X * edge1.Z + deltaUV1.X * edge2.Z);
+
+        V1.Tangent = V2.Tangent = V3.Tangent = tangent;
+        V1.Bitangent = V2.Bitangent = V3.Bitangent = bitangent;
+    }
+}
+
+static class ModelLoader
+{
+    public static Model LoadCube()
+    {
+        Model cube = new();
+
+        int vecSize = 14;
+
+        Triangle[] tris =
+        {
+            new(
+                new(-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f),
+                new(0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f),
+                new(0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f)
+             ),
+            new(
+                new( 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f),
+                new(-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f),
+                new(-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f)
+             ),
+            new(
+                new(-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f),
+                new( 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f),
+                new( 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f)
+             ),                                                           
+            new(                                                         
+                new( 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f),
+                new(-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f),
+                new(-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f)
+             ),                                                           
+            new(                                                         
+                new(-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f),
+                new(-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f),
+                new(-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f)
+             ),                                                          
+            new(                                                         
+                new(-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f),
+                new(-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f),
+                new(-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f)
+             ),                                                           
+             new(                                                        
+                 new(0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f),
+                 new(0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f),
+                 new(0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f)
+              ),                                                          
+             new(                                                        
+                 new(0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f),
+                 new(0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f),
+                 new(0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f)
+              ),                                                          
+            new(                                                         
+                new(-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f),
+                new( 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f),
+                new( 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f)
+             ),                                                           
+            new(                                                         
+                new( 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f),
+                new(-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f),
+                new(-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f)
+             ),                                                           
+            new(                                                         
+                new(-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f),
+                new( 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f),
+                new( 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f)
+             ),
+            new(
+                new( 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f),
+                new(-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f),
+                new(-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f)
+             )
+        };
+
+        for (int i = 0; i < tris.Length; i++)
+        {
+            tris[i].CalculateTangents();
+        }
+
+        float[] vertices = new float[vecSize * tris.Length * 3];
+        int vPointer = 0;
+        for (int i = 0; i < tris.Length; i++)
+        {
+            vPointer = InsertVertex(vertices, vPointer, tris[i].V1);
+            vPointer = InsertVertex(vertices, vPointer, tris[i].V2);
+            vPointer = InsertVertex(vertices, vPointer, tris[i].V3);
+        }
+        cube.Vertices = vertices;
+        return cube;
+    }
+
+    private static int InsertVertex(float[] vertices, int index, Vertex v)
+    {
+        (vertices[index], vertices[index + 1], vertices[index + 2]) = (v.Position.X, v.Position.Y, v.Position.Z);
+        (vertices[index + 3],  vertices[index + 4],  vertices[index + 5])  = (v.Normal.X,     v.Normal.Y,    v.Normal.Z);
+        (vertices[index + 6], vertices[index + 7]) = (v.UV.X, v.UV.Y);
+        (vertices[index + 8],  vertices[index + 9],  vertices[index + 10]) = (v.Tangent.X,   v.Tangent.Y,   v.Tangent.Z);
+        (vertices[index + 11], vertices[index + 12], vertices[index + 13]) = (v.Bitangent.X, v.Bitangent.Y, v.Bitangent.Z);
+
+        return index + 14;
+    }
 }
