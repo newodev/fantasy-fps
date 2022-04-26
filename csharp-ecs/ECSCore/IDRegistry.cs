@@ -40,7 +40,7 @@ internal static class IDRegistry
         return result;
     }
 
-    public static byte GetArchetypeKey(List<Type> key)
+    public static byte GetArchetypeKey(Type[] key)
     {
         // Search for an existing key if the archetype already exists in the Universe
         // (IDs are unique even across regions)

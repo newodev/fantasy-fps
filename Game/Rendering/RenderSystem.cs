@@ -21,17 +21,17 @@ class RenderSystem : JobSystem
 
     public override void Init()
     {
-        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f, -1.5f, 0f), Scale = new Vector3(5f, 1f, 5f), Rotation = new Vector3(0f) }, new RenderableComponent() { RenderableID = 998 } });
-        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f, 0f, 0f), Scale = new Vector3(1f), Rotation = new Vector3(0f) }, new RenderableComponent() { RenderableID = 999 }, new InputComponent() });
-        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f, 1f, 0f), Scale = new Vector3(0.8f), Rotation = new Vector3(0f, MathHelper.PiOver4, 0f) }, new RenderableComponent() { RenderableID = 999 }, new InputComponent() });
-        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(0f, 0f, -2f), Scale = new Vector3(1f), Rotation = Vector3.Zero }, new Camera() { AspectRatio = Settings.AspectRatio, FarPlane = 100f, NearPlane = 0.01f, FieldOfView = 90f } });
-        region.SpawnEntity(new List<IComponent>() { new Transform() { Position = new Vector3(2f, 4f, 0f) }, new PointLight() { LightColor = Color.White } });
+        region.SpawnEntity(new IComponent[] { new Transform() { Position = new Vector3(0f, -1.5f, 0f), Scale = new Vector3(5f, 1f, 5f), Rotation = new Vector3(0f) }, new RenderableComponent() { RenderableID = 998 } });
+        region.SpawnEntity(new IComponent[] { new Transform() { Position = new Vector3(0f, 0f, 0f), Scale = new Vector3(1f), Rotation = new Vector3(0f) }, new RenderableComponent() { RenderableID = 999 }, new InputComponent() });
+        region.SpawnEntity(new IComponent[] { new Transform() { Position = new Vector3(0f, 1f, 0f), Scale = new Vector3(0.8f), Rotation = new Vector3(0f, MathHelper.PiOver4, 0f) }, new RenderableComponent() { RenderableID = 999 }, new InputComponent() });
+        region.SpawnEntity(new IComponent[] { new Transform() { Position = new Vector3(0f, 0f, -2f), Scale = new Vector3(1f), Rotation = Vector3.Zero }, new Camera() { AspectRatio = Settings.AspectRatio, FarPlane = 100f, NearPlane = 0.01f, FieldOfView = 90f } });
+        region.SpawnEntity(new IComponent[] { new Transform() { Position = new Vector3(2f, 4f, 0f) }, new PointLight() { LightColor = Color.White } });
     }
 
     public override void Update()
     {
         Vector3 rot;
-        region.Query((ComponentArray<Transform> t, ComponentArray<Camera> cam) =>
+        region.Query((Query<Transform> t, Query<Camera> cam) =>
         {
             Transform camPos = t[0];
             Camera mainCam = cam[0];
@@ -43,7 +43,7 @@ class RenderSystem : JobSystem
             Renderer.UpdateCamera(camPos, mainCam);
         });
 
-        region.Query((ComponentArray<Transform> t, ComponentArray<InputComponent> i) =>
+        region.Query((Query<Transform> t, Query<InputComponent> i) =>
         {
             Parallel.For(0, t.Count, (i) =>
             {
@@ -65,7 +65,7 @@ class RenderSystem : JobSystem
             });
         });
 
-        region.Query((ComponentArray<Transform> t, ComponentArray<RenderableComponent> r) =>
+        region.Query((Query<Transform> t, Query<RenderableComponent> r) =>
         {
             Parallel.For(0, t.Count, (i) =>
             {
@@ -73,7 +73,7 @@ class RenderSystem : JobSystem
             });
         });
 
-        region.Query((ComponentArray<Transform> t, ComponentArray<DirectionalLight> l) =>
+        region.Query((Query<Transform> t, Query<DirectionalLight> l) =>
         {
             for(int i = 0; i < t.Count; i++)
             {
@@ -81,7 +81,7 @@ class RenderSystem : JobSystem
             }
         });
 
-        region.Query((ComponentArray<Transform> t, ComponentArray<PointLight> l) =>
+        region.Query((Query<Transform> t, Query<PointLight> l) =>
         {
             for (int i = 0; i < t.Count; i++)
             {

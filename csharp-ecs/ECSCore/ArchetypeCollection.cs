@@ -3,165 +3,97 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace CSharp_ECS.ECSCore;
 
-// Stores a collection of entities that exist within a region.
-// All entities stored in an archetype have components that exactly match the Key.
+// TODO: Integrate with queries etc
 internal class ArchetypeCollection
 {
     // The key generated on a per-archetype basis
     public readonly byte Key;
 
-    // The archetype is the components that define the collection, eg. Position + Rotation.
-    // Note that every entity also has the entity component.
-    public List<Type> Archetype;
-    public int EntitySize { get => Archetype.Count; }
+    private GenericComponentArray[] ComponentArrays;
 
-    // An entity is described as an array of components.
-    // Contents are layed out as AAAABBBBCCCC.
-    public List<IComponent> Contents;
-    public int EntityCount = 0;
+    public Type[] ComponentTypes;
 
-    // Entity creation/destruction buffers. This is to ensure entity indexes remain the same throughout each frame
-    private List<IComponent[]> EntitiesToSpawn = new List<IComponent[]>();
-    private List<int> EntitiesToDestroy = new List<int>();
+    // Buffer of entities that will be destroyed at EoF (end of frame)
+    // The buffer of entities to spawn is stored in each component array
+    private List<int> EntitiesToDestroy = new();
 
-    public ArchetypeCollection(List<Type> archetype, byte key)
+    public int EntityCount { get; private set; }
+
+    internal ArchetypeCollection(Type[] types, byte key)
     {
-        Archetype = archetype;
-        Contents = new List<IComponent>();
         Key = key;
-    }
-
-    public void ResolveBuffers()
-    {
-        // Destroy entities first so that new entities can take their freed IDs
-        DestroyBufferedEntities();
-        SpawnBufferedEntities();
-    }
-
-    // Adds an entity to the buffer to be instantiated at the end of frame
-    public void SpawnEntity(List<IComponent> components)
-    {
-        // This is mini cringe. Ideally make it all run on arrays, as lists have too much memalloc
-        EntitiesToSpawn.Add(components.ToArray());
-    }
-
-    // Iterates through the spawn buffer and adds them all to the collection
-    private void SpawnBufferedEntities()
-    {
-        for (int i = 0; i < EntitiesToSpawn.Count; i++)
+        ComponentTypes = types;
+        ComponentArrays = new GenericComponentArray[types.Length];
+        for (int i = 0; i < types.Length; i++)
         {
-            SpawnBufferedEntity(i);
+            ComponentArrays[i] = GenericComponentArray.FromComponentType(types[i]);
         }
-
-        EntitiesToSpawn.Clear();
     }
 
-    // Adds a single entity to the collection
-    private void SpawnBufferedEntity(int entityIndex)
+    internal GenericComponentArray GetSegment(int i)
     {
-        // Get an ID for this new entity
-        int id = IDRegistry.GetNewID(Key);
-
-        // Console.WriteLine(Convert.ToString(id, 2));
-
-        // Add each of the components to the correct location in the list
-        for (int i = EntitySize; i > 0; i--)
-        {
-            // Insert all components into the collection, starting at the back to simplify the algorithm
-            // Set the entity ID of each component
-            IComponent component = EntitiesToSpawn[entityIndex][i - 1];
-            component.Id = id;
-
-            // TODO: Fix, index exceepds list size
-            int insertTarget = EntityCount * i;
-            Contents.Insert(insertTarget, component);
-        }
-
-        EntityCount++;
+        return ComponentArrays[i];
     }
 
-    // Marks an entity by ID to be destroyed at the end of frame
-    public void DestroyEntityByID(int id)
+    public void DestroyEntityByID(int entityID)
     {
-        int index = GetEntityIndexByID(id);
-        DestroyEntity(index);
-    }
-    // Marks an entity to be destroyed at the end of frame
-    public void DestroyEntity(int index)
-    {
-        EntitiesToDestroy.Add(index);
+        EntitiesToDestroy.Add(entityID);
     }
 
-    // Iterates through the destroy buffer and removes all marked entities from the collection
-    private void DestroyBufferedEntities()
-    {
-        for (int i = 0; i < EntitiesToDestroy.Count; i++)
-        {
-            DestroyBufferedEntity(i);
-        }
-
-        EntitiesToDestroy.Clear();
-    }
-
-    // Removes an entity from the collection
-    private void DestroyBufferedEntity(int entityIndex)
-    {
-        // Frees the ID of this entity in the registry
-        int id = Contents[entityIndex].Id;
-        IDRegistry.FreeID(id, Key);
-
-        for (int i = 0; i < EntitySize; i++)
-        {
-            // Destroy all components that compose the entity, starting from the back
-            int destroyTarget = (EntitySize - i) * EntityCount + entityIndex;
-            EntitiesToDestroy.RemoveAt(destroyTarget);
-        }
-        EntityCount--;
-    }
-
-    // Returns true if the input query is a subset of this Archetype
     public bool Contains(HashSet<Type> query)
     {
         if (query == null)
             throw new ArgumentNullException("query");
 
-        if (query.IsSubsetOf(Archetype))
+        if (query.IsSubsetOf(ComponentTypes))
             return true;
         else
             return false;
     }
-    /// <summary>
-    /// Finds an entity's index in this collection based on its ID. 
-    /// </summary>
-    /// <param name="id">The entity's ID</param>
-    public int GetEntityIndexByID(int id)
+
+    public void Update()
     {
-        // Binary search along the first component array in the collection
-        // eg. AAAAPPPPZZZZ
-        // Searches along the A's for a match
-        return GetEntityIndexByID(id, 0, EntityCount - 1);
+        ClearDestroyBuffer();
+        ClearSpawnBuffer();
     }
 
-    private int GetEntityIndexByID(int id, int start, int end)
+    public void SpawnEntity(Span<IComponent> components)
     {
-        // Binary search implementation
-        int pivot = (start + end) / 2;
+        int id = IDRegistry.GetNewID(Key);
 
-        if (Contents[pivot].Id == id)
+        // This assumes that the order of components given matches the order of ComponentArrays
+        for (int i = 0; i < components.Length; i++)
         {
-            return pivot;
+            components[i].Id = id;
+            ComponentArrays[i].AddToSpawnBuffer(components[i]);
         }
-        else if (Contents[pivot].Id < id)
+
+        EntityCount++;
+    }
+
+    public void DestroyEntity(int entityID)
+    {
+        EntitiesToDestroy.Add(entityID);
+    }
+
+    public void ClearSpawnBuffer()
+    {
+        for (int i = 0; i < ComponentArrays.Length; i++)
         {
-            return GetEntityIndexByID(id, pivot + 1, end);
+            ComponentArrays[i].ClearSpawnBuffer();
         }
-        else if (Contents[pivot].Id > id)
+    }
+
+    private void ClearDestroyBuffer()
+    {
+        for (int i = 0; i < ComponentArrays.Length; i++)
         {
-            return GetEntityIndexByID(id, start, pivot - 1);
+            ComponentArrays[i].ClearDestroyBuffer(EntitiesToDestroy);
         }
-        return -1;
+        EntitiesToDestroy.Clear();
     }
 }

@@ -8,69 +8,76 @@ using System.Reflection;
 
 namespace CSharp_ECS.ECSCore;
 
-internal static class ComponentArrayFactory
+// We use an abstract subclass as the ArchetypeCollection cannot interact with the generic types of the ComponentArrays
+public abstract class GenericComponentArray
 {
-    // Info of the ComponentArray<>'s constructor used to generate generics at runtime
-    public static readonly Type Generic = typeof(ComponentArray<>);
-    public static readonly Type[] ConstructorParams = new Type[] { typeof(List<ArchetypeCollection>) };
-
-    // Generate an array of ComponentCollections, based on the input component types
-    public static object[] ConstructCollections(ParameterInfo[] parameters, List<ArchetypeCollection> matches)
+    internal static readonly Type Generic = typeof(ComponentArray<>);
+    internal static GenericComponentArray FromComponentType(Type componentType)
     {
-        object[] collections = new object[parameters.Length];
-
-        for (int i = 0; i < parameters.Length; i++)
-        {
-            collections[i] = ConstructCollection(parameters[i], matches);
-        }
-
-        return collections;
-    }
-
-    // Generate a ComponentArray of the type specified in parameter, using reflection
-    private static object ConstructCollection(ParameterInfo parameter, List<ArchetypeCollection> matches)
-    {
-        object[] constructorArgs = new object[] { matches };
-
+        object[] constructorArgs = Array.Empty<object>();
         // Convert the generic ComponentArray<> type to a ComponentArray<C>
-        Type collectionType = Generic
-            .MakeGenericType(parameter.ParameterType.GenericTypeArguments[0]);
+        Type componentArrayType = Generic.MakeGenericType(componentType);
 
         // Invoke the constructor of this ComponentArray<C> to create our collection
         // Use the binding flags as the constructor is internal (can't be instantiated by other assemblies)
-        var constructor = collectionType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, ConstructorParams);
-        object collection = constructor
-            .Invoke(constructorArgs);
+        var constructor = componentArrayType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, Array.Empty<Type>());
+        GenericComponentArray? collection = constructor.Invoke(constructorArgs) as GenericComponentArray;
+
+        if (collection == null)
+            throw new Exception($"Error creating new ComponentArray with type {componentType.FullName}: constructor invocation returned null");
 
         return collection;
     }
+
+    public Type ComponentType { get; protected init; }
+    internal abstract void DestroyByID(int entityID);
+    internal abstract void ClearSpawnBuffer();
+    internal abstract void ClearDestroyBuffer(List<int> entitiesToDestroy);
+    internal abstract void AddToSpawnBuffer(IComponent component);
 }
 
-public class ComponentArray<T> where T : IComponent
+public class ComponentArray<T> : GenericComponentArray where T : IComponent
 {
-    public int Count;
-    private List<ArchetypeCollection> matches;
+    // TODO: Reimplement this as an array wrapper, so we can ref return!!!! But keep same expansion feature as lists, and possibly some size prediction
+    public int Count { get => contents.Count(); }
+    private List<T> contents = new();
 
-    // Represents the base 1 index of this collection's component type in each ArchetypeCollection's archetype
-    // eg. ComponentArray<C>
-    //     matches: ABC BCD CDE
-    //     offsets: 3   2   1
-    private List<int> componentOffsets;
+    private List<T> spawnBuffer = new();
 
-    // An instance of T so that it doesn't have to be repeatedly instantiated to query
-    private Type typeInstance = typeof(T);
-
-    internal ComponentArray(List<ArchetypeCollection> _matches)
+    internal ComponentArray()
     {
-        matches = _matches;
+        ComponentType = typeof(T);
+    }
 
-        Count = 0;
-        componentOffsets = new List<int>();
-        foreach (ArchetypeCollection a in matches)
+    internal override void ClearSpawnBuffer()
+    {
+        if (spawnBuffer.Count == 0)
+            return;
+
+        for (int i = 0; i < spawnBuffer.Count; i++)
         {
-            Count += a.EntityCount;
-            componentOffsets.Add(a.Archetype.IndexOf(typeInstance));
+            contents.Add(spawnBuffer[i]);
         }
+
+        SortByID();
+
+        spawnBuffer.Clear();
+    }
+
+    internal override void ClearDestroyBuffer(List<int> entitiesToDestroy)
+    {
+        for (int j = entitiesToDestroy.Count - 1; j >= 0; j--)
+        {
+            int id = entitiesToDestroy[j];
+            DestroyByID(id);
+        }
+    }
+
+    // The ComponentArray is sorted by entity ID after each frame if new entities were spawned
+    // This is so binary search can be used when getting a component by ID
+    private void SortByID()
+    {
+        contents.Sort((a, b) => a.Id.CompareTo(b.Id));
     }
 
     public T this[int index]
@@ -79,87 +86,63 @@ public class ComponentArray<T> where T : IComponent
         set => SetComponent(index, value);
     }
 
-    public T GetComponent(int i)
+    private T GetComponent(int i)
     {
-        int match = FindEntityArchetype(i);
-        int entityIndex = FindEntityIndexInArchetype(i);
-
-        ArchetypeCollection a = matches[match];
-
-        int index = FindComponentIndex(entityIndex, match);
-
-        // TODO: This actually causes a boxing conversion meaning a LOT of heap allocations every frame.
-        // Needs complete overhaul of storage system, probably a bunch of generic T[] arrays
-        // Copy the component
-        return (T)a.Contents[index];
+        return contents[i];
     }
 
-    public void SetComponent(int i, T val)
+    private T SetComponent(int i, T val)
     {
-        int match = FindEntityArchetype(i);
-        int entityIndex = FindEntityIndexInArchetype(i);
-
-        ArchetypeCollection a = matches[match];
-
-        int index = FindComponentIndex(entityIndex, match);
-
-        // Maintain the current component's Id
-        val.Id = a.Contents[index].Id;
-        // Apply the value changes
-        a.Contents[index] = val;
+        contents[i] = val;
+        return contents[i];
     }
 
-
-    // Finds the index in matches of the ArchetypeCollection of the entity at i in this array
-    public int FindEntityArchetype(int totalIndex)
+    public T GetByID(int entityID)
     {
-        // TODO: This is a point that could use a lot of optimisation. Could possibly cache ranges and just go straight to the correct Collection
-        if (matches.Count == 1)
-            return 0;
-        for (int i = 0; i < matches.Count; i++)
+        // Binary search for component by its ID
+        int i = GetComponentIndexByID(entityID, 0, Count - 1);
+        return contents[i];
+    }
+
+    public T SetByID(int entityID, T val)
+    {
+        // Binary search for component by its ID
+        int i = GetComponentIndexByID(entityID, 0, Count - 1);
+        contents[i] = val;
+        return contents[i];
+    }
+
+    internal override void DestroyByID(int entityID)
+    {
+        // Binary search for component by its ID
+        int i = GetComponentIndexByID(entityID, 0, Count - 1);
+        if (i != -1)
+            contents.RemoveAt(i);
+    }
+
+    public int GetComponentIndexByID(int id, int start, int end)
+    {
+        // Binary search implementation
+        int pivot = (start + end) / 2;
+
+        if (contents[pivot].Id == id)
         {
-            ArchetypeCollection a = matches[i];
-            if (totalIndex >= a.EntityCount)
-            {
-                totalIndex -= a.EntityCount;
-            }
-            else
-            {
-                return i;
-            }
+            return pivot;
         }
-        throw new IndexOutOfRangeException("Index out of bounds in ComponentArray");
-    }
-
-    public int FindEntityIndexInArchetype(int totalIndex)
-    {
-        int entityIndex = totalIndex;
-        for (int i = 0; i < matches.Count; i++)
+        else if (contents[pivot].Id < id)
         {
-            ArchetypeCollection a = matches[i];
-            if (entityIndex >= a.EntityCount)
-            {
-                entityIndex -= a.EntityCount;
-            }
-            else
-            {
-                return entityIndex;
-            }
+            return GetComponentIndexByID(id, pivot + 1, end);
         }
-        throw new IndexOutOfRangeException("Index out of bounds in ComponentArray");
+        else if (contents[pivot].Id > id)
+        {
+            return GetComponentIndexByID(id, start, pivot - 1);
+        }
+        return -1;
     }
 
-    // Finds the index of a component based on 
-    private int FindComponentIndex(int i, int match)
+    internal override void AddToSpawnBuffer(IComponent component)
     {
-        ArchetypeCollection a = matches[match];
-        // Find the location of the component in the ArchetypeCollection denoted by match
-        int offset = componentOffsets[match];
-        int index = offset * a.EntityCount + i;
-
-        if (offset == -1)
-            throw new ECSArchetypeException(typeInstance, a.Key, $"FindComponentIndex({i}, {match})");
-
-        return index;
+        T castedComponent = (T)component;
+        spawnBuffer.Add(castedComponent);
     }
 }
