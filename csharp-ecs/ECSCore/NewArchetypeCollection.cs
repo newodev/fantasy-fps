@@ -22,6 +22,11 @@ internal class NewArchetypeCollection
     public void Update()
     {
         ClearDestroyBuffer();
+        ClearSpawnBuffer();
+    }
+
+    public void ClearSpawnBuffer()
+    {
         for (int i = 0; i < Components.Length; i++)
         {
             Components[i].ClearSpawnBuffer();
@@ -32,12 +37,9 @@ internal class NewArchetypeCollection
     {
         for (int i = 0; i < Components.Length; i++)
         {
-            for (int j = EntitiesToDestroy.Count - 1; j >= 0; j--)
-            {
-                int id = EntitiesToDestroy[j];
-                Components[i].DestroyByID(id);
-            }
+            Components[i].ClearDestroyBuffer(EntitiesToDestroy);
         }
+        EntitiesToDestroy.Clear();
     }
 }
 
@@ -46,6 +48,7 @@ public abstract class GenericComponentArray
     public Type ComponentType { get; protected init; }
     internal abstract void DestroyByID(int entityID);
     internal abstract void ClearSpawnBuffer();
+    internal abstract void ClearDestroyBuffer(List<int> entitiesToDestroy);
 }
 public class NewComponentArray<T> : GenericComponentArray where T : IComponent
 {
@@ -68,8 +71,26 @@ public class NewComponentArray<T> : GenericComponentArray where T : IComponent
         {
             contents.Add(spawnBuffer[i]);
         }
-        // TODO: SORT CONTENTS BY ID
+
+        SortByID();
+
         spawnBuffer.Clear();
+    }
+
+    internal override void ClearDestroyBuffer(List<int> entitiesToDestroy)
+    {
+        for (int j = entitiesToDestroy.Count - 1; j >= 0; j--)
+        {
+            int id = entitiesToDestroy[j];
+            DestroyByID(id);
+        }
+    }
+
+    // The ComponentArray is sorted by entity ID after each frame if new entities were spawned
+    // This is so binary search can be used when getting a component by ID
+    private void SortByID()
+    {
+        contents.Sort((a, b) => a.Id.CompareTo(b.Id));
     }
 
     public T this[int index]
