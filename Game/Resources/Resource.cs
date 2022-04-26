@@ -45,9 +45,9 @@ static class Resource
         return map;
     }
 
-    public static Material LoadMaterial(string diffuse, string spec, string met, string ao)
+    public static Material LoadMaterial(string diffuse, string spec, string met, string ao, string n)
     {
-        return new Material(new Texture(diffuse), new Texture(spec), new Texture(met), new Texture(ao));
+        return new Material(new Texture(diffuse), new Texture(spec), new Texture(met), new Texture(ao), new Texture(n));
     }
 
     public static Model GenCube()

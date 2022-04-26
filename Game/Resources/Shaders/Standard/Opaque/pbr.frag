@@ -14,6 +14,7 @@ struct Material
     sampler2D metallicMap;
     sampler2D roughnessMap;
     sampler2D aoMap;
+    sampler2D normalMap;
 };
 
 uniform Material material;
@@ -49,8 +50,9 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0);
 
 void main()
 {
+    vec3 norm = (texture(material.normalMap, texCoord).rgb * 2) - 1;
     // Normal vector of surface
-    vec3 N = normalize(Normal);
+    vec3 N = normalize(norm);
     // Outgoing vector, from surface to camera
     vec3 V = normalize(viewPos - FragPos);
     vec3 albedo = pow(texture(material.albedoMap, texCoord).rgb, vec3(2.2));
@@ -62,9 +64,6 @@ void main()
     F0 = mix(F0, albedo, metallic);
 
     vec3 Lo = vec3(0.0);
-
-    //for(int i = 0; i < numDirLight; i++)
-    //    result += CalcDirLight(directionalLights[i], norm, viewDir);
 
     for(int i = 0; i < numPointLight; i++)
     {

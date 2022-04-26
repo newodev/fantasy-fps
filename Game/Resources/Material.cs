@@ -18,8 +18,8 @@ class Material
 
 
 
-    internal Material(Texture a, Texture r, Texture m, Texture ao)
-        => (Albedo, Roughness, Metallic, AO) = (a, r, m, ao);
+    internal Material(Texture a, Texture r, Texture m, Texture ao, Texture n)
+        => (Albedo, Roughness, Metallic, AO, Normal) = (a, r, m, ao, n);
 
     public void Use()
     {
@@ -27,5 +27,6 @@ class Material
         Metallic.Use(TextureUnit.Texture1);
         Roughness.Use(TextureUnit.Texture2);
         AO.Use(TextureUnit.Texture3);
+        Normal.Use(TextureUnit.Texture4);
     }
 }

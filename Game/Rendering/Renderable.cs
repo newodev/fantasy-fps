@@ -37,6 +37,7 @@ class Renderable
         Shader.SetInt("material.roughnessMap", 1);
         Shader.SetInt("material.metallicMap", 2);
         Shader.SetInt("material.aoMap", 3);
+        Shader.SetInt("material.normalMap", 4);
 
         Matrix4 model = Mathm.Transform(t);
         Shader.SetMatrix4("model", model);
