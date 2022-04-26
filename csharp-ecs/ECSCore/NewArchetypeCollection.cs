@@ -8,7 +8,10 @@ namespace CSharp_ECS.ECSCore;
 
 internal class NewArchetypeCollection
 {
-    private GenericComponentArray[] Components;
+    // The key generated on a per-archetype basis
+    public readonly byte Key;
+
+    private GenericComponentArray[] ComponentArrays;
 
     // Buffer of entities that will be destroyed at EoF (end of frame)
     // The buffer of entities to spawn is stored in each component array
@@ -25,38 +28,59 @@ internal class NewArchetypeCollection
         ClearSpawnBuffer();
     }
 
+    public void SpawnEntity(Span<IComponent> components)
+    {
+        int id = IDRegistry.GetNewID(Key);
+
+        // This assumes that the order of components given matches the order of ComponentArrays
+        for (int i = 0; i < components.Length; i++)
+        {
+            components[i].Id = id;
+            ComponentArrays[i].AddToSpawnBuffer(components[i]);
+        }
+    }
+
+    public void DestroyEntity(int entityID)
+    {
+        EntitiesToDestroy.Add(entityID);
+    }
+
     public void ClearSpawnBuffer()
     {
-        for (int i = 0; i < Components.Length; i++)
+        for (int i = 0; i < ComponentArrays.Length; i++)
         {
-            Components[i].ClearSpawnBuffer();
+            ComponentArrays[i].ClearSpawnBuffer();
         }
     }
 
     private void ClearDestroyBuffer()
     {
-        for (int i = 0; i < Components.Length; i++)
+        for (int i = 0; i < ComponentArrays.Length; i++)
         {
-            Components[i].ClearDestroyBuffer(EntitiesToDestroy);
+            ComponentArrays[i].ClearDestroyBuffer(EntitiesToDestroy);
         }
         EntitiesToDestroy.Clear();
     }
+
+
 }
 
+// We use an abstract subclass as the ArchetypeCollection cannot interact with the generic types of the ComponentArrays
 public abstract class GenericComponentArray
 {
     public Type ComponentType { get; protected init; }
     internal abstract void DestroyByID(int entityID);
     internal abstract void ClearSpawnBuffer();
     internal abstract void ClearDestroyBuffer(List<int> entitiesToDestroy);
+    internal abstract void AddToSpawnBuffer(IComponent component);
 }
+
 public class NewComponentArray<T> : GenericComponentArray where T : IComponent
 {
     public int Count { get => contents.Count(); }
     private List<T> contents = new();
 
     private List<T> spawnBuffer = new();
-    // TODO: At end of each frame, ensure lists are still sorted by ID. (only sort if changed this frame)
 
     internal NewComponentArray()
     {
@@ -67,6 +91,7 @@ public class NewComponentArray<T> : GenericComponentArray where T : IComponent
     {
         if (spawnBuffer.Count == 0)
             return;
+
         for (int i = 0; i < spawnBuffer.Count; i++)
         {
             contents.Add(spawnBuffer[i]);
@@ -125,6 +150,14 @@ public class NewComponentArray<T> : GenericComponentArray where T : IComponent
         return contents[i];
     }
 
+    internal override void DestroyByID(int entityID)
+    {
+        // Binary search for component by its ID
+        int i = GetEntityIndexByID(entityID, 0, Count - 1);
+        if (i != -1)
+            contents.RemoveAt(i);
+    }
+
     private int GetEntityIndexByID(int id, int start, int end)
     {
         // Binary search implementation
@@ -145,11 +178,9 @@ public class NewComponentArray<T> : GenericComponentArray where T : IComponent
         return -1;
     }
 
-    internal override void DestroyByID(int entityID)
+    internal override void AddToSpawnBuffer(IComponent component)
     {
-        // Binary search for component by its ID
-        int i = GetEntityIndexByID(entityID, 0, Count - 1);
-        if (i != -1)
-            contents.RemoveAt(i);
+        T castedComponent = (T)component;
+        spawnBuffer.Add(castedComponent);
     }
 }
