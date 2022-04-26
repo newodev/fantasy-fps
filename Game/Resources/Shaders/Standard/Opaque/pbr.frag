@@ -7,6 +7,7 @@ out vec4 FragColor;
 in vec3 FragPos;
 in vec2 texCoord;
 in vec3 Normal;
+in mat3 TBN;
 
 struct Material
 {
@@ -50,11 +51,15 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0);
 
 void main()
 {
-    vec3 norm = (texture(material.normalMap, texCoord).rgb * 2) - 1;
+    vec3 norm = texture(material.normalMap, texCoord).rgb;
+    norm = norm * 2.0 - 1.0;
+
     // Normal vector of surface
-    vec3 N = normalize(norm);
+    vec3 N = normalize(norm * TBN);
+
     // Outgoing vector, from surface to camera
     vec3 V = normalize(viewPos - FragPos);
+
     vec3 albedo = pow(texture(material.albedoMap, texCoord).rgb, vec3(2.2));
     float roughness = texture(material.roughnessMap, texCoord).r;
     float metallic = texture(material.metallicMap, texCoord).r;

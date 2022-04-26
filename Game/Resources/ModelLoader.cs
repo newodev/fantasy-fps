@@ -18,8 +18,8 @@ public struct Vertex
 
     public Vertex(Vector3 pos, Vector2 uv, Vector3 norm) =>
         (Position, UV, Normal, Tangent, Bitangent) = (pos, uv, norm, Vector3.Zero, Vector3.Zero);
-    public Vertex(float px, float py, float pz, float u, float v, float nx, float ny, float nz) =>
-        (Position, UV, Normal, Tangent, Bitangent) = (new Vector3(px, py, pz), new Vector2(u, v), new Vector3(nx, ny, nz), Vector3.Zero, Vector3.Zero);
+    public Vertex(float px, float py, float pz, float nx, float ny, float nz, float u, float v) =>
+        (Position, Normal, UV, Tangent, Bitangent) = (new Vector3(px, py, pz), new Vector3(nx, ny, nz), new Vector2(u, v), Vector3.Zero, Vector3.Zero);
 }
 
 public struct Triangle
@@ -30,28 +30,6 @@ public struct Triangle
 
     public Triangle(Vertex v1, Vertex v2, Vertex v3) =>
         (V1, V2, V3) = (v1, v2, v3);
-
-    public void CalculateTangents()
-    {
-        Vector3 edge1 = V2.Position - V1.Position;
-        Vector3 edge2 = V3.Position - V1.Position;
-        Vector2 deltaUV1 = V2.UV - V1.UV;
-        Vector2 deltaUV2 = V3.UV - V1.UV;
-
-        Vector3 tangent, bitangent;
-        float f = 1.0f / (deltaUV1.X * deltaUV2.Y - deltaUV2.X * deltaUV1.Y);
-
-        tangent.X = f * (deltaUV2.Y * edge1.X - deltaUV1.Y * edge2.X);
-        tangent.Y = f * (deltaUV2.Y * edge1.Y - deltaUV1.Y * edge2.Y);
-        tangent.Z = f * (deltaUV2.Y * edge1.Z - deltaUV1.Y * edge2.Z);
-
-        bitangent.X = f * (-deltaUV2.X * edge1.X + deltaUV1.X * edge2.X);
-        bitangent.Y = f * (-deltaUV2.X * edge1.Y + deltaUV1.X * edge2.Y);
-        bitangent.Z = f * (-deltaUV2.X * edge1.Z + deltaUV1.X * edge2.Z);
-
-        V1.Tangent = V2.Tangent = V3.Tangent = tangent;
-        V1.Bitangent = V2.Bitangent = V3.Bitangent = bitangent;
-    }
 }
 
 static class ModelLoader
@@ -128,7 +106,7 @@ static class ModelLoader
 
         for (int i = 0; i < tris.Length; i++)
         {
-            tris[i].CalculateTangents();
+            tris[i] = CalculateTangents(tris[i]);
         }
 
         float[] vertices = new float[vecSize * tris.Length * 3];
@@ -152,5 +130,30 @@ static class ModelLoader
         (vertices[index + 11], vertices[index + 12], vertices[index + 13]) = (v.Bitangent.X, v.Bitangent.Y, v.Bitangent.Z);
 
         return index + 14;
+    }
+
+    private static Triangle CalculateTangents(Triangle t)
+    {
+        Vector3 edge1 = t.V2.Position - t.V1.Position;
+        Vector3 edge2 = t.V3.Position - t.V1.Position;
+        Vector2 deltaUV1 = t.V2.UV - t.V1.UV;
+        Vector2 deltaUV2 = t.V3.UV - t.V1.UV;
+
+        Vector3 tangent, bitangent;
+        float f = 1.0f / (deltaUV1.X * deltaUV2.Y - deltaUV2.X * deltaUV1.Y);
+
+        tangent.X = f * (deltaUV2.Y * edge1.X - deltaUV1.Y * edge2.X);
+        tangent.Y = f * (deltaUV2.Y * edge1.Y - deltaUV1.Y * edge2.Y);
+        tangent.Z = f * (deltaUV2.Y * edge1.Z - deltaUV1.Y * edge2.Z);
+
+        bitangent.X = f * (-deltaUV2.X * edge1.X + deltaUV1.X * edge2.X);
+        bitangent.Y = f * (-deltaUV2.X * edge1.Y + deltaUV1.X * edge2.Y);
+        bitangent.Z = f * (-deltaUV2.X * edge1.Z + deltaUV1.X * edge2.Z);
+
+        Console.WriteLine($"n: {t.V1.Normal}, tan: {tangent}, bt: {bitangent}");
+
+        t.V1.Tangent = t.V2.Tangent = t.V3.Tangent = tangent;
+        t.V1.Bitangent = t.V2.Bitangent = t.V3.Bitangent = bitangent;
+        return t;
     }
 }
