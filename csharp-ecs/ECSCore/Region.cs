@@ -32,23 +32,23 @@ public class Region
         Type[] componentTypes = new Type[parameters.Length];
         for (int i = 0; i < parameters.Length; i++)
         {
-            if (!parameters[i].ParameterType.IsGenericType || parameters[i].ParameterType.GetGenericTypeDefinition() != GenericComponentArray.Generic)
-                throw new ECSException("Query type " + parameters[i].ParameterType.FullName + " is not a ComponentArray");
+            if (!parameters[i].ParameterType.IsGenericType || parameters[i].ParameterType.GetGenericTypeDefinition() != QueryFactory.Generic)
+                throw new ECSException("Query type " + parameters[i].ParameterType.FullName + " is not a Query");
             componentTypes[i] = parameters[i].ParameterType.GetGenericArguments()[0];
         }
 
-        List<ArchetypeCollection> matches = GetMatchingArchetypes(componentTypes.ToHashSet());
+        ArchetypeCollection[] matches = GetMatchingArchetypes(componentTypes.ToHashSet());
 
 
         // The array of ComponentCollections the delegate is called with
-        object[] args = ComponentArrayFactory.ConstructCollections(parameters, matches);
+        object[] args = QueryFactory.ConstructQueries(parameters, matches);
 
         action.DynamicInvoke(args);
     }
 
-    private List<ArchetypeCollection> GetMatchingArchetypes(HashSet<Type> query)
+    private ArchetypeCollection[] GetMatchingArchetypes(HashSet<Type> query)
     {
-        List<ArchetypeCollection> subset = Archetypes.Where(x => x.Contains(query)).ToList();
+        ArchetypeCollection[] subset = Archetypes.Where(x => x.Contains(query)).ToArray();
 
         return subset;
     }
@@ -83,7 +83,7 @@ public class Region
         // TODO: this is allocating multiple lists... and a complex expression.... Look to simplify
 
         // Sort components by type name to match with an archetype
-        Array.Sort(components, (x, y) => x.GetType().FullName.CompareTo(y.GetType().FullName));
+        Array.Sort(components, (x, y) => x.GetType().Name.CompareTo(y.GetType().Name));
 
         Type[] key = new Type[components.Length];
         for (int i = 0; i < components.Length; i++)

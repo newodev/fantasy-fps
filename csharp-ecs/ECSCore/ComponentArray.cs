@@ -38,6 +38,7 @@ public abstract class GenericComponentArray
 
 public class ComponentArray<T> : GenericComponentArray where T : IComponent
 {
+    // TODO: Reimplement this as an array wrapper, so we can ref return!!!! But keep same expansion feature as lists, and possibly some size prediction
     public int Count { get => contents.Count(); }
     private List<T> contents = new();
 

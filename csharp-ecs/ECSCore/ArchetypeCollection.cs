@@ -21,6 +21,8 @@ internal class ArchetypeCollection
     // The buffer of entities to spawn is stored in each component array
     private List<int> EntitiesToDestroy = new();
 
+    public int EntityCount { get; private set; }
+
     internal ArchetypeCollection(Type[] types, byte key)
     {
         Key = key;
@@ -30,6 +32,11 @@ internal class ArchetypeCollection
         {
             ComponentArrays[i] = GenericComponentArray.FromComponentType(types[i]);
         }
+    }
+
+    internal GenericComponentArray GetSegment(int i)
+    {
+        return ComponentArrays[i];
     }
 
     public void DestroyEntityByID(int entityID)
@@ -64,6 +71,8 @@ internal class ArchetypeCollection
             components[i].Id = id;
             ComponentArrays[i].AddToSpawnBuffer(components[i]);
         }
+
+        EntityCount++;
     }
 
     public void DestroyEntity(int entityID)
