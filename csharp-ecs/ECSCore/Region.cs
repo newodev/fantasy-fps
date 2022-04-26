@@ -32,7 +32,7 @@ public class Region
         Type[] componentTypes = new Type[parameters.Length];
         for (int i = 0; i < parameters.Length; i++)
         {
-            if (!parameters[i].ParameterType.IsGenericType || parameters[i].ParameterType.GetGenericTypeDefinition() != ComponentArrayFactory.Generic)
+            if (!parameters[i].ParameterType.IsGenericType || parameters[i].ParameterType.GetGenericTypeDefinition() != GenericComponentArray.Generic)
                 throw new ECSException("Query type " + parameters[i].ParameterType.FullName + " is not a ComponentArray");
             componentTypes[i] = parameters[i].ParameterType.GetGenericArguments()[0];
         }
@@ -58,7 +58,7 @@ public class Region
     {
         for (int i = 0; i < Archetypes.Count; i++)
         {
-            Archetypes[i].ResolveBuffers();
+            Archetypes[i].Update();
         }
     }
 
@@ -78,21 +78,21 @@ public class Region
     }
 
     // 'Spawns' an entity by adding its components into the collection
-    public void SpawnEntity(List<IComponent> components)
+    public void SpawnEntity(IComponent[] components)
     {
         // TODO: this is allocating multiple lists... and a complex expression.... Look to simplify
 
         // Sort components by type name to match with an archetype
-        components.Sort((x, y) => x.GetType().FullName.CompareTo(y.GetType().FullName));
+        Array.Sort(components, (x, y) => x.GetType().FullName.CompareTo(y.GetType().FullName));
 
-        List<Type> key = new List<Type>();
-        foreach (var component in components)
+        Type[] key = new Type[components.Length];
+        for (int i = 0; i < components.Length; i++)
         {
-            key.Add(component.GetType());
+            key[i] = components[i].GetType();
         }
 
         // Find an archetype that matches this new entity
-        List<ArchetypeCollection> a = Archetypes.Where(x => x.Archetype.SequenceEqual(key)).ToList();
+        List<ArchetypeCollection> a = Archetypes.Where(x => x.ComponentTypes.SequenceEqual(key)).ToList();
         // If this entity doesn't match an archetype, create a new one to match it
         if (a.Count() == 0)
         {
@@ -103,13 +103,13 @@ public class Region
         // Else add the entity to its matching archetype
         else
         {
-            a.First().SpawnEntity(components);
+            a.First().SpawnEntity(new Span<IComponent>(components));
         }
     }
 
     // Overload for convenience with a single component
     public void SpawnEntity(IComponent component)
     {
-        SpawnEntity(new List<IComponent> { component });
+        SpawnEntity(new[] { component });
     }
 }

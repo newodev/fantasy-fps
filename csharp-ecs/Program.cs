@@ -16,7 +16,7 @@ int entityCount = 100000;
 
 for (int i = 0; i < entityCount; i++)
 {
-    r.SpawnEntity(new List<IComponent>() { new A(), new B()});
+    r.SpawnEntity(new IComponent[] { new A(), new B()});
 }
 r.ResolveBuffers();
 
@@ -24,7 +24,7 @@ Console.WriteLine($"Running on {entityCount} entities...");
 bool loop = true;
 while (loop)
 {
-    r.Archetypes[0].ResolveBuffers();
+    r.Archetypes[0].Update();
     s.Update();
 
     char input = Console.ReadKey(true).KeyChar;

@@ -8,21 +8,22 @@ using System.Reflection;
 namespace CSharp_ECS.ECSCore;
 
 // TODO: Integrate with queries etc
-internal class NewArchetypeCollection
+internal class ArchetypeCollection
 {
     // The key generated on a per-archetype basis
     public readonly byte Key;
 
     private GenericComponentArray[] ComponentArrays;
 
-    private Type[] ComponentTypes;
+    public Type[] ComponentTypes;
 
     // Buffer of entities that will be destroyed at EoF (end of frame)
     // The buffer of entities to spawn is stored in each component array
     private List<int> EntitiesToDestroy = new();
 
-    internal NewArchetypeCollection(Type[] types)
+    internal ArchetypeCollection(Type[] types, byte key)
     {
+        Key = key;
         ComponentTypes = types;
         ComponentArrays = new GenericComponentArray[types.Length];
         for (int i = 0; i < types.Length; i++)
