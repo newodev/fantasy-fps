@@ -89,7 +89,6 @@ class Renderer
 
             for (int j = 0; j < Light.PointCount; j++)
             {
-                Console.WriteLine("a");
                 UsePoint(j, r, Light.PointLights[j], Light.PointPositions[j]);
             }
 
