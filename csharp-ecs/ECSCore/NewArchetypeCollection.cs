@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace CSharp_ECS.ECSCore;
 
+// TODO: Integrate with queries etc
 internal class NewArchetypeCollection
 {
     // The key generated on a per-archetype basis
@@ -13,13 +15,36 @@ internal class NewArchetypeCollection
 
     private GenericComponentArray[] ComponentArrays;
 
+    private Type[] ComponentTypes;
+
     // Buffer of entities that will be destroyed at EoF (end of frame)
     // The buffer of entities to spawn is stored in each component array
     private List<int> EntitiesToDestroy = new();
 
+    internal NewArchetypeCollection(Type[] types)
+    {
+        ComponentTypes = types;
+        ComponentArrays = new GenericComponentArray[types.Length];
+        for (int i = 0; i < types.Length; i++)
+        {
+            ComponentArrays[i] = GenericComponentArray.FromComponentType(types[i]);
+        }
+    }
+
     public void DestroyEntityByID(int entityID)
     {
         EntitiesToDestroy.Add(entityID);
+    }
+
+    public bool Contains(HashSet<Type> query)
+    {
+        if (query == null)
+            throw new ArgumentNullException("query");
+
+        if (query.IsSubsetOf(ComponentTypes))
+            return true;
+        else
+            return false;
     }
 
     public void Update()
@@ -68,6 +93,24 @@ internal class NewArchetypeCollection
 // We use an abstract subclass as the ArchetypeCollection cannot interact with the generic types of the ComponentArrays
 public abstract class GenericComponentArray
 {
+    public static readonly Type Generic = typeof(ComponentArray<>);
+    public static GenericComponentArray FromComponentType(Type componentType)
+    {
+        object[] constructorArgs = Array.Empty<object>();
+        // Convert the generic ComponentArray<> type to a ComponentArray<C>
+        Type componentArrayType = Generic.MakeGenericType(componentType);
+
+        // Invoke the constructor of this ComponentArray<C> to create our collection
+        // Use the binding flags as the constructor is internal (can't be instantiated by other assemblies)
+        var constructor = componentArrayType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, Array.Empty<Type>());
+        GenericComponentArray? collection = constructor.Invoke(constructorArgs) as GenericComponentArray;
+
+        if (collection == null)
+            throw new Exception($"Error creating new ComponentArray with type {componentType.FullName}: constructor invocation returned null");
+
+        return collection;
+    }
+
     public Type ComponentType { get; protected init; }
     internal abstract void DestroyByID(int entityID);
     internal abstract void ClearSpawnBuffer();
@@ -138,14 +181,14 @@ public class NewComponentArray<T> : GenericComponentArray where T : IComponent
     public T GetByID(int entityID)
     {
         // Binary search for component by its ID
-        int i = GetEntityIndexByID(entityID, 0, Count - 1);
+        int i = GetComponentIndexByID(entityID, 0, Count - 1);
         return contents[i];
     }
 
     public T SetByID(int entityID, T val)
     {
         // Binary search for component by its ID
-        int i = GetEntityIndexByID(entityID, 0, Count - 1);
+        int i = GetComponentIndexByID(entityID, 0, Count - 1);
         contents[i] = val;
         return contents[i];
     }
@@ -153,12 +196,12 @@ public class NewComponentArray<T> : GenericComponentArray where T : IComponent
     internal override void DestroyByID(int entityID)
     {
         // Binary search for component by its ID
-        int i = GetEntityIndexByID(entityID, 0, Count - 1);
+        int i = GetComponentIndexByID(entityID, 0, Count - 1);
         if (i != -1)
             contents.RemoveAt(i);
     }
 
-    private int GetEntityIndexByID(int id, int start, int end)
+    public int GetComponentIndexByID(int id, int start, int end)
     {
         // Binary search implementation
         int pivot = (start + end) / 2;
@@ -169,11 +212,11 @@ public class NewComponentArray<T> : GenericComponentArray where T : IComponent
         }
         else if (contents[pivot].Id < id)
         {
-            return GetEntityIndexByID(id, pivot + 1, end);
+            return GetComponentIndexByID(id, pivot + 1, end);
         }
         else if (contents[pivot].Id > id)
         {
-            return GetEntityIndexByID(id, start, pivot - 1);
+            return GetComponentIndexByID(id, start, pivot - 1);
         }
         return -1;
     }
