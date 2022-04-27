@@ -4,6 +4,7 @@
 // PBR Implementation from LearnOpenGL.com
 
 out vec4 FragColor;
+
 in vec3 FragPos;
 in vec2 texCoord;
 in vec3 Normal;
@@ -55,10 +56,10 @@ void main()
     norm = norm * 2.0 - 1.0;
 
     // Normal vector of surface
-    vec3 N = normalize(norm * TBN);
+    vec3 N = normalize(norm);
 
     // Outgoing vector, from surface to camera
-    vec3 V = normalize(viewPos - FragPos);
+    vec3 V = TBN * normalize(viewPos - FragPos);
 
     vec3 albedo = pow(texture(material.albedoMap, texCoord).rgb, vec3(2.2));
     float roughness = texture(material.roughnessMap, texCoord).r;
@@ -73,7 +74,7 @@ void main()
     for(int i = 0; i < numPointLight; i++)
     {
         PointLight light = pointLights[i];
-        vec3 L = normalize(light.position - FragPos);
+        vec3 L = TBN * normalize(light.position - FragPos);
         vec3 H = normalize(V + L);
         float distance    = length(light.position - FragPos);
         float attenuation = 1.0 / (distance * distance);

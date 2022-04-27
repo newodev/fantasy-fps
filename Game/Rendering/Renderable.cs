@@ -20,8 +20,8 @@ class Renderable
         Shader.InitialiseAttribute("aPosition", 3, VertexAttribPointerType.Float, false, 14 * sizeof(float), 0);
         Shader.InitialiseAttribute("aNormal", 3, VertexAttribPointerType.Float, false, 14 * sizeof(float), 3 * sizeof(float));
         Shader.InitialiseAttribute("aTexCoord", 2, VertexAttribPointerType.Float, false, 14 * sizeof(float), 6 * sizeof(float));
-        Shader.InitialiseAttribute("aTangent", 2, VertexAttribPointerType.Float, false, 14 * sizeof(float), 8 * sizeof(float));
-        Shader.InitialiseAttribute("aBitangent", 2, VertexAttribPointerType.Float, false, 14 * sizeof(float), 11 * sizeof(float));
+        Shader.InitialiseAttribute("aTangent", 3, VertexAttribPointerType.Float, false, 14 * sizeof(float), 8 * sizeof(float));
+        Shader.InitialiseAttribute("aBitangent", 3, VertexAttribPointerType.Float, false, 14 * sizeof(float), 11 * sizeof(float));
 
 
         Material = material;
