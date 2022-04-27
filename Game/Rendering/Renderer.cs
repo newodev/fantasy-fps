@@ -133,7 +133,7 @@ class Renderer
         // TODO: Make a configurable resource loader
         Shader s = new("Resources/Shaders/Standard/Opaque/shader.vert", "Resources/Shaders/Standard/Opaque/pbr.frag");
         Model cube = ModelLoader.LoadCube();
-        renderables.Add(999, new Renderable(s, Resource.LoadMaterial("Resources/Textures/floor_alb.tif", "Resources/Textures/floor_rough.tif", "Resources/Textures/floor_met.tif", "Resources/Textures/floor_ao.tif", "Resources/Textures/floor_normal.tif"), cube, VAO, VBO));
+        renderables.Add(999, new Renderable(s, Resource.LoadMaterial("Resources/Textures/stone_alb.tif", "Resources/Textures/stone_rough.tif", "Resources/Textures/floor_met.tif", "Resources/Textures/stone_ao.tif", "Resources/Textures/stone_normal.tif"), cube, VAO, VBO));
         renderables.Add(998, new Renderable(s, Resource.LoadMaterial("Resources/Textures/floor_alb.tif", "Resources/Textures/floor_rough.tif", "Resources/Textures/floor_met.tif", "Resources/Textures/floor_ao.tif", "Resources/Textures/floor_normal.tif"), cube, VAO, VBO));
     }
 }
