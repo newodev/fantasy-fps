@@ -35,14 +35,21 @@ static class Input
         KeyBinding k = new(InputAction.Forward);
         k.Add(Keys.W);
         Keybindings.Add(k);
+
         k = new(InputAction.Backward);
         k.Add(Keys.S);
         Keybindings.Add(k);
+
         k = new(InputAction.Left);
         k.Add(Keys.A);
         Keybindings.Add(k);
+
         k = new(InputAction.Right);
         k.Add(Keys.D);
+        Keybindings.Add(k);
+
+        k = new(InputAction.Secondary);
+        k.Add(MouseButton.Right);
         Keybindings.Add(k);
 
         PopulateDictionaries();

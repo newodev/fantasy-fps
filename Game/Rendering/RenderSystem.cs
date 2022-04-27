@@ -23,8 +23,8 @@ class RenderSystem : JobSystem
     {
         region.SpawnEntity(new IComponent[] { new Transform() { Position = new Vector3(0f, -1.5f, 0f), Scale = new Vector3(5f, 1f, 5f), Rotation = new Vector3(0f) }, new RenderableComponent() { RenderableID = 998 } });
         region.SpawnEntity(new IComponent[] { new Transform() { Position = new Vector3(0f, 0f, 0f), Scale = new Vector3(1f), Rotation = new Vector3(0f) }, new RenderableComponent() { RenderableID = 999 }, new InputComponent() });
-        region.SpawnEntity(new IComponent[] { new Transform() { Position = new Vector3(0f, 1f, -2f), Scale = new Vector3(1f), Rotation = new(MathHelper.PiOver4, 0f, 0f) }, new Camera() { AspectRatio = Settings.AspectRatio, FarPlane = 100f, NearPlane = 0.01f, FieldOfView = 90f } });
-        region.SpawnEntity(new IComponent[] { new Transform() { Position = new Vector3(0f, 4f, 0f) }, new PointLight() { LightColor = Color.White } });
+        region.SpawnEntity(new IComponent[] { new Transform() { Position = new Vector3(0f, 3f, -3f), Scale = new Vector3(1f), Rotation = new(MathHelper.PiOver4, 0f, 0f) }, new Camera() { AspectRatio = Settings.AspectRatio, FarPlane = 100f, NearPlane = 0.01f, FieldOfView = 90f } });
+        region.SpawnEntity(new IComponent[] { new Transform() { Position = new Vector3(0f, 3f, 0f), Scale = new Vector3(0.3f) }, new PointLight() { LightColor = Color.White }, new RenderableComponent() { RenderableID = 1 } });
     }
 
     public override void Update()
@@ -49,16 +49,18 @@ class RenderSystem : JobSystem
                 Transform tt = t[i];
         
                 if (Input.GetKeyHeld(InputAction.Forward) > 0)
-                    tt.Position.Z += 2 * Time.DeltaTime;
+                    tt.Rotation.Z += 2 * Time.DeltaTime;
                 if (Input.GetKeyHeld(InputAction.Backward) > 0)
-                    tt.Position.Z -= 2 * Time.DeltaTime;
+                    tt.Rotation.Z -= 2 * Time.DeltaTime;
                 if (Input.GetKeyHeld(InputAction.Left) > 0)
-                    tt.Position.X += 2 * Time.DeltaTime;
+                    tt.Rotation.X += 2 * Time.DeltaTime;
                 if (Input.GetKeyHeld(InputAction.Right) > 0)
-                    tt.Position.X -= 2 * Time.DeltaTime;
+                    tt.Rotation.X -= 2 * Time.DeltaTime;
+                if(Input.GetKeyHeld(InputAction.Secondary) > 0)
+                    tt.Rotation.Z += 2 * Time.DeltaTime;
         
-                tt.Rotation.Y += MathHelper.DegreesToRadians(Input.MouseDelta.X) * 0.3f;
-                tt.Rotation.X -= MathHelper.DegreesToRadians(Input.MouseDelta.Y) * 0.3f;
+                //tt.Rotation.Y += MathHelper.DegreesToRadians(Input.MouseDelta.X) * 0.3f;
+                //tt.Rotation.X -= MathHelper.DegreesToRadians(Input.MouseDelta.Y) * 0.3f;
         
                 t[i] = tt;
             });

@@ -18,18 +18,16 @@ uniform mat3 normalMat;
 
 void main()
 {
-    gl_Position =  vec4(aPosition, 1.0) * model * view * projection;
 
     texCoord = aTexCoord;
 
     FragPos = vec3(model * vec4(aPosition, 1.0));
 
     Normal = mat3(model) * aNormal;
-
     vec3 T = normalize(vec3(model * vec4(aTangent,   0.0)));
     vec3 B = normalize(vec3(model * vec4(aBitangent, 0.0)));
     vec3 N = normalize(vec3(model * vec4(aNormal,    0.0)));
-    if (dot(cross(N, T), B) < 0.0)
-                T = T * -1.0;
-    TBN = mat3(T, B, N);
+    TBN = transpose(mat3(T, B, N));
+
+    gl_Position =  vec4(aPosition, 1.0) * model * view * projection;
 }
