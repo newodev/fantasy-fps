@@ -118,6 +118,10 @@ static class ModelLoader
             vPointer = InsertVertex(vertices, vPointer, tris[i].V3);
         }
         cube.Vertices = vertices;
+        for (int i = 3; i < vertices.Length; i+= 14)
+        {
+            Console.WriteLine($"norm: {vertices[i]}, {vertices[i + 1]}, {vertices[i + 2]}");
+        }
         return cube;
     }
 
@@ -149,8 +153,6 @@ static class ModelLoader
         bitangent.X = f * (-deltaUV2.X * edge1.X + deltaUV1.X * edge2.X);
         bitangent.Y = f * (-deltaUV2.X * edge1.Y + deltaUV1.X * edge2.Y);
         bitangent.Z = f * (-deltaUV2.X * edge1.Z + deltaUV1.X * edge2.Z);
-
-        Console.WriteLine($"n: {t.V1.Normal}, tan: {tangent}, bt: {bitangent}");
 
         t.V1.Tangent = t.V2.Tangent = t.V3.Tangent = tangent;
         t.V1.Bitangent = t.V2.Bitangent = t.V3.Bitangent = bitangent;
