@@ -49,9 +49,9 @@ class RenderSystem : JobSystem
                 Transform tt = t[i];
         
                 if (Input.GetKeyHeld(InputAction.Forward) > 0)
-                    tt.Rotation.Z += 2 * Time.DeltaTime;
+                    tt.Rotation.Y += 2 * Time.DeltaTime;
                 if (Input.GetKeyHeld(InputAction.Backward) > 0)
-                    tt.Rotation.Z -= 2 * Time.DeltaTime;
+                    tt.Rotation.Y -= 2 * Time.DeltaTime;
                 if (Input.GetKeyHeld(InputAction.Left) > 0)
                     tt.Rotation.X += 2 * Time.DeltaTime;
                 if (Input.GetKeyHeld(InputAction.Right) > 0)

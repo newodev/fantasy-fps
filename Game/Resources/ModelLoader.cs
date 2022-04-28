@@ -118,7 +118,7 @@ static class ModelLoader
             vPointer = InsertVertex(vertices, vPointer, tris[i].V3);
         }
         cube.Vertices = vertices;
-        for (int i = 3; i < vertices.Length; i+= 14)
+        for (int i = 3; i < vertices.Length; i+= 14 * 6)
         {
             Console.WriteLine($"norm: {vertices[i]}, {vertices[i + 1]}, {vertices[i + 2]}");
         }

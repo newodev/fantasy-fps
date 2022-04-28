@@ -54,14 +54,14 @@ vec3 sampleNormalMap()
 {
     vec3 norm = texture(material.normalMap, texCoord).rgb * 2.0 - 1.0;
 
-    return normalize(norm);
+    return normalize(TBN * norm);
 }
 
 void main()
 {
     // Normal vector of surface
-    //vec3 N = sampleNormalMap();
-    vec3 N = normalize(Normal);
+    vec3 N = sampleNormalMap();
+    //vec3 N = normalize(Normal);
 
     // Outgoing vector, from surface to camera
     vec3 V = normalize(viewPos - FragPos);
@@ -111,8 +111,8 @@ void main()
     color = color / (color + vec3(1.0));
     color = pow(color, vec3(1.0/2.2));
 
-    //FragColor = vec4(color, 1.0);
-    FragColor = vec4(N, 1.0);
+    FragColor = vec4(color, 1.0);
+    //FragColor = vec4(abs(N), 1.0);
 }
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0)

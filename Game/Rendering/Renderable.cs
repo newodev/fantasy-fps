@@ -48,8 +48,8 @@ class Renderable
         Shader.SetMatrix4("view", view);
         Matrix4 projection = Mathm.GetProjectionMatrix(c);
         Shader.SetMatrix4("projection", projection);
-        Matrix4 normal = Matrix4.Transpose(Matrix4.Invert(model));
-        Shader.SetMatrix3("normalMat", new Matrix3(normal));
+        Matrix3 normal = new(Matrix4.Transpose(Matrix4.Invert(model)));
+        Shader.SetMatrix3("normalMat", normal);
         Shader.SetVec3("viewPos", camTransform.Position);
     }
 }
