@@ -13,7 +13,9 @@ using OpenTK.Graphics.OpenGL;
 namespace Game.Rendering;
 
 // Currently this is a naive implementation. Renders should be batched
-
+// TODO: Parralax mapping
+// TODO: Shadows
+// TODO: Bloom
 class Renderer
 {
     public Illumination Light = new();

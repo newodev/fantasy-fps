@@ -11,6 +11,7 @@ using System.Drawing;
 
 namespace Game.Rendering;
 
+// TODO: Frustrum culling
 class RenderSystem : JobSystem
 {
     private Renderer Renderer;
