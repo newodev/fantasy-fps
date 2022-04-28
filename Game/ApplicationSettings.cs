@@ -25,6 +25,7 @@ static class ApplicationSettings
     private static string WindowName = "ECSENGINE";
     private static WindowBorder ResizeMode = WindowBorder.Fixed;
     private static WindowState StartMode = WindowState.Maximized;
+    private static int AASamples = 4;
 
     public static GameWindowSettings MakeGWS()
     {
@@ -47,6 +48,7 @@ static class ApplicationSettings
         nws.Title = WindowName;
         nws.WindowBorder = ResizeMode;
         nws.WindowState = StartMode;
+        nws.NumberOfSamples = AASamples;
 
         return nws;
     }
