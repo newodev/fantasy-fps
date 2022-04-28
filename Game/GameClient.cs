@@ -52,7 +52,7 @@ class GameClient
         Input.Init();
 
         renderer.Init();
-        List<JobSystem> systems = new() { new RenderSystem(renderer) };
+        List<JobSystem> systems = new() { new RenderSystem(renderer), new TestSystem() };
         client = new(systems);
         client.Init();
 
