@@ -21,7 +21,7 @@ void main()
 
     texCoord = aTexCoord;
 
-    FragPos = vec3(model * vec4(aPosition, 1.0));
+    vec3 VertexWorldPos = vec3(vec4(aPosition, 1.0) * model);
 
     Normal = aNormal * normalMat;
 
@@ -30,5 +30,6 @@ void main()
     vec3 N = normalize(vec3(vec4(aNormal,    0.0) * model));
     TBN = mat3(T, B, N);
 
-    gl_Position =  vec4(aPosition, 1.0) * model * view * projection;
+    FragPos = VertexWorldPos;
+    gl_Position =  vec4(VertexWorldPos, 1.0) * view * projection;
 }

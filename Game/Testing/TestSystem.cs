@@ -31,20 +31,18 @@ class TestSystem : JobSystem
         {
             Parallel.For(0, t.Count, (i) =>
             {
-                Transform tt = t[i];
+                ref Transform tt = ref t.GetRef(i);
 
                 if (Input.GetKeyHeld(InputAction.Forward) > 0)
-                    tt.Rotation.Y += 2 * Time.DeltaTime;
+                    tt.Position.Z += 2 * Time.DeltaTime;
                 if (Input.GetKeyHeld(InputAction.Backward) > 0)
-                    tt.Rotation.Y -= 2 * Time.DeltaTime;
+                    tt.Position.Z -= 2 * Time.DeltaTime;
                 if (Input.GetKeyHeld(InputAction.Left) > 0)
-                    tt.Rotation.X += 2 * Time.DeltaTime;
+                    tt.Position.X += 2 * Time.DeltaTime;
                 if (Input.GetKeyHeld(InputAction.Right) > 0)
-                    tt.Rotation.X -= 2 * Time.DeltaTime;
+                    tt.Position.X -= 2 * Time.DeltaTime;
                 if (Input.GetKeyHeld(InputAction.Secondary) > 0)
                     tt.Rotation.Z += 2 * Time.DeltaTime;
-
-                t[i] = tt;
             });
         });
     }

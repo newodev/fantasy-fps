@@ -139,6 +139,13 @@ public class ComponentArray<T> : GenericComponentArray where T : IComponent
         return contents[i];
     }
 
+    public ref T GetRefByID(int entityID)
+    {
+        // Binary search for component by its ID
+        int i = GetComponentIndexByID(entityID, 0, Count - 1);
+        return ref contents[i];
+    }
+
     public T SetByID(int entityID, T val)
     {
         // Binary search for component by its ID

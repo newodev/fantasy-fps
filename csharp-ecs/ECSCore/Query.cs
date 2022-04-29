@@ -80,6 +80,16 @@ public class Query<T> where T : IComponent
         }
     }
 
+    public ref T GetRef(int i)
+    {
+        int match = FindEntityArchetype(i);
+        int entityIndex = FindEntityIndexInArchetype(i);
+
+        ComponentArray<T> a = matches[match];
+
+        return ref a.GetRef(entityIndex);
+    }
+
     public T this[int index]
     {
         get => GetComponent(index);
