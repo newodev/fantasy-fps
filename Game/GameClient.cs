@@ -33,7 +33,7 @@ namespace Game;
  *          - Game systems
  *  - ECSUniverse
  *      - Holds entire game state
- *      - used to mediate connections between servers that interact
+ *      - used to mediate connections between neighbouring servers
 */
 class GameClient
 {

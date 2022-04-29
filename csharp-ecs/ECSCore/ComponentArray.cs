@@ -30,6 +30,7 @@ public abstract class GenericComponentArray
     }
 
     public Type ComponentType { get; protected init; }
+    internal abstract int Count { get; }
     internal abstract void DestroyByID(int entityID);
     internal abstract void ClearSpawnBuffer();
     internal abstract void ClearDestroyBuffer(List<int> entitiesToDestroy);
@@ -39,14 +40,39 @@ public abstract class GenericComponentArray
 public class ComponentArray<T> : GenericComponentArray where T : IComponent
 {
     // TODO: Reimplement this as an array wrapper, so we can ref return!!!! But keep same expansion feature as lists, and possibly some size prediction
-    public int Count { get => contents.Count(); }
-    private List<T> contents = new();
+    internal override int Count { get => endPointer; }
+
+    private T[] contents = new T[16];
+    private int endPointer = 0;
 
     private List<T> spawnBuffer = new();
 
     internal ComponentArray()
     {
         ComponentType = typeof(T);
+    }
+    // Adds a component to the end of the array. Expands if needed.
+    internal void Add(T component)
+    {
+        if (endPointer >= contents.Length)
+            Expand();
+        contents[endPointer] = component;
+        endPointer++;
+    }
+    // Removes a component from the array by copying everything back one.
+    internal void RemoveAt(int index)
+    {
+        for (int i = index; i < endPointer; i++)
+        {
+            contents[i] = contents[i + 1];
+        }
+        endPointer--;
+    }
+    internal void Expand()
+    {
+        T[] old = contents;
+        contents = new T[old.Length * 2];
+        old.CopyTo(contents, 0);
     }
 
     internal override void ClearSpawnBuffer()
@@ -56,7 +82,7 @@ public class ComponentArray<T> : GenericComponentArray where T : IComponent
 
         for (int i = 0; i < spawnBuffer.Count; i++)
         {
-            contents.Add(spawnBuffer[i]);
+            Add(spawnBuffer[i]);
         }
 
         SortByID();
@@ -77,13 +103,22 @@ public class ComponentArray<T> : GenericComponentArray where T : IComponent
     // This is so binary search can be used when getting a component by ID
     private void SortByID()
     {
-        contents.Sort((a, b) => a.Id.CompareTo(b.Id));
+        Array.Sort(contents, (a, b) => {
+            if (a.Id == 0 || b.Id == 0)
+                return 0;
+            return a.Id.CompareTo(b.Id); 
+        });
     }
 
     public T this[int index]
     {
         get => GetComponent(index);
         set => SetComponent(index, value);
+    }
+
+    public ref T GetRef(int i)
+    {
+        return ref contents[i];
     }
 
     private T GetComponent(int i)
@@ -117,7 +152,7 @@ public class ComponentArray<T> : GenericComponentArray where T : IComponent
         // Binary search for component by its ID
         int i = GetComponentIndexByID(entityID, 0, Count - 1);
         if (i != -1)
-            contents.RemoveAt(i);
+            RemoveAt(i);
     }
 
     public int GetComponentIndexByID(int id, int start, int end)
