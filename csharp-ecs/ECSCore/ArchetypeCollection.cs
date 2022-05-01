@@ -34,6 +34,21 @@ internal class ArchetypeCollection
         }
     }
 
+    internal GenericComponentArray GetSegmentFromType(Type t)
+    {
+        int index = -1;
+        for (int i = 0; i < ComponentTypes.Length; i++)
+        {
+            if (ComponentTypes[i].Equals(t))
+            {
+                index = i;
+                break;
+            }
+        }
+
+        return ComponentArrays[index];
+    }
+
     internal GenericComponentArray GetSegment(int i)
     {
         return ComponentArrays[i];

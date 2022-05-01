@@ -41,7 +41,7 @@ public class Region
 
 
         // The array of ComponentCollections the delegate is called with
-        object[] args = QueryFactory.ConstructQueries(parameters, matches);
+        object[] args = QueryFactory.ConstructQueries(parameters, matches, this);
 
         action.DynamicInvoke(args);
     }

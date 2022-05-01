@@ -16,6 +16,8 @@ public class ECSClient
      * This ECSWorld:
      *  a. Contains culled regions of interest to the player
      *  b. Runs predictive systems on them
+     *  c. Processes user input, which is then sent to the server by this ECSClient instance
+     *  d. Data is recieved by this ECSClient regularly and compared with the local simulation to ensure synchronisation
     */
     private ECSWorld world;
 

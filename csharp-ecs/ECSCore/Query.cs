@@ -16,22 +16,22 @@ internal static class QueryFactory
     public static readonly Type[] ConstructorParams = new Type[] { typeof(ArchetypeCollection[]) };
 
     // Generate an array of Queries, based on the input component types
-    public static object[] ConstructQueries(ParameterInfo[] parameters, ArchetypeCollection[] matches)
+    public static object[] ConstructQueries(ParameterInfo[] parameters, ArchetypeCollection[] matches, Region region)
     {
         object[] collections = new object[parameters.Length];
 
         for (int i = 0; i < parameters.Length; i++)
         {
-            collections[i] = ConstructQuery(parameters[i], matches);
+            collections[i] = ConstructQuery(parameters[i], matches, region);
         }
 
         return collections;
     }
 
     // Generate a Query of the type specified in parameter, using reflection
-    private static object ConstructQuery(ParameterInfo parameter, ArchetypeCollection[] matches)
+    private static object ConstructQuery(ParameterInfo parameter, ArchetypeCollection[] matches, Region region)
     {
-        object[] constructorArgs = new object[] { matches };
+        object[] constructorArgs = new object[] { matches, region };
 
         // Convert the generic Query<> type to a Query<C>
         Type queryType = Generic
@@ -50,13 +50,14 @@ public class Query<T> where T : IComponent
 {
     public int Count;
     private ComponentArray<T>[] matches;
-
+    private Region region { get; init; }
     // An instance of T so that it doesn't have to be repeatedly instantiated to query
     private Type typeInstance = typeof(T);
 
-    internal Query(ArchetypeCollection[] _matches)
+    internal Query(ArchetypeCollection[] _matches, Region r)
     {
         matches = new ComponentArray<T>[_matches.Length];
+        region = r;
 
         Count = 0;
         for (int i = 0; i < matches.Length; i++)
@@ -104,6 +105,15 @@ public class Query<T> where T : IComponent
         ComponentArray<T> a = matches[match];
         
         return a[entityIndex];
+    }
+
+    public ref T GetRefByID(int entityID)
+    {
+        ArchetypeCollection match = region.FindArchetypeFromKey(IDRegistry.GetArchetypeKeyFromID(entityID));
+        
+        ComponentArray<T> componentArray = match.GetSegmentFromType(typeInstance) as ComponentArray<T>;
+
+        return ref componentArray.GetRefByID(entityID);
     }
 
     public void SetComponent(int i, T val)
