@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 
-namespace CSharp_ECS.ECSCore;
+namespace CSharp_ECS;
 
 // TODO: Integrate with queries etc
 internal class ArchetypeCollection

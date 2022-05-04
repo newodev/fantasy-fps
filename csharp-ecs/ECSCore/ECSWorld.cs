@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSharp_ECS.ECSCore;
+namespace CSharp_ECS;
 
-class ECSWorld
+public class ECSWorld
 {
     // All systems run by this game instance
     private List<JobSystem> systems = new();

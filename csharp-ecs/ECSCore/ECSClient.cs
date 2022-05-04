@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSharp_ECS.ECSCore;
+namespace CSharp_ECS;
 
 // A single instance of this class exists on every player's client
 // It handles the networked changes to the ECSWorld and sends input to the server
@@ -21,7 +21,7 @@ public class ECSClient
     */
     private ECSWorld world;
 
-    public ECSClient(List<JobSystem> systems)
+    public ECSClient(JobSystem[] systems)
     {
         // Initialise some server connections
 

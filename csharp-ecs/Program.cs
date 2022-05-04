@@ -1,4 +1,4 @@
-﻿using CSharp_ECS.ECSCore;
+﻿using CSharp_ECS;
 using CSharp_ECS;
 
 //GridTest grid = new GridTest();

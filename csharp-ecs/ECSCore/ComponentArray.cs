@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using CSharp_ECS.ECSCore.Exceptions;
 using System.Reflection;
 
-namespace CSharp_ECS.ECSCore;
+namespace CSharp_ECS;
 
 // We use an abstract subclass as the ArchetypeCollection cannot interact with the generic types of the ComponentArrays
 public abstract class GenericComponentArray
@@ -165,6 +165,7 @@ public class ComponentArray<T> : GenericComponentArray where T : IComponent
     public int GetComponentIndexByID(int id, int start, int end)
     {
         // Binary search implementation
+        // TODO: Use a non-recursive way
         int pivot = (start + end) / 2;
 
         if (contents[pivot].Id == id)

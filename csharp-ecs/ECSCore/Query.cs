@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using CSharp_ECS.ECSCore.Exceptions;
 using System.Reflection;
 
-namespace CSharp_ECS.ECSCore;
+namespace CSharp_ECS;
 
 
 internal static class QueryFactory

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
-using CSharp_ECS.ECSCore;
+using CSharp_ECS;
 using Game.InputDevices;
 
 using Game.Rendering;
@@ -52,7 +52,7 @@ class GameClient
         Input.Init();
 
         renderer.Init();
-        List<JobSystem> systems = new() { new RenderSystem(renderer), new TestSystem() };
+        JobSystem[] systems = { new RenderSystem(renderer), new TestSystem() };
         client = new(systems);
         client.Init();
 

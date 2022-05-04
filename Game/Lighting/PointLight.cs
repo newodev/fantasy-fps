@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CSharp_ECS.ECSCore;
+using CSharp_ECS;
 using System.Drawing;
 
 namespace Game.Lighting;
