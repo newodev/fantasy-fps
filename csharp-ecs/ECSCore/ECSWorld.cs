@@ -9,14 +9,14 @@ namespace CSharp_ECS;
 public class ECSWorld
 {
     // All systems run by this game instance
-    private List<JobSystem> systems = new();
+    private JobSystem[] systems;
     // The region owned/observed by this server/client
     private Region region = new();
 
-    public ECSWorld(List<JobSystem> s)
+    public ECSWorld(JobSystem[] s)
     {
         systems = s;
-        for (int i = 0; i < systems.Count; i++)
+        for (int i = 0; i < systems.Length; i++)
         {
             systems[i].SetRegion(region);
         }
@@ -24,7 +24,7 @@ public class ECSWorld
 
     public void Init()
     {
-        for (int i = 0; i < systems.Count; i++)
+        for (int i = 0; i < systems.Length; i++)
         {
             systems[i].Init();
         }
@@ -33,7 +33,7 @@ public class ECSWorld
 
     public void Update()
     {
-        for (int i = 0; i < systems.Count; i++)
+        for (int i = 0; i < systems.Length; i++)
         {
             systems[i].Update();
         }
@@ -43,7 +43,7 @@ public class ECSWorld
 
     public void FrameUpdate()
     {
-        for (int i = 0; i < systems.Count; i++)
+        for (int i = 0; i < systems.Length; i++)
         {
             systems[i].FrameUpdate();
         }
