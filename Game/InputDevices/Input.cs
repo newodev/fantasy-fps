@@ -11,9 +11,10 @@ namespace Game.InputDevices;
 
 static class Input
 {
-    private static Keys[] KeyList;
-    private static MouseButton[] MBList;
-    private static InputAction[] ActionList;
+    private static Keys[] KeyList = (Keys[]) Enum.GetValues(typeof(Keys));
+    private static MouseButton[] MBList = (MouseButton[]) Enum.GetValues(typeof(MouseButton));
+    private static InputAction[] ActionList = (InputAction[]) Enum.GetValues(typeof(InputAction));
+
     public static List<KeyBinding> Keybindings = new List<KeyBinding>();
 
     // How long an input has been held down for, in seconds
@@ -28,10 +29,6 @@ static class Input
 
     public static void Init()
     {
-        KeyList = (Keys[]) Enum.GetValues(typeof(Keys));
-        MBList = (MouseButton[])Enum.GetValues(typeof(MouseButton));
-        ActionList = (InputAction[])Enum.GetValues(typeof(InputAction));
-
         KeyBinding k = new(InputAction.Forward);
         k.Add(Keys.W);
         Keybindings.Add(k);

@@ -13,7 +13,7 @@ internal static class QueryFactory
 {
     // Info of the Query<>'s constructor used to generate generics at runtime
     public static readonly Type Generic = typeof(Query<>);
-    public static readonly Type[] ConstructorParams = new Type[] { typeof(ArchetypeCollection[]) };
+    public static readonly Type[] ConstructorParams = new Type[] { typeof(ArchetypeCollection[]), typeof(Region) };
 
     // Generate an array of Queries, based on the input component types
     public static object[] ConstructQueries(ParameterInfo[] parameters, ArchetypeCollection[] matches, Region region)

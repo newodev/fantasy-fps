@@ -70,6 +70,7 @@ class Renderer
 
         // TODO: Render shadow maps from each light source
         // Render each renderable
+        // TODO: Multiple render passes with diff shaders?
 
         for (int i = 0; i < entities.Count; i++)
         {

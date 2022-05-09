@@ -15,6 +15,7 @@ using Game.Resources;
 namespace Game;
 
 // Being used to learn OpenGL based on the tutorial on the OpenTK.net website.
+/*
 class TestWindow : GameWindow
 {
     Shader shader;
@@ -219,4 +220,4 @@ class TestWindow : GameWindow
         base.OnUnload();
     }
 }
-
+*/
