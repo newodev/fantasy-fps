@@ -1,0 +1,36 @@
+﻿ * Vertex-Clustered Model Streaming
+ * - Cluster vertexes in a model, where a parent cluster is made of sub-clusters
+ * - Choose what LOD clusters to store in memory based on what could actually be seen
+ * - Streamed off disk, and thrown away when a higher LOD hasn't been used in a while
+ * Generation Process
+ * - Build clusters of 128tris each
+ * - For each LOD level:
+ *   - Group clusters
+ *   - Merge triangles in group into a shared list
+ *   - Simplify to half number of tris
+ *   - Split simplified tris back into groups of 128
+ * - Clustering Process:
+ *   - Things to optimise: triCount <= 128 (but close as possible), minimise number of cluster edges
+ *   - Graph partitioning again (What are we graphing though..?)
+ * - Grouping Process:
+ *   - Graph partitioning problem
+ *   - Node = cluster
+ *   - Edge = connects to clusters with shared edges
+ *   - Edge Weight = number of shared tri edges
+ *   - Add additional edges for spatially close but not connected clusters
+ *   - Unreal uses METIS library
+ * - Simplification Process:
+ *   - Edge Collapsing Decimation
+ *   - Error calculated using Quadric Error Metric
+ *   - Optimise for minimal error in new vertex properties (position, normal, UV)
+ *   - Basic Quadric: integral of dist^2 error over area ..?
+ *   - Quadrics with attributes (I assume this means UV, vert colours, etc) mix all errors in one with weights
+ *   - NOTE: Mesh should be scaled such that average surface area of trianges is rougly a chosen constant (constant based on position to attribute balance)
+ *   
+ * Runtime model Streaming
+ * - Choose between simplified group or sub-groups based on screen-space error
+ * - Error calculated by simplifier is projected to screen with object distance and projection accounted for
+ * - Maximise projected error within a bounding sphere (..?)
+ * - All clusters in a group store the same error value and bounding sphere, meaning all clusters in a group make the same decision
+ * - Cut the graph where parent error is too high and child error is small enough
+ * - This can be calc'd on GPU in parralel
