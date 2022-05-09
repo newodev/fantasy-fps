@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSharp_ECS.ECSCore.Exceptions;
+namespace CSharp_ECS.Exceptions;
 
 internal class ECSArchetypeException : ECSException
 {
