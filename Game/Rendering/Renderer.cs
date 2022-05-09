@@ -24,25 +24,6 @@ namespace Game.Rendering;
  * Deferred rendering + z pass
  * - per final pixel lighting calc (constant, doesn't scale with obj count
  * 
- * Vertex-Clustered Model Streaming
- * - Cluster vertexes in a model, where a parent cluster is made of sub-clusters
- * - Choose what LOD clusters to store in memory based on what could actually be seen
- * - Streamed off disk, and thrown away when a higher LOD hasn't been used in a while
- * Clustering Process
- * - Build clusters of 128tris each
- * - For each LOD level:
- *   - Group clusters
- *   - Merge triangles in group into a shared list
- *   - Simplify to half number of tris
- *   - Split simplified tris back into groups of 128
- * - Grouping Process:
- *   - Graph partitioning problem
- *   - Node = cluster
- *   - Edge = connects to clusters with shared edges
- *   - Edge Weight = number of shared tri edges
- *   - Add additional edges for spatially close but not connected clusters
- *   - Unreal uses METIS library
- * 
  */
 class Renderer
 {
