@@ -44,6 +44,8 @@ class GameClient
     // The renderer draws to the OpenTK window
     private Renderer renderer = new();
 
+    private TestScene initialiser = new TestScene();
+
     public GameClient()
     {
         window.GameUpdate += OnGameUpdate;
@@ -52,9 +54,10 @@ class GameClient
         Input.Init();
 
         renderer.Init();
-        JobSystem[] systems = { new RenderSystem(renderer), new TestSystem() };
-        client = new(systems);
-        client.Init();
+
+        initialiser.Rend(renderer);
+        client = new(initialiser.InitSystems());
+        client.Init(initialiser);
 
         window.Run();
     }

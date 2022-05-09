@@ -22,12 +22,13 @@ public class ECSWorld
         }
     }
 
-    public void Init()
+    public void Init(Initialiser init)
     {
         for (int i = 0; i < systems.Length; i++)
         {
             systems[i].Init();
         }
+        init.InitEntities(region);
         region.ResolveBuffers();
     }
 

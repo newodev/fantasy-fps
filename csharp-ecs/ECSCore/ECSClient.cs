@@ -27,9 +27,9 @@ public class ECSClient
 
         world = new ECSWorld(systems);
     }
-    public void Init()
+    public void Init(Initialiser init)
     {
-        world.Init();
+        world.Init(init);
     }
     public void Update()
     {

@@ -15,23 +15,6 @@ namespace Game;
 // TODO: Frustrum culling
 class TestSystem : JobSystem
 {
-    public override void Init()
-    {
-        // Floor
-        region.SpawnEntity(EntityFactory.New(2).Transform(new(0f, -1.5f, 0f), new(0f, 0f, 0f), new(5f, 1f, 5f)).Renderable(998).End());
-
-        // Center cube
-        region.SpawnEntity(EntityFactory.New(3).Transform(new(0f, 0f, 0f), new(0f, 0f, 0f), new(1f)).Renderable(999).Input().End());
-
-        // Camera
-        region.SpawnEntity(EntityFactory.New(2).Transform(new(0f, 2f, -2f), new(MathHelper.PiOver4, 0f, 0f), new(1f)).Camera(Settings.AspectRatio, 0.01f, 100f, 90f).End());
-
-        // Point Lights
-        region.SpawnEntity(EntityFactory.New(3).Transform(new(0f, 3f, 0f), new(0f, 0f, 0f), new(0.3f)).Renderable(1).PointLight(Color.White).End());
-        region.SpawnEntity(EntityFactory.New(3).Transform(new(-3f, 1f, 0f), new(0f, 0f, 0f), new(0.3f)).Renderable(1).PointLight(Color.Red).End());
-        region.SpawnEntity(EntityFactory.New(3).Transform(new(3f, 1f, -1f), new(0f, 0f, 0f), new(0.3f)).Renderable(1).PointLight(Color.Blue).End());
-    }
-
     public override void Update()
     {
         region.Query((Query<Transform> t, Query<InputComponent> i) =>
