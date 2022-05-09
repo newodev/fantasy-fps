@@ -17,13 +17,19 @@ class TestSystem : JobSystem
 {
     public override void Init()
     {
+        // Floor
         region.SpawnEntity(EntityFactory.New(2).Transform(new(0f, -1.5f, 0f), new(0f, 0f, 0f), new(5f, 1f, 5f)).Renderable(998).End());
+
+        // Center cube
         region.SpawnEntity(EntityFactory.New(3).Transform(new(0f, 0f, 0f), new(0f, 0f, 0f), new(1f)).Renderable(999).Input().End());
+
+        // Camera
         region.SpawnEntity(EntityFactory.New(2).Transform(new(0f, 2f, -2f), new(MathHelper.PiOver4, 0f, 0f), new(1f)).Camera(Settings.AspectRatio, 0.01f, 100f, 90f).End());
-        region.SpawnEntity(new IComponent[] { new Transform() { Position = new Vector3(0f, 2f, -2f), Scale = new Vector3(1f), Rotation = new(MathHelper.PiOver4, 0f, 0f) }, new Camera() { AspectRatio = Settings.AspectRatio, FarPlane = 100f, NearPlane = 0.01f, FieldOfView = 90f } });
-        region.SpawnEntity(new IComponent[] { new Transform() { Position = new Vector3(0f, 3f, 0f), Scale = new Vector3(0.3f) }, new PointLight() { LightColor = Color.White }, new RenderableComponent() { RenderableID = 1 } });
-        region.SpawnEntity(new IComponent[] { new Transform() { Position = new Vector3(-3f, 1f, 0f), Scale = new Vector3(0.3f) }, new PointLight() { LightColor = Color.Red }, new RenderableComponent() { RenderableID = 1 } });
-        region.SpawnEntity(new IComponent[] { new Transform() { Position = new Vector3(3f, 1f, -1f), Scale = new Vector3(0.3f) }, new PointLight() { LightColor = Color.Blue }, new RenderableComponent() { RenderableID = 1 } });
+
+        // Point Lights
+        region.SpawnEntity(EntityFactory.New(3).Transform(new(0f, 3f, 0f), new(0f, 0f, 0f), new(0.3f)).Renderable(1).PointLight(Color.White).End());
+        region.SpawnEntity(EntityFactory.New(3).Transform(new(-3f, 1f, 0f), new(0f, 0f, 0f), new(0.3f)).Renderable(1).PointLight(Color.Red).End());
+        region.SpawnEntity(EntityFactory.New(3).Transform(new(3f, 1f, -1f), new(0f, 0f, 0f), new(0.3f)).Renderable(1).PointLight(Color.Blue).End());
     }
 
     public override void Update()
