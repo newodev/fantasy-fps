@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CSharp_ECS.ECSCore.Exceptions;
+using CSharp_ECS.Exceptions;
 using System.Reflection;
 
 namespace CSharp_ECS;
