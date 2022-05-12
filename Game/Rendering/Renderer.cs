@@ -13,17 +13,33 @@ using OpenTK.Graphics.OpenGL;
 namespace Game.Rendering;
 
 // Currently this is a naive implementation. Renders should be batched
-// TODO: Parralax mapping
-// TODO: Shadows
-// TODO: Bloom
 
-// NOTES ON ADVANCED RENDERING
+// TODOS ON ADVANCED RENDERING
 /*
- * https://advances.realtimerendering.com/s2021/Karis_Nanite_SIGGRAPH_Advances_2021_final.pdf
+ * 
+ * Profiler
+ * - Profile allocs, time per system call, fps etc
+ * 
+ * Instanced/Batched rendering
+ * - Create a RenderAllocator, and create different versions that use batching, instancing, etc
+ * - Compare and see what works best
+ * - PROFILE
  * 
  * Deferred rendering + z pass
- * - per final pixel lighting calc (constant, doesn't scale with obj count
+ * - per final pixel lighting calc (constant, doesn't scale with obj count)
  * 
+ * Dynamic Global Illumination
+ * - Look into UE5 Lumen
+ * 
+ * Ambient Occlusion
+ * 
+ * Bloom
+ * 
+ * Cascaded Shadows
+ * 
+ * Virtual Streamed Textures? See UE5
+ * 
+ * https://advances.realtimerendering.com/s2021/Karis_Nanite_SIGGRAPH_Advances_2021_final.pdf
  */
 class Renderer
 {

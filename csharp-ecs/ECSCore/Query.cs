@@ -66,7 +66,6 @@ public class Query<T> where T : IComponent
 
             Count += a.EntityCount;
             
-            int index = 0;
             // TODO: Error checking here
             // TODO: Extract method probably
             for (int j = 0; j < a.ComponentTypes.Length; j++)
