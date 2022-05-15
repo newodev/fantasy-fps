@@ -13,12 +13,12 @@ class GBufferStage : RenderStage
     private DrawBuffersEnum[] layers = { DrawBuffersEnum.ColorAttachment0, DrawBuffersEnum.ColorAttachment1, DrawBuffersEnum.ColorAttachment2, DrawBuffersEnum.ColorAttachment3 };
     private int buffer;
     private Shader shader;
+    private int posLayer, normLayer, colorLayer, detailLayer;
 
-    public override void Init()
+    public GBufferStage()
     {
         GL.GenFramebuffers(1, out buffer);
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, buffer);
-        int posLayer, normLayer, colorLayer, detailLayer;
 
         posLayer = GenTarget(0, PixelInternalFormat.Rgba16f);
         normLayer = GenTarget(1, PixelInternalFormat.Rgba16f);
@@ -40,11 +40,44 @@ class GBufferStage : RenderStage
         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 
         shader = new("Resources/Shaders/Standard/Opaque/shader.vert", "Resources/Shaders/Standard/Deferred/gbuffer.frag");
-        
+        shader.InitialiseAttribute("aPosition", 3, VertexAttribPointerType.Float, false, 14 * sizeof(float), 0);
+        shader.InitialiseAttribute("aNormal", 3, VertexAttribPointerType.Float, false, 14 * sizeof(float), 3 * sizeof(float));
+        shader.InitialiseAttribute("aTexCoord", 2, VertexAttribPointerType.Float, false, 14 * sizeof(float), 6 * sizeof(float));
+        shader.InitialiseAttribute("aTangent", 3, VertexAttribPointerType.Float, false, 14 * sizeof(float), 8 * sizeof(float));
+        shader.InitialiseAttribute("aBitangent", 3, VertexAttribPointerType.Float, false, 14 * sizeof(float), 11 * sizeof(float));
     }
+
+    public int[] GetLayers()
+    {
+        return new int[] { posLayer, normLayer, colorLayer, detailLayer };
+    }
+
     public override void Render()
     {
+        for (int i = 0; i < entities.Count; i++)
+        {
+            var entity = entities.ElementAt(i);
+            int renderableID = entity.Value.RenderableID;
+            Transform t = entity.Value.Transform;
 
+            Renderable r = renderables[renderableID];
+            r.UseWithTransform(t, CameraPos, CurrentCamera);
 
+            r.Shader.SetInt("numDirLight", Light.DirectionalCount);
+
+            for (int j = 0; j < Light.DirectionalCount; j++)
+            {
+                UseDirectional(j, r, Light.Directionals[j], Light.DirectionalDirections[j]);
+            }
+
+            r.Shader.SetInt("numPointLight", Light.PointCount);
+
+            for (int j = 0; j < Light.PointCount; j++)
+            {
+                UsePoint(j, r, Light.PointLights[j], Light.PointPositions[j]);
+            }
+
+            GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
+        }
     }
 }

@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace Game.NewRendering;
 
-internal class RenderObject
+struct RenderObject
 {
+    public int modelID;
+    public Transform transform;
+
+    public RenderObject(int model, Transform t)
+        => (modelID, transform) = (model, t);
 }

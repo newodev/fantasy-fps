@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Mathematics;
+using OpenTK.Graphics.OpenGL;
 
 namespace Game.Resources;
 
@@ -34,6 +35,30 @@ public struct Triangle
 
 static class ModelLoader
 {
+    private static float[] quadVertices = {
+            // vert pos         // UVs
+            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+             1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+             1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        };
+
+    public static int GenScreenQuad()
+    {
+        int quadVAO, quadVBO;
+        GL.GenVertexArrays(1, out quadVAO);
+        GL.GenBuffers(1, out quadVBO);
+        GL.BindVertexArray(quadVAO);
+        GL.BindBuffer(BufferTarget.ArrayBuffer, quadVBO);
+        GL.BufferData(BufferTarget.ArrayBuffer, 20 * sizeof(float), quadVertices, BufferUsageHint.StaticDraw);
+        GL.EnableVertexAttribArray(0);
+        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
+        GL.EnableVertexAttribArray(1);
+        GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+
+        return quadVAO;
+    }
+
     public static Model LoadCube()
     {
         Model cube = new();
@@ -118,10 +143,7 @@ static class ModelLoader
             vPointer = InsertVertex(vertices, vPointer, tris[i].V3);
         }
         cube.Vertices = vertices;
-        for (int i = 3; i < vertices.Length; i+= 14 * 6)
-        {
-            Console.WriteLine($"norm: {vertices[i]}, {vertices[i + 1]}, {vertices[i + 2]}");
-        }
+
         return cube;
     }
 

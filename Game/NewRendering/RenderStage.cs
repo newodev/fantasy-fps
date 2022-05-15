@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Rendering;
 using OpenTK.Graphics.OpenGL;
 
 namespace Game.NewRendering;
 
 abstract class RenderStage
 {
-    public abstract void Init();
+    public Camera camera;
+    public Transform camTransform;
     public abstract void Render();
 
     protected int GenTarget(int i, PixelInternalFormat type)

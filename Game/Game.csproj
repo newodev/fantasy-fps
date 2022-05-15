@@ -82,4 +82,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Resources\Shaders\Standard\Deferred\" />
+  </ItemGroup>
+
 </Project>
