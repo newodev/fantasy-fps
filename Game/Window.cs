@@ -14,6 +14,8 @@ namespace Game;
 public static class Settings
 {
     public static float AspectRatio { get; set; }
+    public static int Width { get; set; }
+    public static int Height { get; set; }
 }
 
 class Window : GameWindow
@@ -25,7 +27,7 @@ class Window : GameWindow
 
     public Window() : base(ApplicationSettings.MakeGWS(), ApplicationSettings.MakeNWS())
     {
-        Settings.AspectRatio = Size.X / (float)Size.Y;
+        UpdateSize();
     }
 
     protected override void OnUpdateFrame(FrameEventArgs e)
@@ -38,7 +40,7 @@ class Window : GameWindow
 
     protected override void OnRenderFrame(FrameEventArgs e)
     {
-        Settings.AspectRatio = Size.X / (float)Size.Y;
+        UpdateSize();
 
         FrameUpdate.Invoke(this, e.Time);
 
@@ -49,5 +51,12 @@ class Window : GameWindow
     {
         GL.Viewport(0, 0, e.Width, e.Height);
         base.OnResize(e);
+    }
+
+    private void UpdateSize()
+    {
+        Settings.AspectRatio = Size.X / (float)Size.Y;
+        Settings.Width = Size.X;
+        Settings.Height = Size.Y;
     }
 }
