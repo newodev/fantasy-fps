@@ -1,3 +1,5 @@
+#version 330 core
+
 layout (location = 0) out vec3 gPosition;
 layout (location = 1) out vec3 gNormal;
 layout (location = 2) out vec4 gAlbedo;
@@ -32,8 +34,8 @@ void main()
     gPosition = FragPos;
     gNormal = sampleNormalMap();
     gAlbedo = texture(material.albedoMap, texCoord);
-    gDetail.r = texture(material.metallicMap, texCoord);
-    gDetail.g = texture(material.roughnessMap, texCoord);
-    gDetail.b = texture(material.aoMap, texCoord);
+    gDetail.r = texture(material.metallicMap, texCoord).r;
+    gDetail.g = texture(material.roughnessMap, texCoord).r;
+    gDetail.b = texture(material.aoMap, texCoord).r;
 
 }

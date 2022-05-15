@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Game.Rendering;
+using Game.NewRendering;
 using System.Drawing;
 using OpenTK.Mathematics;
 
@@ -12,9 +13,9 @@ namespace Game;
 
 class TestScene : Initialiser
 {
-    private Renderer r;
+    private Game.NewRendering.Renderer r;
 
-    public void Rend(Renderer renderer)
+    public void Rend(Game.NewRendering.Renderer renderer)
     {
         r = renderer;
     }
@@ -35,9 +36,9 @@ class TestScene : Initialiser
         region.SpawnEntity(EntityFactory.New(2).Transform(new(0f, 2f, -2f), new(MathHelper.PiOver4, 0f, 0f), new(1f)).Camera(Settings.AspectRatio, 0.01f, 100f, 90f).End());
 
         // Point Lights
-        region.SpawnEntity(EntityFactory.New(3).Transform(new(0f, 3f, 0f), new(0f, 0f, 0f), new(0.3f)).Renderable(1).PointLight(Color.White).End());
-        region.SpawnEntity(EntityFactory.New(3).Transform(new(-3f, 1f, 0f), new(0f, 0f, 0f), new(0.3f)).Renderable(1).PointLight(Color.Red).End());
-        region.SpawnEntity(EntityFactory.New(3).Transform(new(3f, 1f, -1f), new(0f, 0f, 0f), new(0.3f)).Renderable(1).PointLight(Color.Blue).End());
+        region.SpawnEntity(EntityFactory.New(2).Transform(new(0f, 3f, 0f), new(0f, 0f, 0f), new(0.3f)).PointLight(Color.White).End());
+        region.SpawnEntity(EntityFactory.New(2).Transform(new(-3f, 1f, 0f), new(0f, 0f, 0f), new(0.3f)).PointLight(Color.Red).End());
+        region.SpawnEntity(EntityFactory.New(2).Transform(new(3f, 1f, -1f), new(0f, 0f, 0f), new(0.3f)).PointLight(Color.Blue).End());
     }
 
 }

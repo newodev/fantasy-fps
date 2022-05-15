@@ -26,7 +26,8 @@ class LightingStage : RenderStage
         // The lighting stage renders to a screen-size quad. Here we initialise the quad object
         quadVAO = ModelLoader.GenScreenQuad();
 
-        shader = new("Resources/Shaders/Standard/Deferred/lighting.vert", "Resources/Shaders/Standard/Deferred/lighting.frag");
+        shader = new("Resources/Shaders/Standard/Deferred/shading.vert", "Resources/Shaders/Standard/Deferred/shading.frag");
+        shader.Use();
         shader.SetInt("gPosition", 0);
         shader.SetInt("gNormal", 1);
         shader.SetInt("gAlbedo", 2);

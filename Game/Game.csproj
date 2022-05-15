@@ -29,6 +29,18 @@
     <None Update="OpenGLTest\shader.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Shaders\Standard\Deferred\gbuffer.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Shaders\Standard\Deferred\gbuffer.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Shaders\Standard\Deferred\shading.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Shaders\Standard\Deferred\shading.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Shaders\Standard\Opaque\pbr.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -80,10 +92,6 @@
     <None Update="Resources\Textures\stone_rough.tif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\Shaders\Standard\Deferred\" />
   </ItemGroup>
 
 </Project>

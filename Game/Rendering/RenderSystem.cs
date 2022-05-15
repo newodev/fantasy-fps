@@ -14,11 +14,12 @@ namespace Game.Rendering;
 // TODO: Frustrum culling
 class RenderSystem : JobSystem
 {
-    private Renderer Renderer;
-    public RenderSystem(Renderer r)
+    private Game.NewRendering.Renderer Renderer;
+    public RenderSystem(Game.NewRendering.Renderer r)
     {
         Renderer = r;
     }
+
 
     public override void Update()
     {
@@ -36,10 +37,12 @@ class RenderSystem : JobSystem
 
         region.Query((Query<Transform> t, Query<RenderableComponent> r) =>
         {
-            Parallel.For(0, t.Count, (i) =>
+            for (int i = 0; i < t.Count; i++)
             {
+                Transform tr = t[i];
+                RenderableComponent rr = r[i];
                 Renderer.AddObject(t[i].Id, t[i], r[i].RenderableID);
-            });
+            }
         });
 
         region.Query((Query<Transform> t, Query<DirectionalLight> l) =>

@@ -7,7 +7,7 @@ using OpenTK;
 using CSharp_ECS;
 using Game.InputDevices;
 
-using Game.Rendering;
+using Game.NewRendering;
 
 namespace Game;
 /*
@@ -48,9 +48,6 @@ class GameClient
 
     public GameClient()
     {
-        window.GameUpdate += OnGameUpdate;
-        window.FrameUpdate += OnFrameUpdate;
-
         Input.Init();
 
         renderer.Init();
@@ -59,16 +56,22 @@ class GameClient
         client = new(initialiser.InitSystems());
         client.Init(initialiser);
 
+        client.Update();
+
+        window.GameUpdate += OnGameUpdate;
+        window.FrameUpdate += OnFrameUpdate;
+
         window.Run();
     }
 
     public void OnGameUpdate(object? s, double deltaTime)
     {
         Input.Update(deltaTime, window.KeyboardState, window.MouseState);
-        renderer.Update();
 
+        renderer.Update();
         // Update all ECS systems
         client.Update();
+
 
         Time.UpdateTime((float)deltaTime);
     }
